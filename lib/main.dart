@@ -1,11 +1,20 @@
+import 'package:convertify/service/init_services.dart';
 import 'package:convertify/view/screen/homeScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized;
+  await initServices();
   runApp(
       GetMaterialApp(debugShowCheckedModeBanner: false, home: const MyApp()));
+}
+
+Future initServices() async {
+  await Get.putAsync(
+    () => InitServices().init(),
+  );
 }
 
 class MyApp extends StatelessWidget {

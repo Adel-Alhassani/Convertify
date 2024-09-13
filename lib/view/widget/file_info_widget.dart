@@ -13,8 +13,9 @@ class FileInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return Container(
       width: 221.w,
+      height: 50.h,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [

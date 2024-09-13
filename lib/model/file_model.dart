@@ -1,17 +1,19 @@
 class FileModel {
   late String _name;
   late double _size;
-  late List _outputFormats;
-  
+  late String _extension;
+  late Map<String, List<String>> _supportedOutputFormats;
+  FileModel(this._name, this._size, this._extension);
+
   get name => this._name;
 
- set name(value) => this._name = value;
+  set name(value) => this._name = value;
 
   get size => this._size;
 
- set size( value) => this._size = value;
+  set size(value) => this._size = value;
 
-  get outputFormats => this._outputFormats;
+  get supportedOutputFormats => this._supportedOutputFormats;
 
- set outputFormats( value) => this._outputFormats = value;
+  set supportedOutputFormats(value) => this._supportedOutputFormats = value;
 }

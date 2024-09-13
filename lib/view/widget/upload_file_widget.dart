@@ -6,16 +6,17 @@ import 'package:flutter_svg/svg.dart';
 class UploadFile extends StatelessWidget {
   final String iconAsset;
   final String content;
+  final void Function() onTap;
   const UploadFile({
     super.key,
     required this.iconAsset,
-    required this.content,
+    required this.content, required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {},
+      onTap: onTap,
       child: DottedBorder(
           borderType: BorderType.RRect,
           padding: EdgeInsets.all(0),
