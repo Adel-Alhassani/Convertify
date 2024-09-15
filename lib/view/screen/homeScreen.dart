@@ -1,4 +1,3 @@
-import 'dart:ffi';
 import 'package:convertify/controller/file_controller.dart';
 import 'package:convertify/view/widget/button_collection_dialog.dart';
 import 'package:convertify/view/widget/custom_primary_button.dart';
@@ -43,22 +42,28 @@ class Homescreen extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-          Column(
-            children: [
-              Container(height: statusBarHeight, color: Color(0xff2663FF)),
-              SvgPicture.asset(
-                "image/background.svg",
-                height: 730.h,
-                fit: BoxFit.fill,
-                alignment: Alignment.topCenter,
-              ),
-              CustomPrimaryButton(
-                text: "Convert",
-                width: 170.w,
-                height: 47.h,
-                onPressed: () {},
-              )
-            ],
+          Container(
+            color: Colors.white,
+            child: Column(
+              // mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Container(height: statusBarHeight, color: Color(0xff2663FF)),
+
+                CustomPaint(
+                  painter: BlueBackgroundPainter(),
+                  child: Container(
+                    width: 430.w,
+                    height: 717.h,
+                  ),
+                ),
+                CustomPrimaryButton(
+                  text: "Convert",
+                  width: 170.w,
+                  height: 47.h,
+                  onPressed: () {},
+                )
+              ],
+            ),
           ),
           Container(
             padding: EdgeInsets.symmetric(horizontal: 40.w),
@@ -92,13 +97,13 @@ class Homescreen extends StatelessWidget {
                     height: 8.h,
                   ),
                   GetBuilder<FileController>(
-                      builder: (controller) => fileController.isFileUploaded
-                          ? FileInfo(
-                              fileName: "filename.docx",
-                              fileSize: "3.5 MB",
-                            )
-                          : Container()),
-
+                    builder: (controller) => fileController.isFileUploaded
+                        ? FileInfo(
+                            fileName: "filename.docx",
+                            fileSize: "3.5 MB",
+                          )
+                        : SizedBox.shrink(),
+                  ),
                   SizedBox(
                     height: 28.h,
                   ),
@@ -145,9 +150,9 @@ class Homescreen extends StatelessWidget {
                     textColor: Color(0xff5F8BFF),
                     borderColor: Color(0xff5F8BFF),
                   ),
-                  // SizedBox(
-                  //   height: 59.h,
-                  // ),
+                  SizedBox(
+                    height: 59.h,
+                  ),
                 ],
               ),
             ),
@@ -156,4 +161,35 @@ class Homescreen extends StatelessWidget {
       ),
     );
   }
+}
+
+class BlueBackgroundPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint();
+
+    // Draw blue background
+    paint.color = Color(0xff2663FF);
+    canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), paint);
+
+    // Draw white curve
+    paint.color = Colors.white;
+    final path = Path();
+    path.moveTo(0, size.height);
+    path.quadraticBezierTo(
+      size.width / 2,
+      size.height - 80,
+      size.width,
+      size.height,
+    );
+    path.lineTo(
+        size.width, size.height); // Ensure this point is included in the path
+    path.lineTo(0, size.height); // Connect back to the start point
+    path.close(); // Close the path to ensure it's a complete shape
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

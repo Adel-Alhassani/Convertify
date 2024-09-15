@@ -1,19 +1,29 @@
+import 'dart:io';
+
 class FileModel {
-  late String _name;
-  late double _size;
-  late String _extension;
-  late Map<String, List<String>> _supportedOutputFormats;
-  FileModel(this._name, this._size, this._extension);
+  File? file;
+   final String name;
+   final double size;
+   final String extension;
+   late Map<String, List<String>> _supportedOutputFormats;
 
-  get name => this._name;
+     FileModel({required this.name, required this.size, required this.extension});
 
-  set name(value) => this._name = value;
+//   get name => this._name;
 
-  get size => this._size;
+// //  set name( value) => this._name = value;
 
-  set size(value) => this._size = value;
+//   get size => this._size;
+
+// //  set size( value) => this._size = value;
+
+//   get extension => this._extension;
+
+//  set extension( value) => this._extension = value;
 
   get supportedOutputFormats => this._supportedOutputFormats;
 
-  set supportedOutputFormats(value) => this._supportedOutputFormats = value;
+ set supportedOutputFormats( value) => this._supportedOutputFormats = value;
+
+ 
 }
