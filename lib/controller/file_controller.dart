@@ -14,7 +14,6 @@ class FileController extends GetxController {
 
     if (result != null) {
       File selectedFile = File(result.files.single.path!);
-
       PlatformFile selectedFileInfo = result.files.first;
       isFileUploaded = true;
       file = FileModel(
