@@ -48,7 +48,6 @@ class Homescreen extends StatelessWidget {
               // mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Container(height: statusBarHeight, color: Color(0xff2663FF)),
-
                 CustomPaint(
                   painter: BlueBackgroundPainter(),
                   child: Container(
@@ -97,20 +96,26 @@ class Homescreen extends StatelessWidget {
                     height: 8.h,
                   ),
                   GetBuilder<FileController>(
-                    builder: (controller) => fileController.isFileUploaded
+                    builder: (controller) => controller.isFileUploaded
                         ? FileInfo(
-                            fileName: "filename.docx",
-                            fileSize: "3.5 MB",
+                            fileName: controller.file!.name,
+                            fileSize: controller.file!.size
                           )
                         : SizedBox.shrink(),
                   ),
                   SizedBox(
                     height: 28.h,
                   ),
-                  FromTo(
-                    text: "From",
-                    textColor: Color(0xff5F8BFF),
-                    borderColor: Color(0xff5F8BFF),
+                  GetBuilder<FileController>(
+                    builder: (controller) => FromTo(
+                      text: controller.isFileUploaded? controller.file!.extension : "From",
+                      textColor: controller.isFileUploaded
+                          ? Colors.white
+                          : Color(0xff5F8BFF),
+                      borderColor: controller.isFileUploaded
+                          ? Colors.white
+                          : Color(0xff5F8BFF),
+                    ),
                   ),
                   SizedBox(
                     height: 9.h,

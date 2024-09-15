@@ -1,13 +1,14 @@
 import 'dart:io';
 
 class FileModel {
-  File? file;
+  final File data;
    final String name;
-   final double size;
+   final String size;
    final String extension;
    late Map<String, List<String>> _supportedOutputFormats;
 
-     FileModel({required this.name, required this.size, required this.extension});
+     FileModel({ required this.data,
+      required this.name, required this.size, required this.extension});
 
 //   get name => this._name;
 
