@@ -1,3 +1,4 @@
+import 'package:convertify/constant/color.dart';
 import 'package:convertify/controller/file_controller.dart';
 import 'package:convertify/view/widget/button_collection_dialog.dart';
 import 'package:convertify/view/widget/custom_primary_button.dart';
@@ -16,7 +17,6 @@ class Homescreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    FileController fileController = Get.find();
     final double statusBarHeight = MediaQuery.of(context).viewPadding.top;
     Map<String, List<String>?> formats = {
       "Documents": ["pdf", "doc", "docx"],
@@ -43,11 +43,12 @@ class Homescreen extends StatelessWidget {
       body: Stack(
         children: [
           Container(
-            color: Colors.white,
+            color: AppColor.whiteColor, // Use AppColor
             child: Column(
-              // mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Container(height: statusBarHeight, color: Color(0xff2663FF)),
+                Container(
+                    height: statusBarHeight,
+                    color: AppColor.primaryColor), // Use AppColor
                 CustomPaint(
                   painter: BlueBackgroundPainter(),
                   child: Container(
@@ -57,111 +58,115 @@ class Homescreen extends StatelessWidget {
                 ),
                 CustomPrimaryButton(
                   text: "Convert",
-                  width: 170.w,
+                  minWidth: 170.w,
                   height: 47.h,
+                  btnColor: AppColor.secondaryColor, // Use AppColor
+                  textColor: AppColor.tertiaryColor, // Use AppColor
                   onPressed: () {},
                 )
               ],
             ),
           ),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 40.w),
-            child: Center(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    height: 65.h,
-                  ),
-                  Container(
-                    child: Text(
-                      "support nearly all documents and images formats",
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.manjari(
-                          textStyle:
-                              TextStyle(fontSize: 26.sp, color: Colors.white)),
+          GetBuilder<FileController>(
+            builder: (fileController) => Container(
+              padding: EdgeInsets.symmetric(horizontal: 40.w),
+              child: Center(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      height: 65.h,
                     ),
-                  ),
-                  SizedBox(
-                    height: 20.h,
-                  ),
-                  UploadFile(
-                    iconAsset: "icon/add_file.svg",
-                    content: "Click here to upload a file",
-                    onTap: () async {
-                      fileController.pickFile();
-                    },
-                  ),
-                  SizedBox(
-                    height: 8.h,
-                  ),
-                  GetBuilder<FileController>(
-                    builder: (controller) => controller.isFileUploaded
+                    Container(
+                      child: Text(
+                        "support nearly all documents and images formats",
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.manjari(
+                          textStyle: TextStyle(
+                            fontSize: 26.sp,
+                            color: AppColor.whiteColor, // Use AppColor
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 20.h,
+                    ),
+                    UploadFile(
+                      iconAsset: "icon/add_file.svg",
+                      content: "Click here to upload a file",
+                      onTap: () async {
+                        fileController.pickFile();
+                      },
+                    ),
+                    SizedBox(
+                      height: 8.h,
+                    ),
+                    fileController.isFileUploaded
                         ? FileInfo(
-                            fileName: controller.file!.name,
-                            fileSize: controller.file!.size
-                          )
+                            fileName: fileController.file!.name,
+                            fileSize: fileController.file!.size)
                         : SizedBox.shrink(),
-                  ),
-                  SizedBox(
-                    height: 28.h,
-                  ),
-                  GetBuilder<FileController>(
-                    builder: (controller) => FromTo(
-                      text: controller.isFileUploaded? controller.file!.extension : "From",
-                      textColor: controller.isFileUploaded
-                          ? Colors.white
-                          : Color(0xff5F8BFF),
-                      borderColor: controller.isFileUploaded
-                          ? Colors.white
-                          : Color(0xff5F8BFF),
+                    SizedBox(
+                      height: 28.h,
                     ),
-                  ),
-                  SizedBox(
-                    height: 9.h,
-                  ),
-                  SvgPicture.asset(
-                    "icon/bottom_arrow.svg",
-                    // colorFilter:
-                    //     ColorFilter.mode(Colors.white, BlendMode.srcIn),
-                  ),
-                  SizedBox(
-                    height: 9.h,
-                  ),
-                  CustomPrimaryButton(
-                    text: "Select Output Format",
-                    width: 224.w,
-                    height: 47.h,
-                    onPressed: () {
-                      Get.dialog(ButtonCollectionDialog(
-                        collection: formats,
-                        onPressed: () {
-                          print("object");
-                        },
-                      ));
-                    },
-                  ),
-                  SizedBox(
-                    height: 9.h,
-                  ),
-                  SvgPicture.asset(
-                    "icon/head_arrow.svg",
-                  ),
-                  SizedBox(
-                    height: 9.h,
-                  ),
-                  FromTo(
-                    text: "To",
-                    textColor: Color(0xff5F8BFF),
-                    borderColor: Color(0xff5F8BFF),
-                  ),
-                  SizedBox(
-                    height: 59.h,
-                  ),
-                ],
+                    FromTo(
+                      text: fileController.isFileUploaded
+                          ? fileController.file!.extension
+                          : "From",
+                      textColor: fileController.isFileUploaded
+                          ? AppColor.whiteColor // Use AppColor
+                          : AppColor.secondaryColor, // Use AppColor
+                      borderColor: fileController.isFileUploaded
+                          ? AppColor.whiteColor // Use AppColor
+                          : AppColor.secondaryColor, // Use AppColor
+                    ),
+                    SizedBox(
+                      height: 9.h,
+                    ),
+                    fileController.isFileUploaded
+                        ? SvgPicture.asset(
+                            "icon/enabled/enabled_bottom_arrow.svg")
+                        : SvgPicture.asset(
+                            "icon/disabled/disabled_bottom_arrow.svg"),
+                    SizedBox(
+                      height: 9.h,
+                    ),
+                    CustomPrimaryButton(
+                      text: "Select Output Format",
+                      minWidth: 224.w,
+                      height: 47.h,
+                      btnColor: AppColor.secondaryColor, // Use AppColor
+                      textColor: AppColor.tertiaryColor, // Use AppColor
+                      onPressed: () {
+                        Get.dialog(ButtonCollectionDialog(
+                          collection: formats,
+                          onPressed: () {
+                            print("object");
+                          },
+                        ));
+                      },
+                    ),
+                    SizedBox(
+                      height: 9.h,
+                    ),
+                    SvgPicture.asset("icon/disabled/disabled_head_arrow.svg"),
+                    SizedBox(
+                      height: 9.h,
+                    ),
+                    FromTo(
+                      text: "To",
+                      textColor: AppColor.secondaryColor, // Use AppColor
+                      borderColor: AppColor.secondaryColor, // Use AppColor
+                    ),
+                    SizedBox(
+                      height: 59.h,
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
+          )
         ],
       ),
     );
@@ -174,11 +179,11 @@ class BlueBackgroundPainter extends CustomPainter {
     final paint = Paint();
 
     // Draw blue background
-    paint.color = Color(0xff2663FF);
+    paint.color = AppColor.primaryColor; // Use AppColor
     canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), paint);
 
     // Draw white curve
-    paint.color = Colors.white;
+    paint.color = AppColor.whiteColor; // Use AppColor
     final path = Path();
     path.moveTo(0, size.height);
     path.quadraticBezierTo(

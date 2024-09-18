@@ -1,3 +1,4 @@
+import 'package:convertify/constant/color.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -10,7 +11,8 @@ class UploadFile extends StatelessWidget {
   const UploadFile({
     super.key,
     required this.iconAsset,
-    required this.content, required this.onTap,
+    required this.content,
+    required this.onTap,
   });
 
   @override
@@ -23,7 +25,7 @@ class UploadFile extends StatelessWidget {
           radius: Radius.circular(15.r),
           strokeWidth: 3.w,
           dashPattern: [9.h, 5.w],
-          color: Colors.black,
+          color: AppColor.blackColor,
           child: Container(
             decoration: BoxDecoration(
                 color: Color(0xffB7CBFF),

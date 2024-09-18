@@ -1,3 +1,4 @@
+import 'package:convertify/constant/color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -22,7 +23,7 @@ class ButtonCollectionDialog extends StatelessWidget {
           width: 354.w,
           height: 434.h,
           decoration: BoxDecoration(
-              color: Color(0xff2663FF),
+              color: AppColor.primaryColor,
               borderRadius: BorderRadius.circular(23.r)),
           child: Center(
             child: Container(
@@ -31,7 +32,7 @@ class ButtonCollectionDialog extends StatelessWidget {
                 child: ScrollbarTheme(
                   data: ScrollbarThemeData(
                     thickness: WidgetStateProperty.all(2.w),
-                    thumbColor: WidgetStateProperty.all(Colors.white),
+                    thumbColor: WidgetStateProperty.all(AppColor.whiteColor),
                     interactive: true,
                     radius: Radius.circular(5.r),
                   ),
@@ -52,7 +53,7 @@ class ButtonCollectionDialog extends StatelessWidget {
                                 Expanded(
                                   child: Container(
                                     margin: EdgeInsets.symmetric(horizontal: 5),
-                                    color: Colors.white,
+                                    color: AppColor.whiteColor,
                                     height: 1.h,
                                   ),
                                 ),
@@ -61,13 +62,13 @@ class ButtonCollectionDialog extends StatelessWidget {
                                   style: TextStyle(
                                       fontSize: 18.sp,
                                       fontWeight: FontWeight.w500,
-                                      color: Colors.white),
+                                      color: AppColor.whiteColor),
                                 ),
                                 Expanded(
                                   child: Container(
                                     margin:
                                         EdgeInsets.symmetric(horizontal: 10),
-                                    color: Colors.white,
+                                    color: AppColor.whiteColor,
                                     height: 1.h,
                                   ),
                                 ),
@@ -87,7 +88,7 @@ class ButtonCollectionDialog extends StatelessWidget {
                                     materialTapTargetSize:
                                         MaterialTapTargetSize.shrinkWrap,
                                     onPressed: onPressed,
-                                    color: Colors.white,
+                                    color: AppColor.whiteColor,
                                     shape: RoundedRectangleBorder(
                                         borderRadius:
                                             BorderRadius.circular(8.r)),
@@ -96,7 +97,7 @@ class ButtonCollectionDialog extends StatelessWidget {
                                       style: TextStyle(
                                         fontSize: 16.sp,
                                         fontWeight: FontWeight.bold,
-                                        color: Color(0xff2663FF),
+                                        color: AppColor.primaryColor,
                                       ),
                                     ),
                                   );
