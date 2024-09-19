@@ -5,10 +5,11 @@ class FileModel {
    final String name;
    final String size;
    final String extension;
-   late Map<String, List<String>> _supportedOutputFormats;
+  // Map<String, List<String>>? validOutputFormats = {};
 
      FileModel({ required this.data,
-      required this.name, required this.size, required this.extension});
+      required this.name, required this.size, required this.extension,
+});
 
 //   get name => this._name;
 
@@ -22,9 +23,6 @@ class FileModel {
 
 //  set extension( value) => this._extension = value;
 
-  get supportedOutputFormats => this._supportedOutputFormats;
-
- set supportedOutputFormats( value) => this._supportedOutputFormats = value;
 
  
 }

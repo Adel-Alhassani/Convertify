@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ButtonCollectionDialog extends StatelessWidget {
-  final Map<String, List<String>?> collection;
+  final Map<String, List<String>>? collection;
   final void Function() onPressed;
 
   ButtonCollectionDialog({
@@ -16,7 +16,7 @@ class ButtonCollectionDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List category = collection.keys.toList();
+    List category = collection!.keys.toList();
 
     return Dialog(
       child: Container(
@@ -43,7 +43,7 @@ class ButtonCollectionDialog extends StatelessWidget {
                       controller: _scrollController,
                       itemCount: category.length,
                       itemBuilder: (context, i) {
-                        List currentCategoryData = collection[category[i]]!;
+                        List<String>? currentCategoryData = collection![category[i]];
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -81,7 +81,7 @@ class ButtonCollectionDialog extends StatelessWidget {
                                 spacing: 12.w,
                                 runSpacing: 12.h,
                                 direction: Axis.horizontal,
-                                children: currentCategoryData.map((data) {
+                                children: currentCategoryData!.map((data) {
                                   return MaterialButton(
                                     minWidth: 65.w,
                                     height: 27.h,

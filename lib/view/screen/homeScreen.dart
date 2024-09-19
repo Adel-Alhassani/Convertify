@@ -18,26 +18,26 @@ class Homescreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double statusBarHeight = MediaQuery.of(context).viewPadding.top;
-    Map<String, List<String>?> formats = {
-      "Documents": ["pdf", "doc", "docx"],
-      "Images": ["pdf", "doc", "docx", "svg", "png", "jpg"],
-      "Cad": [
-        "pdf",
-        "doc",
-        "docx",
-        "svg",
-        "png",
-      ],
-      "video": ["pdf", "doc", "docx"],
-      "app": ["pdf", "doc", "docx", "svg", "png", "jpg"],
-      "ssss": [
-        "pdf",
-        "doc",
-        "docx",
-        "svg",
-        "png",
-      ],
-    };
+    // Map<String, List<String>?> formats = {
+    //   "Documents": ["pdf", "doc", "docx"],
+    //   "Images": ["pdf", "doc", "docx", "svg", "png", "jpg"],
+    //   "Cad": [
+    //     "pdf",
+    //     "doc",
+    //     "docx",
+    //     "svg",
+    //     "png",
+    //   ],
+    //   "video": ["pdf", "doc", "docx"],
+    //   "app": ["pdf", "doc", "docx", "svg", "png", "jpg"],
+    //   "ssss": [
+    //     "pdf",
+    //     "doc",
+    //     "docx",
+    //     "svg",
+    //     "png",
+    //   ],
+    // };
 
     return Scaffold(
       body: Stack(
@@ -56,10 +56,12 @@ class Homescreen extends StatelessWidget {
                     height: 717.h,
                   ),
                 ),
-                CustomPrimaryButton(
+                PrimaryButtonWithLoading(
                   text: "Convert",
                   minWidth: 170.w,
                   height: 47.h,
+                  disabled: false,
+                  isLoading: false,
                   btnColor: AppColor.secondaryColor, // Use AppColor
                   textColor: AppColor.tertiaryColor, // Use AppColor
                   onPressed: () {},
@@ -132,21 +134,31 @@ class Homescreen extends StatelessWidget {
                     SizedBox(
                       height: 9.h,
                     ),
-                    CustomPrimaryButton(
+                    Obx(() => PrimaryButtonWithLoading(
                       text: "Select Output Format",
                       minWidth: 224.w,
                       height: 47.h,
-                      btnColor: AppColor.secondaryColor, // Use AppColor
-                      textColor: AppColor.tertiaryColor, // Use AppColor
+                      disabled: fileController.validOutputFormats.isEmpty
+                          ? true
+                          : false,
+                      isLoading: fileController.isValidOutputFormatLoading.value
+                          ? true
+                          : false,
+                      btnColor: fileController.isFileUploaded
+                          ? AppColor.whiteColor
+                          : AppColor.secondaryColor, // Use AppColor
+                      textColor: fileController.isFileUploaded
+                          ? AppColor.primaryColor
+                          : AppColor.tertiaryColor, // Use AppColor
                       onPressed: () {
                         Get.dialog(ButtonCollectionDialog(
-                          collection: formats,
+                          collection: fileController.validOutputFormats,
                           onPressed: () {
                             print("object");
                           },
                         ));
                       },
-                    ),
+                    ),),
                     SizedBox(
                       height: 9.h,
                     ),

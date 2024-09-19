@@ -1,4 +1,4 @@
-import 'package:convertify/utils/error_dialog.dart';
+import 'package:convertify/utils/ui/error_dialog.dart';
 
 class FileUtils {
   static String limitFileName(String name) {
