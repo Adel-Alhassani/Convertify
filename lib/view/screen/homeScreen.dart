@@ -18,26 +18,6 @@ class Homescreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double statusBarHeight = MediaQuery.of(context).viewPadding.top;
-    // Map<String, List<String>?> formats = {
-    //   "Documents": ["pdf", "doc", "docx"],
-    //   "Images": ["pdf", "doc", "docx", "svg", "png", "jpg"],
-    //   "Cad": [
-    //     "pdf",
-    //     "doc",
-    //     "docx",
-    //     "svg",
-    //     "png",
-    //   ],
-    //   "video": ["pdf", "doc", "docx"],
-    //   "app": ["pdf", "doc", "docx", "svg", "png", "jpg"],
-    //   "ssss": [
-    //     "pdf",
-    //     "doc",
-    //     "docx",
-    //     "svg",
-    //     "png",
-    //   ],
-    // };
 
     return Scaffold(
       body: Stack(
@@ -134,42 +114,53 @@ class Homescreen extends StatelessWidget {
                     SizedBox(
                       height: 9.h,
                     ),
-                    Obx(() => PrimaryButtonWithLoading(
-                      text: "Select Output Format",
-                      minWidth: 224.w,
-                      height: 47.h,
-                      disabled: fileController.validOutputFormats.isEmpty
-                          ? true
-                          : false,
-                      isLoading: fileController.isValidOutputFormatLoading.value
-                          ? true
-                          : false,
-                      btnColor: fileController.isFileUploaded
-                          ? AppColor.whiteColor
-                          : AppColor.secondaryColor, // Use AppColor
-                      textColor: fileController.isFileUploaded
-                          ? AppColor.primaryColor
-                          : AppColor.tertiaryColor, // Use AppColor
-                      onPressed: () {
-                        Get.dialog(ButtonCollectionDialog(
-                          collection: fileController.validOutputFormats,
-                          onPressed: () {
-                            print("object");
-                          },
-                        ));
-                      },
-                    ),),
+                    Obx(
+                      () => PrimaryButtonWithLoading(
+                        text: "Select Output Format",
+                        minWidth: 224.w,
+                        height: 47.h,
+                        disabled: fileController.validOutputFormats.isEmpty
+                            ? true
+                            : false,
+                        isLoading:
+                            fileController.isValidOutputFormatLoading.value
+                                ? true
+                                : false,
+                        btnColor: fileController.isFileUploaded
+                            ? AppColor.whiteColor
+                            : AppColor.secondaryColor, // Use AppColor
+                        textColor: fileController.isFileUploaded
+                            ? AppColor.primaryColor
+                            : AppColor.tertiaryColor, // Use AppColor
+                        onPressed: () {
+                         
+                          Get.dialog(
+                            ButtonCollectionDialog(collection: fileController.validOutputFormats)
+                          );
+                        },
+                      ),
+                    ),
                     SizedBox(
                       height: 9.h,
                     ),
-                    SvgPicture.asset("icon/disabled/disabled_head_arrow.svg"),
+                    fileController.getOutputFormat().isEmpty
+                        ? SvgPicture.asset(
+                            "icon/disabled/disabled_head_arrow.svg")
+                        : SvgPicture.asset(
+                            "icon/enabled/enabled_head_arrow.svg"),
                     SizedBox(
                       height: 9.h,
                     ),
                     FromTo(
-                      text: "To",
-                      textColor: AppColor.secondaryColor, // Use AppColor
-                      borderColor: AppColor.secondaryColor, // Use AppColor
+                      text: fileController.getOutputFormat().isEmpty
+                          ? "To"
+                          : fileController.getOutputFormat(),
+                      textColor: fileController.getOutputFormat().isEmpty
+                          ? AppColor.secondaryColor
+                          : AppColor.whiteColor, // Use AppColor
+                      borderColor: fileController.getOutputFormat().isEmpty
+                          ? AppColor.secondaryColor
+                          : AppColor.whiteColor, // Use AppColor
                     ),
                     SizedBox(
                       height: 59.h,

@@ -1,23 +1,27 @@
 import 'package:convertify/constant/color.dart';
+import 'package:convertify/controller/file_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 
 class ButtonCollectionDialog extends StatelessWidget {
   final Map<String, List<String>>? collection;
-  final void Function() onPressed;
+  // final void Function() onPressed;
+  // final String value;
 
   ButtonCollectionDialog({
     super.key,
     required this.collection,
-    required this.onPressed,
+    // required this.onPressed,
+    // required this.value,
   });
 
   final _scrollController = ScrollController();
+  final FileController fileController = Get.find();
 
   @override
   Widget build(BuildContext context) {
     List category = collection!.keys.toList();
-
     return Dialog(
       child: Container(
           width: 354.w,
@@ -43,7 +47,8 @@ class ButtonCollectionDialog extends StatelessWidget {
                       controller: _scrollController,
                       itemCount: category.length,
                       itemBuilder: (context, i) {
-                        List<String>? currentCategoryData = collection![category[i]];
+                        List<String>? currentCategoryValue =
+                            collection![category[i]];
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -81,19 +86,23 @@ class ButtonCollectionDialog extends StatelessWidget {
                                 spacing: 12.w,
                                 runSpacing: 12.h,
                                 direction: Axis.horizontal,
-                                children: currentCategoryData!.map((data) {
+                                children: currentCategoryValue!.map((value) {
                                   return MaterialButton(
                                     minWidth: 65.w,
                                     height: 27.h,
                                     materialTapTargetSize:
                                         MaterialTapTargetSize.shrinkWrap,
-                                    onPressed: onPressed,
+                                    onPressed: () {
+                                      fileController
+                                          .setOutputFormat(value.toString());
+                                      Get.back();
+                                    },
                                     color: AppColor.whiteColor,
                                     shape: RoundedRectangleBorder(
                                         borderRadius:
                                             BorderRadius.circular(8.r)),
                                     child: Text(
-                                      data.toString(),
+                                      value.toString(),
                                       style: TextStyle(
                                         fontSize: 16.sp,
                                         fontWeight: FontWeight.bold,

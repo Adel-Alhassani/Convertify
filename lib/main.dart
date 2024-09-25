@@ -8,7 +8,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized;
   await initServices();
   runApp(
-      GetMaterialApp(debugShowCheckedModeBanner: false, home: const MyApp()));
+      const GetMaterialApp(debugShowCheckedModeBanner: false, home: MyApp()));
 }
 
 Future initServices() async {
@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Convertify',
         // debugShowCheckedModeBanner: true,
-        home: const Homescreen(),
+        home: Homescreen(),
       ),
     );
   }

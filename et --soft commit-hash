@@ -1,0 +1,25 @@
+[33m898ab3a[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m)[m HEAD@{0}: reset: moving to HEAD~
+[33m6220629[m HEAD@{1}: commit: Add limitation for file's size
+[33m898ab3a[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m)[m HEAD@{2}: reset: moving to HEAD~
+[33m27039d3[m HEAD@{3}: commit: Add limitation for file's size
+[33m898ab3a[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m)[m HEAD@{4}: reset: moving to HEAD~
+[33mac9fdd5[m HEAD@{5}: commit: Add limitation for file's size
+[33m898ab3a[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m)[m HEAD@{6}: reset: moving to HEAD~
+[33m34f3cca[m HEAD@{7}: reset: moving to HEAD~
+[33m4a50687[m HEAD@{8}: commit: Add a method for getting the valid output formats of the selected file
+[33m34f3cca[m HEAD@{9}: reset: moving to HEAD~
+[33m0dce2be[m HEAD@{10}: commit: Add a method for getting the valid output formats of the selected file
+[33m34f3cca[m HEAD@{11}: reset: moving to HEAD~
+[33m075063c[m[33m ([m[1;31morigin/master[m[33m)[m HEAD@{12}: reset: moving to HEAD~
+[33ma62f55b[m HEAD@{13}: commit: Update the custome valid output formats dialog to integrate it in the home page file
+[33m075063c[m[33m ([m[1;31morigin/master[m[33m)[m HEAD@{14}: reset: moving to HEAD~
+[33m813d94d[m HEAD@{15}: commit: Update the costome dialog to be in the home page file
+[33m075063c[m[33m ([m[1;31morigin/master[m[33m)[m HEAD@{16}: commit: Add a method for getting the valid output formats of the selected file
+[33m34f3cca[m HEAD@{17}: commit: Add limitation for file's size
+[33m898ab3a[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m)[m HEAD@{18}: commit: Update file structure to refactor the code and move all the colors to an AppColor class
+[33m3c958dd[m HEAD@{19}: commit: Add an enabled version of the arrows icons and rename the old one
+[33m1017b02[m HEAD@{20}: commit: Add a format methods for both the size and name of the file
+[33m81747e9[m HEAD@{21}: commit: Replace SVG background custom painting
+[33m101a3f9[m HEAD@{22}: commit: Add pickFile method to let the user pick a file
+[33mbf62256[m HEAD@{23}: commit: Add home screen
+[33mc945665[m HEAD@{24}: commit (initial): init commit
