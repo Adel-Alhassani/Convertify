@@ -1,13 +1,13 @@
 import 'dart:io';
 
 class FileModel {
-  final File data;
+  final String path;
    final String name;
    final String size;
    final String extension;
   // Map<String, List<String>>? validOutputFormats = {};
 
-     FileModel({ required this.data,
+     FileModel({ required this.path,
       required this.name, required this.size, required this.extension,
 });
 

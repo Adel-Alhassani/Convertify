@@ -10,6 +10,7 @@ class PrimaryButtonWithLoading extends StatelessWidget {
   final Color btnColor;
   final Color textColor;
   final bool isLoading;
+  final Color loadingWidgetColor;
   final bool disabled;
 
   final void Function() onPressed;
@@ -21,7 +22,8 @@ class PrimaryButtonWithLoading extends StatelessWidget {
     required this.onPressed,
     required this.btnColor,
     required this.textColor,
-    required this.isLoading, required this.disabled,
+    required this.isLoading,
+    required this.disabled, required this.loadingWidgetColor,
   });
 
   @override
@@ -39,7 +41,7 @@ class PrimaryButtonWithLoading extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.r)),
         child: isLoading
             ? LoadingAnimationWidget.waveDots(
-                color: AppColor.primaryColor, size: 25.w)
+                color:loadingWidgetColor, size: 25.w)
             : Text(
                 text,
                 style: TextStyle(

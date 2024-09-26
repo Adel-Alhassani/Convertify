@@ -1,3 +1,4 @@
 {
-    "cmake.sourceDirectory": "C:/Users/alhzl/AndroidStudioProjects/convertify/linux"
+    "cmake.sourceDirectory": "C:/Users/alhzl/AndroidStudioProjects/convertify/linux",
+    "java.compile.nullAnalysis.mode": "automatic"
 }

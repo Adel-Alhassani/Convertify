@@ -36,16 +36,27 @@ class Homescreen extends StatelessWidget {
                     height: 717.h,
                   ),
                 ),
-                PrimaryButtonWithLoading(
-                  text: "Convert",
-                  minWidth: 170.w,
-                  height: 47.h,
-                  disabled: false,
-                  isLoading: false,
-                  btnColor: AppColor.secondaryColor, // Use AppColor
-                  textColor: AppColor.tertiaryColor, // Use AppColor
-                  onPressed: () {},
-                )
+                GetBuilder<FileController>(
+                    builder: (fileController) => PrimaryButtonWithLoading(
+                          text: "Convert",
+                          minWidth: 170.w,
+                          height: 47.h,
+                          disabled: fileController.getOutputFormat().isEmpty
+                              ? true
+                              : false,
+                          isLoading: fileController.isConverting ? true : false,
+                          loadingWidgetColor: AppColor.whiteColor,
+                          btnColor: fileController.getOutputFormat().isEmpty
+                              ? AppColor.secondaryColor
+                              : AppColor.primaryColor, // Use AppColor
+                          textColor: fileController.getOutputFormat().isEmpty
+                              ? AppColor.tertiaryColor
+                              : AppColor.whiteColor, // Use AppColor
+                          onPressed: () {
+                            // fileController.createPublicFolder("huh");
+                            fileController.download();
+                          },
+                        ))
               ],
             ),
           ),
@@ -126,6 +137,8 @@ class Homescreen extends StatelessWidget {
                             fileController.isValidOutputFormatLoading.value
                                 ? true
                                 : false,
+                          loadingWidgetColor: AppColor.primaryColor,
+
                         btnColor: fileController.isFileUploaded
                             ? AppColor.whiteColor
                             : AppColor.secondaryColor, // Use AppColor
@@ -133,10 +146,8 @@ class Homescreen extends StatelessWidget {
                             ? AppColor.primaryColor
                             : AppColor.tertiaryColor, // Use AppColor
                         onPressed: () {
-                         
-                          Get.dialog(
-                            ButtonCollectionDialog(collection: fileController.validOutputFormats)
-                          );
+                          Get.dialog(ButtonCollectionDialog(
+                              collection: fileController.validOutputFormats));
                         },
                       ),
                     ),
