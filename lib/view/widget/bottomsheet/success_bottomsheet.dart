@@ -4,8 +4,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
-class DownloadBottomsheet {
-  static void showDownloadBottomsheet(void Function()? onPressed) {
+class SuccessBottomsheet {
+  static void showSuccessWithBtnBottomsheet(String textBtn,void Function()? onPressed) {
     Get.bottomSheet(Container(
       padding: EdgeInsets.only(top: 33.h, left: 20, right: 20, bottom: 30),
       height: 414.h,
@@ -28,7 +28,7 @@ class DownloadBottomsheet {
               style: TextStyle(fontSize: 16.sp, color: AppColor.blackColor),
               children: <TextSpan>[
                 TextSpan(
-                    text: '“Download”',
+                    text: '“$textBtn”',
                     style: TextStyle(
                         fontSize: 16.sp,
                         color: AppColor.primaryColor,
@@ -46,7 +46,7 @@ class DownloadBottomsheet {
             minWidth: 220.w,
             height: 47.h,
             materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            onPressed: () {},
+            onPressed: onPressed,
             color: AppColor.whiteColor,
             shape: RoundedRectangleBorder(
                 side: BorderSide(

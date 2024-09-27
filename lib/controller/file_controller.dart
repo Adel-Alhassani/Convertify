@@ -11,6 +11,7 @@ import 'package:permission_handler/permission_handler.dart';
 
 class FileController extends GetxController {
   FileModel? file;
+  FileService fileService = FileService();
   bool isFileUploaded = false;
   bool isFileSizeValid = true;
   int fileSizeLimitInMB = 30;
@@ -32,7 +33,8 @@ class FileController extends GetxController {
       isFileUploaded = true;
       isValidOutputFormatLoading.value = true;
       _outputFormat = "";
-      validOutputFormats = await FileService.getValidOutputFormatsOf(
+      validOutputFormats = await fileService
+          .getValidOutputFormatsOf(
           "${selectedFileInfo.extension}");
       isValidOutputFormatLoading.value = false;
       file = FileModel(
@@ -77,19 +79,18 @@ class FileController extends GetxController {
     }
   }
 
-  Future<String> getDownloadUrl() async {
+  Future<void> convertFile() async {
     isConverting = true;
     update();
-    String downloadUrl = await FileService.convert(
+    await fileService.convert(
         file!.path, file!.extension, getOutputFormat());
     isConverting = false;
     update();
-    return downloadUrl;
   }
 
-  void download() async {
+  void downloadFile() async {
     final taskId = await FlutterDownloader.enqueue(
-        url: await getDownloadUrl(),
+        url: fileService.getDownloadUrl(),
         // 'https://file-examples.com/storage/fe58a1f07d66f447a9512f1/2017/04/file_example_MP4_1920_18MG.mp4',
         savedDir: await createPublicFolder("convertify"),
         showNotification:

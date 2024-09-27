@@ -4,10 +4,10 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 
 class FileService {
-  static const String apiKey =
+  final String apiKey =
       'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiM2RiYzJiNmI1M2JiOTVjZDk0YWM2YmMxMGFmMDIwYzI3YWFiMjBhZDMyMGY1MWM1YzhjMzkxMmJmNTQwODZkOTEyMGNlNTk2NGE4OThlMjMiLCJpYXQiOjE3MjQxNjI1MDMuNTA1MzA1LCJuYmYiOjE3MjQxNjI1MDMuNTA1MzA2LCJleHAiOjQ4Nzk4MzYxMDMuNTAwMDg4LCJzdWIiOiI2OTMzNTIxMyIsInNjb3BlcyI6WyJ1c2VyLnJlYWQiLCJ1c2VyLndyaXRlIiwidGFzay5yZWFkIiwidGFzay53cml0ZSIsIndlYmhvb2sucmVhZCIsIndlYmhvb2sud3JpdGUiLCJwcmVzZXQucmVhZCIsInByZXNldC53cml0ZSJdfQ.fQQK3-XOCTWDtKIzxJ6jbpGunNEHnqQbJN9K8kT5moiiJvFePqtdMOeT65QMly96ZK7Jbw9Fm3aq5847UDlHFBv-VGQoY0FyX5lOk10yhZFHFQsQ9C6NaoLI7VEWEjG8FHceu_mDN-A7wU8nfi7_z39qvoeRwJptitoIuKCDSnpPYBcXrxJnuMdCf0CQUHoqHrhrBmCfqclWR_ZlV-3yktnTtck5VNS-chgJLhHUdDyDHynKeUcs2dlft7CZdPaz70E9HWIiDQHbWZmX9RbWCoB7tDBDe2OSdMUfohU-JZWqs2XgVK9LxKfkJyqi-RIaXellfmYCPG8qO81hlN1aObIQsHOm9xfNg0zLvTBz3hFlzAklwklGI-mW-VJWHbpY3lZvXz5wZ_pgzqkiumm8B9tn2W7SnSS775hoF_vHJKoRbd6-UoatsFQLP6yaqm3MXANKhJ7x1NS_U1zj5W8yrXaHFfAgEVmkoEW-Ohv_e23EBWP9lOLVfQorltLhiBr9WU1n1cuGTzgTxRJUPUX0Bo84QCzfSQTrZvOGVGOOjH6wJqKysQ2rDKZwXrO-1FIRpsHgTBqVr2cqhkP7AHi04ucJGe6WRfKnFNDQM_c0MUh_qJy-dzavooXTqkW4hCmSbCKO7gmeFTkxKj1uRiZQsmBEWkT78_prF6SjWArmOto';
-
-  static Future<Map<String, List<String>>> getValidOutputFormatsOf(
+  late String _downloadUrl;
+  Future<Map<String, List<String>>> getValidOutputFormatsOf(
       String InputFormat) async {
     Map<String, List<String>> validOutputFormats = {};
     try {
@@ -34,7 +34,7 @@ class FileService {
     }
   }
 
-  static Future<String> convert(
+  Future<void> convert(
     String filePath,
     String inputFormat,
     String outputFormat,
@@ -86,17 +86,16 @@ class FileService {
       if (await uploadFile(uploadUrl, parameters, filePath)) {
         // Now we wait for the job to complete and download the file
         final String jobId = data['id'];
-        return await getFileDownloadUrl(jobId, apiKey);
+        _downloadUrl = await _getFileDownloadUrlFromAPI(jobId);
       } else {
         // do somthin
       }
     } else {
       print('Failed to create job: ${response.statusCode}');
     }
-    return "";
   }
 
-  static Future<bool> uploadFile(
+  Future<bool> uploadFile(
       String uploadUrl, Map parameters, String filePath) async {
     // Create the multipart request
     final uploadRequest = http.MultipartRequest("POST", Uri.parse(uploadUrl));
@@ -115,7 +114,6 @@ class FileService {
 
     if (uploadResponse.statusCode == 201) {
       print("File uploaded successfully");
-
       return true;
     } else {
       print('Failed to upload file: ${uploadResponse.statusCode}');
@@ -124,7 +122,7 @@ class FileService {
     }
   }
 
-  static Future<String> getFileDownloadUrl(String jobId, String apiKey) async {
+  Future<String> _getFileDownloadUrlFromAPI(String jobId) async {
     final String jobStatusUrl = 'https://api.cloudconvert.com/v2/jobs/$jobId';
     final headers = {
       'Authorization': 'Bearer $apiKey',
@@ -142,8 +140,8 @@ class FileService {
             orElse: () => null);
 
         if (exportTask != null && exportTask['status'] == 'finished') {
-          final String downloadUrl = exportTask['result']['files'][0]['url'];
-          return downloadUrl;
+          final String url = exportTask['result']['files'][0]['url'];
+          return url;
         } else {
           print('-------- Waiting for file conversion to complete...');
           await Future.delayed(
@@ -155,5 +153,10 @@ class FileService {
       }
     }
     return "";
+  }
+
+  String getDownloadUrl() {
+    print("downlaod url is: $_downloadUrl");
+    return _downloadUrl;
   }
 }

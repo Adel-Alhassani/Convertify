@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:convertify/constant/color.dart';
 import 'package:convertify/controller/file_controller.dart';
-import 'package:convertify/view/widget/bottomsheet/download_bottomsheet.dart';
+import 'package:convertify/view/widget/bottomsheet/success_bottomsheet.dart';
 import 'package:convertify/view/widget/dialog/button_collection_dialog.dart';
 import 'package:convertify/view/widget/button/primary_button_with_loading.dart';
 import 'package:convertify/view/widget/file_info_widget.dart';
@@ -41,26 +41,30 @@ class Homescreen extends StatelessWidget {
                 ),
                 GetBuilder<FileController>(
                     builder: (fileController) => PrimaryButtonWithLoading(
-                          text: "Convert",
-                          minWidth: 170.w,
-                          height: 47.h,
-                          disabled: fileController.getOutputFormat().isEmpty
-                              ? true
-                              : false,
-                          isLoading: fileController.isConverting ? true : false,
-                          loadingWidgetColor: AppColor.whiteColor,
-                          btnColor: fileController.getOutputFormat().isEmpty
-                              ? AppColor.secondaryColor
-                              : AppColor.primaryColor, // Use AppColor
-                          textColor: fileController.getOutputFormat().isEmpty
-                              ? AppColor.tertiaryColor
-                              : AppColor.whiteColor, // Use AppColor
-                          onPressed: () {
-                            // fileController.createPublicFolder("huh");
-                            // fileController.download();
-                           
-                          },
-                        ))
+                        text: "Convert",
+                        minWidth: 170.w,
+                        height: 47.h,
+                        disabled: fileController.getOutputFormat().isEmpty
+                            ? true
+                            : false,
+                        isLoading: fileController.isConverting ? true : false,
+                        loadingWidgetColor: AppColor.whiteColor,
+                        btnColor: fileController.getOutputFormat().isEmpty
+                            ? AppColor.secondaryColor
+                            : AppColor.primaryColor, // Use AppColor
+                        textColor: fileController.getOutputFormat().isEmpty
+                            ? AppColor.tertiaryColor
+                            : AppColor.whiteColor, // Use AppColor
+                        onPressed: () async {
+                          await fileController.convertFile();
+                          SuccessBottomsheet.showSuccessWithBtnBottomsheet(
+                            "Download",
+                            () {
+                              fileController.downloadFile();
+                              Get.back();
+                            },
+                          );
+                        }))
               ],
             ),
           ),
