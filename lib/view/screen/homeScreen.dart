@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:convertify/constant/color.dart';
 import 'package:convertify/controller/file_controller.dart';
-import 'package:convertify/view/widget/button_collection_dialog.dart';
-import 'package:convertify/view/widget/custom_primary_button.dart';
+import 'package:convertify/view/widget/bottomsheet/download_bottomsheet.dart';
+import 'package:convertify/view/widget/dialog/button_collection_dialog.dart';
+import 'package:convertify/view/widget/button/primary_button_with_loading.dart';
 import 'package:convertify/view/widget/file_info_widget.dart';
 import 'package:convertify/view/widget/from_to.dart';
 import 'package:convertify/view/widget/upload_file_widget.dart';
@@ -54,7 +57,8 @@ class Homescreen extends StatelessWidget {
                               : AppColor.whiteColor, // Use AppColor
                           onPressed: () {
                             // fileController.createPublicFolder("huh");
-                            fileController.download();
+                            // fileController.download();
+                           
                           },
                         ))
               ],
@@ -137,14 +141,14 @@ class Homescreen extends StatelessWidget {
                             fileController.isValidOutputFormatLoading.value
                                 ? true
                                 : false,
-                          loadingWidgetColor: AppColor.primaryColor,
+                        loadingWidgetColor: AppColor.primaryColor,
 
-                        btnColor: fileController.isFileUploaded
-                            ? AppColor.whiteColor
-                            : AppColor.secondaryColor, // Use AppColor
-                        textColor: fileController.isFileUploaded
-                            ? AppColor.primaryColor
-                            : AppColor.tertiaryColor, // Use AppColor
+                        btnColor: fileController.validOutputFormats.isEmpty
+                            ? AppColor.secondaryColor
+                            : AppColor.whiteColor, // Use AppColor
+                        textColor: fileController.validOutputFormats.isEmpty
+                            ? AppColor.tertiaryColor
+                            : AppColor.primaryColor, // Use AppColor
                         onPressed: () {
                           Get.dialog(ButtonCollectionDialog(
                               collection: fileController.validOutputFormats));
