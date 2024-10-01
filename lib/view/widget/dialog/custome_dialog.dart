@@ -3,11 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
-class ErrorDialog {
-  static void showConfirmErrorDialog (String title, String content) {
+class CustomeDialog {
+  static void showConfirmDialog(String title, String content, String confirmTxt,
+      void Function() onPressed,
+      {bool? barrierDismissible}) {
     Get.defaultDialog(
       title: title,
       contentPadding: EdgeInsets.symmetric(horizontal: 20.w),
+      barrierDismissible: barrierDismissible ?? true,
       content: Text(
         content,
       ),
@@ -19,10 +22,23 @@ class ErrorDialog {
         textColor: AppColor.whiteColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.r)),
         onPressed: () {
-          Get.back(); // Closes the dialog
+          onPressed();
         },
-        child: Text("ok"),
+        child: Text(confirmTxt),
       ),
+    );
+  }
+
+  static showTextOnlyDialog(String title, String content,
+      {bool? barrierDismissible}) {
+    Get.defaultDialog(
+      title: title,
+      contentPadding: EdgeInsets.symmetric(horizontal: 20.w),
+      barrierDismissible: barrierDismissible ?? true,
+      content: Text(
+        content,
+      ),
+      titleStyle: TextStyle(fontSize: 20.sp),
     );
   }
 }

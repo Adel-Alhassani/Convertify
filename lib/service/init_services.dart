@@ -1,4 +1,5 @@
 import 'package:convertify/controller/file_controller.dart';
+import 'package:convertify/service/network_service.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:get/get.dart';
 
@@ -10,9 +11,7 @@ class InitServices extends GetxService {
         ignoreSsl:
             true // option: set to false to disable working with http links (default: false)
         );
-    Get.put(FileController());
     print("init");
     return this;
   }
-  
 }

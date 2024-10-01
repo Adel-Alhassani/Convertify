@@ -1,7 +1,8 @@
-import 'package:convertify/view/widget/dialog/error_dialog.dart';
+import 'package:convertify/view/widget/dialog/custome_dialog.dart';
+import 'package:get/get.dart';
 
 class FileUtils {
-  static String limitFileName(String name) {
+  String limitFileName(String name) {
     int lengthLimit = 15;
     if (name.length <= lengthLimit) {
       return name;
@@ -10,17 +11,19 @@ class FileUtils {
     }
   }
 
-  static bool validateFileSize(int bytes, int limitSizeInMB) {
+  bool validateFileSize(int bytes, int limitSizeInMB) {
     double fileSizeInMB = bytes / (1024 * 1024);
     if (fileSizeInMB >= limitSizeInMB) {
-      ErrorDialog.showConfirmErrorDialog("File's size is large",
-          "The file size cannot be more than ${limitSizeInMB} MB");
+      CustomeDialog.showConfirmDialog("File's size is large",
+          "The file size cannot be more than $limitSizeInMB MB", "ok", () {
+        Get.back();
+      });
       return false;
     }
     return true;
   }
 
-  static String formatFileSize(int bytes) {
+  String formatFileSize(int bytes) {
     if (bytes <= 0) return "0 B";
 
     const int kb = 1024;

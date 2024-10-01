@@ -2,9 +2,11 @@ import 'dart:io';
 
 import 'package:convertify/constant/color.dart';
 import 'package:convertify/controller/file_controller.dart';
+import 'package:convertify/controller/network_controller.dart';
 import 'package:convertify/view/widget/bottomsheet/success_bottomsheet.dart';
 import 'package:convertify/view/widget/dialog/button_collection_dialog.dart';
 import 'package:convertify/view/widget/button/primary_button_with_loading.dart';
+import 'package:convertify/view/widget/dialog/custome_dialog.dart';
 import 'package:convertify/view/widget/file_info_widget.dart';
 import 'package:convertify/view/widget/from_to.dart';
 import 'package:convertify/view/widget/upload_file_widget.dart';
@@ -20,8 +22,9 @@ class Homescreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final NetworkController networkController = Get.put(NetworkController());
+    final FileController fileController = Get.put(FileController());
     final double statusBarHeight = MediaQuery.of(context).viewPadding.top;
-
     return Scaffold(
       body: Stack(
         children: [
@@ -39,37 +42,35 @@ class Homescreen extends StatelessWidget {
                     height: 717.h,
                   ),
                 ),
-                GetBuilder<FileController>(
-                    builder: (fileController) => PrimaryButtonWithLoading(
-                        text: "Convert",
-                        minWidth: 170.w,
-                        height: 47.h,
-                        disabled: fileController.getOutputFormat().isEmpty
-                            ? true
-                            : false,
-                        isLoading: fileController.isConverting ? true : false,
-                        loadingWidgetColor: AppColor.whiteColor,
-                        btnColor: fileController.getOutputFormat().isEmpty
-                            ? AppColor.secondaryColor
-                            : AppColor.primaryColor, // Use AppColor
-                        textColor: fileController.getOutputFormat().isEmpty
-                            ? AppColor.tertiaryColor
-                            : AppColor.whiteColor, // Use AppColor
-                        onPressed: () async {
-                          await fileController.convertFile();
-                          SuccessBottomsheet.showSuccessWithBtnBottomsheet(
-                            "Download",
-                            () {
-                              fileController.downloadFile();
-                              Get.back();
-                            },
-                          );
-                        }))
+                Obx(() => PrimaryButtonWithLoading(
+                    text: "Convert",
+                    minWidth: 170.w,
+                    height: 47.h,
+                    disabled:
+                        fileController.getOutputFormat().isEmpty ? true : false,
+                    isLoading: fileController.isConverting.value ? true : false,
+                    loadingWidgetColor: AppColor.whiteColor,
+                    btnColor: fileController.getOutputFormat().isEmpty
+                        ? AppColor.secondaryColor
+                        : AppColor.primaryColor, // Use AppColor
+                    textColor: fileController.getOutputFormat().isEmpty
+                        ? AppColor.tertiaryColor
+                        : AppColor.whiteColor, // Use AppColor
+                    onPressed: () async {
+                      await fileController.convertFile();
+                      SuccessBottomsheet.showSuccessWithBtnBottomsheet(
+                        "Download",
+                        () {
+                          fileController.downloadFile();
+                          Get.back();
+                        },
+                      );
+                    }))
               ],
             ),
           ),
-          GetBuilder<FileController>(
-            builder: (fileController) => Container(
+          Obx(
+            () => Container(
               padding: EdgeInsets.symmetric(horizontal: 40.w),
               child: Center(
                 child: Column(
@@ -94,16 +95,24 @@ class Homescreen extends StatelessWidget {
                       height: 20.h,
                     ),
                     UploadFile(
-                      iconAsset: "icon/add_file.svg",
-                      content: "Click here to upload a file",
-                      onTap: () async {
-                        fileController.pickFile();
-                      },
-                    ),
+                        iconAsset: "icon/add_file.svg",
+                        content: "Click here to upload a file",
+                        onTap: () async {
+                          if (!await networkController.isInternetConnected()) {
+                            CustomeDialog.showConfirmDialog(
+                                "No Internet Connection!",
+                                "please check your internet connection and try again.",
+                                "Ok", () {
+                              Get.back();
+                            });
+                          } else {
+                            fileController.pickFile();
+                          }
+                        }),
                     SizedBox(
                       height: 8.h,
                     ),
-                    fileController.isFileUploaded
+                    fileController.isFileUploaded.value
                         ? FileInfo(
                             fileName: fileController.file!.name,
                             fileSize: fileController.file!.size)
@@ -112,20 +121,20 @@ class Homescreen extends StatelessWidget {
                       height: 28.h,
                     ),
                     FromTo(
-                      text: fileController.isFileUploaded
+                      text: fileController.isFileUploaded.value
                           ? fileController.file!.extension
                           : "From",
-                      textColor: fileController.isFileUploaded
+                      textColor: fileController.isFileUploaded.value
                           ? AppColor.whiteColor // Use AppColor
                           : AppColor.secondaryColor, // Use AppColor
-                      borderColor: fileController.isFileUploaded
+                      borderColor: fileController.isFileUploaded.value
                           ? AppColor.whiteColor // Use AppColor
                           : AppColor.secondaryColor, // Use AppColor
                     ),
                     SizedBox(
                       height: 9.h,
                     ),
-                    fileController.isFileUploaded
+                    fileController.isFileUploaded.value
                         ? SvgPicture.asset(
                             "icon/enabled/enabled_bottom_arrow.svg")
                         : SvgPicture.asset(
@@ -133,31 +142,28 @@ class Homescreen extends StatelessWidget {
                     SizedBox(
                       height: 9.h,
                     ),
-                    Obx(
-                      () => PrimaryButtonWithLoading(
-                        text: "Select Output Format",
-                        minWidth: 224.w,
-                        height: 47.h,
-                        disabled: fileController.validOutputFormats.isEmpty
-                            ? true
-                            : false,
-                        isLoading:
-                            fileController.isValidOutputFormatLoading.value
-                                ? true
-                                : false,
-                        loadingWidgetColor: AppColor.primaryColor,
+                    PrimaryButtonWithLoading(
+                      text: "Select Output Format",
+                      minWidth: 224.w,
+                      height: 47.h,
+                      disabled: fileController.validOutputFormats.isEmpty
+                          ? true
+                          : false,
+                      isLoading: fileController.isValidOutputFormatLoading.value
+                          ? true
+                          : false,
+                      loadingWidgetColor: AppColor.primaryColor,
 
-                        btnColor: fileController.validOutputFormats.isEmpty
-                            ? AppColor.secondaryColor
-                            : AppColor.whiteColor, // Use AppColor
-                        textColor: fileController.validOutputFormats.isEmpty
-                            ? AppColor.tertiaryColor
-                            : AppColor.primaryColor, // Use AppColor
-                        onPressed: () {
-                          Get.dialog(ButtonCollectionDialog(
-                              collection: fileController.validOutputFormats));
-                        },
-                      ),
+                      btnColor: fileController.validOutputFormats.isEmpty
+                          ? AppColor.secondaryColor
+                          : AppColor.whiteColor, // Use AppColor
+                      textColor: fileController.validOutputFormats.isEmpty
+                          ? AppColor.tertiaryColor
+                          : AppColor.primaryColor, // Use AppColor
+                      onPressed: () {
+                        Get.dialog(ButtonCollectionDialog(
+                            collection: fileController.validOutputFormats));
+                      },
                     ),
                     SizedBox(
                       height: 9.h,

@@ -26,11 +26,9 @@ class MyApp extends StatelessWidget {
     return const ScreenUtilInit(
       designSize: Size(430, 932),
       minTextAdapt: true,
-      // ensureScreenSize: true,
       splitScreenMode: true,
       child: MaterialApp(
         title: 'Convertify',
-        // debugShowCheckedModeBanner: true,
         home: Homescreen(),
       ),
     );

@@ -113,10 +113,8 @@ class FileService {
     final uploadResponse = await uploadRequest.send();
 
     if (uploadResponse.statusCode == 201) {
-      print("File uploaded successfully");
       return true;
     } else {
-      print('Failed to upload file: ${uploadResponse.statusCode}');
 
       return false;
     }

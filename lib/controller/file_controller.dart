@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:convertify/model/file_model.dart';
 import 'package:convertify/service/file_service.dart';
+import 'package:convertify/service/network_service.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:get/get.dart';
@@ -11,13 +12,15 @@ import 'package:permission_handler/permission_handler.dart';
 
 class FileController extends GetxController {
   FileModel? file;
-  FileService fileService = FileService();
-  bool isFileUploaded = false;
-  bool isFileSizeValid = true;
+
+  final FileService _fileService = FileService();
+  final FileUtils fileUtils = FileUtils();
+  RxBool isFileUploaded = false.obs;
+  // RxBool isFileSizeValid = true.obs;
+  RxBool isConverting = false.obs;
   int fileSizeLimitInMB = 30;
-  bool isConverting = false;
   RxBool isValidOutputFormatLoading = false.obs;
-  Map<String, List<String>> validOutputFormats = {};
+  RxMap<String, List<String>> validOutputFormats = <String, List<String>>{}.obs;
   String _outputFormat = "";
 
   pickFile() async {
@@ -26,26 +29,24 @@ class FileController extends GetxController {
     if (result != null) {
       File selectedFile = File(result.files.single.path!);
       PlatformFile selectedFileInfo = result.files.first;
-      if (!FileUtils.validateFileSize(
+      if (!fileUtils.validateFileSize(
           selectedFileInfo.size, fileSizeLimitInMB)) {
         return;
       }
-      isFileUploaded = true;
+      isFileUploaded.value = true;
       isValidOutputFormatLoading.value = true;
       _outputFormat = "";
-      validOutputFormats = await fileService
-          .getValidOutputFormatsOf(
-          "${selectedFileInfo.extension}");
+      validOutputFormats.value = await _fileService
+          .getValidOutputFormatsOf("${selectedFileInfo.extension}");
       isValidOutputFormatLoading.value = false;
       file = FileModel(
         path: selectedFile.path,
-        name: FileUtils.limitFileName(selectedFileInfo.name),
-        size: FileUtils.formatFileSize(selectedFileInfo.size),
+        name: fileUtils.limitFileName(selectedFileInfo.name),
+        size: fileUtils.formatFileSize(selectedFileInfo.size),
         extension: selectedFileInfo.extension ?? "Unknown",
       );
 
       print(validOutputFormats);
-      update();
     } else {
       // User canceled the picker
     }
@@ -53,7 +54,6 @@ class FileController extends GetxController {
 
   void setOutputFormat(String outputFormat) {
     _outputFormat = outputFormat;
-    update();
   }
 
   String getOutputFormat() {
@@ -80,17 +80,14 @@ class FileController extends GetxController {
   }
 
   Future<void> convertFile() async {
-    isConverting = true;
-    update();
-    await fileService.convert(
-        file!.path, file!.extension, getOutputFormat());
-    isConverting = false;
-    update();
+    isConverting.value = true;
+    await _fileService.convert(file!.path, file!.extension, getOutputFormat());
+    isConverting.value = false;
   }
 
   void downloadFile() async {
     final taskId = await FlutterDownloader.enqueue(
-        url: fileService.getDownloadUrl(),
+        url: _fileService.getDownloadUrl(),
         // 'https://file-examples.com/storage/fe58a1f07d66f447a9512f1/2017/04/file_example_MP4_1920_18MG.mp4',
         savedDir: await createPublicFolder("convertify"),
         showNotification:
