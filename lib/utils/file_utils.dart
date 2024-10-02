@@ -14,8 +14,10 @@ class FileUtils {
   bool validateFileSize(int bytes, int limitSizeInMB) {
     double fileSizeInMB = bytes / (1024 * 1024);
     if (fileSizeInMB >= limitSizeInMB) {
-      CustomeDialog.showConfirmDialog("File's size is large",
-          "The file size cannot be more than $limitSizeInMB MB", "ok", () {
+      CustomeDialog.showConfirmDialog("file_size_large".tr,
+          "file_size_limit".trParams(({
+            "limitSizeInMB" : "$limitSizeInMB"
+          })), "ok".tr, () {
         Get.back();
       });
       return false;

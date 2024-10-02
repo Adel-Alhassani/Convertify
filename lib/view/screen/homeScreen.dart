@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:convertify/constant/color.dart';
+import 'package:convertify/core/constant/color.dart';
 import 'package:convertify/controller/file_controller.dart';
 import 'package:convertify/controller/network_controller.dart';
 import 'package:convertify/view/widget/bottomsheet/success_bottomsheet.dart';
@@ -43,7 +43,7 @@ class Homescreen extends StatelessWidget {
                   ),
                 ),
                 Obx(() => PrimaryButtonWithLoading(
-                    text: "Convert",
+                    text: "convert".tr,
                     minWidth: 170.w,
                     height: 47.h,
                     disabled:
@@ -59,7 +59,10 @@ class Homescreen extends StatelessWidget {
                     onPressed: () async {
                       await fileController.convertFile();
                       SuccessBottomsheet.showSuccessWithBtnBottomsheet(
-                        "Download",
+                        "file_converted_successfully".tr,
+                        "download".tr,
+                        "click_to_download".tr,
+                        "download".tr,
                         () {
                           fileController.downloadFile();
                           Get.back();
@@ -81,11 +84,11 @@ class Homescreen extends StatelessWidget {
                     ),
                     Container(
                       child: Text(
-                        "support nearly all documents and images formats",
+                        "supports_all_file_formats".tr,
                         textAlign: TextAlign.center,
                         style: GoogleFonts.manjari(
                           textStyle: TextStyle(
-                            fontSize: 26.sp,
+                            fontSize: 24.sp,
                             color: AppColor.whiteColor, // Use AppColor
                           ),
                         ),
@@ -96,9 +99,18 @@ class Homescreen extends StatelessWidget {
                     ),
                     UploadFile(
                         iconAsset: "icon/add_file.svg",
-                        content: "Click here to upload a file",
+                        content: "tap_here_to_pick_file".tr,
                         onTap: () async {
-                          await fileController.pickFile();
+                          if (!await networkController.isInternetConnected()) {
+                            CustomeDialog.showConfirmDialog(
+                                "no_internet_connection".tr,
+                                "check_internet_connection".tr,
+                                "ok".tr, () {
+                              Get.back();
+                            });
+                          } else {
+                            await fileController.pickFile();
+                          }
                         }),
                     SizedBox(
                       height: 8.h,
@@ -114,7 +126,7 @@ class Homescreen extends StatelessWidget {
                     FromTo(
                       text: fileController.isFilePicked.value
                           ? fileController.file!.extension
-                          : "From",
+                          : "from".tr,
                       textColor: fileController.isFilePicked.value
                           ? AppColor.whiteColor // Use AppColor
                           : AppColor.secondaryColor, // Use AppColor
@@ -134,7 +146,7 @@ class Homescreen extends StatelessWidget {
                       height: 9.h,
                     ),
                     PrimaryButtonWithLoading(
-                      text: "Select Output Format",
+                      text: "select_output_format".tr,
                       minWidth: 224.w,
                       height: 47.h,
                       disabled: fileController.validOutputFormats.isEmpty
@@ -144,7 +156,6 @@ class Homescreen extends StatelessWidget {
                           ? true
                           : false,
                       loadingWidgetColor: AppColor.primaryColor,
-
                       btnColor: fileController.validOutputFormats.isEmpty
                           ? AppColor.secondaryColor
                           : AppColor.whiteColor, // Use AppColor
@@ -169,7 +180,7 @@ class Homescreen extends StatelessWidget {
                     ),
                     FromTo(
                       text: fileController.getOutputFormat().isEmpty
-                          ? "To"
+                          ? "to".tr
                           : fileController.getOutputFormat(),
                       textColor: fileController.getOutputFormat().isEmpty
                           ? AppColor.secondaryColor

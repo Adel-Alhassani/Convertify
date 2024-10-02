@@ -1,4 +1,4 @@
-import 'package:convertify/constant/color.dart';
+import 'package:convertify/core/constant/color.dart';
 import 'package:convertify/view/screen/homeScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

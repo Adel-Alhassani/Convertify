@@ -1,11 +1,11 @@
-import 'package:convertify/constant/color.dart';
+import 'package:convertify/core/constant/color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
 class SuccessBottomsheet {
-  static void showSuccessWithBtnBottomsheet(String textBtn,void Function()? onPressed) {
+  static void showSuccessWithBtnBottomsheet(firstText,String span,secondText,btnText,void Function()? onPressed) {
     Get.bottomSheet(Container(
       padding: EdgeInsets.only(top: 33.h, left: 20, right: 20, bottom: 30),
       height: 414.h,
@@ -24,17 +24,17 @@ class SuccessBottomsheet {
           RichText(
             textAlign: TextAlign.center,
             text: TextSpan(
-              text: 'The file has been converted successfully.\n Click ',
+              text: firstText,
               style: TextStyle(fontSize: 16.sp, color: AppColor.blackColor),
               children: <TextSpan>[
                 TextSpan(
-                    text: '“$textBtn”',
+                    text: span,
                     style: TextStyle(
                         fontSize: 16.sp,
                         color: AppColor.primaryColor,
                         fontWeight: FontWeight.bold)),
                 TextSpan(
-                  text: ' to download it.',
+                  text: secondText,
                   style: TextStyle(),
                 ),
               ],
@@ -55,7 +55,7 @@ class SuccessBottomsheet {
                 ), // Set the border width
                 borderRadius: BorderRadius.circular(15.r)),
             child: Text(
-              "Download",
+              btnText,
               style: TextStyle(
                 fontSize: 20.sp,
                 fontWeight: FontWeight.bold,
