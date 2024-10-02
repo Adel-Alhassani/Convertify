@@ -15,17 +15,16 @@ class FileController extends GetxController {
 
   final FileService _fileService = FileService();
   final FileUtils fileUtils = FileUtils();
-  RxBool isFileUploaded = false.obs;
-  // RxBool isFileSizeValid = true.obs;
+  RxBool isFilePicked = false.obs;
   RxBool isConverting = false.obs;
   int fileSizeLimitInMB = 30;
   RxBool isValidOutputFormatLoading = false.obs;
   RxMap<String, List<String>> validOutputFormats = <String, List<String>>{}.obs;
-  String _outputFormat = "";
+  RxString _outputFormat = "".obs;
 
   pickFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles();
-
+    _outputFormat.value = "";
     if (result != null) {
       File selectedFile = File(result.files.single.path!);
       PlatformFile selectedFileInfo = result.files.first;
@@ -33,9 +32,7 @@ class FileController extends GetxController {
           selectedFileInfo.size, fileSizeLimitInMB)) {
         return;
       }
-      isFileUploaded.value = true;
       isValidOutputFormatLoading.value = true;
-      _outputFormat = "";
       validOutputFormats.value = await _fileService
           .getValidOutputFormatsOf("${selectedFileInfo.extension}");
       isValidOutputFormatLoading.value = false;
@@ -45,19 +42,24 @@ class FileController extends GetxController {
         size: fileUtils.formatFileSize(selectedFileInfo.size),
         extension: selectedFileInfo.extension ?? "Unknown",
       );
-
-      print(validOutputFormats);
+      isFilePicked.value = true;
     } else {
       // User canceled the picker
     }
   }
 
+  void clearData() {
+    _outputFormat.value = "";
+    file!.extension = "";
+    validOutputFormats.value = {};
+  }
+
   void setOutputFormat(String outputFormat) {
-    _outputFormat = outputFormat;
+    _outputFormat.value = outputFormat;
   }
 
   String getOutputFormat() {
-    return _outputFormat;
+    return _outputFormat.value;
   }
 
   Future<String> createPublicFolder(String folderName) async {

@@ -98,21 +98,12 @@ class Homescreen extends StatelessWidget {
                         iconAsset: "icon/add_file.svg",
                         content: "Click here to upload a file",
                         onTap: () async {
-                          if (!await networkController.isInternetConnected()) {
-                            CustomeDialog.showConfirmDialog(
-                                "No Internet Connection!",
-                                "please check your internet connection and try again.",
-                                "Ok", () {
-                              Get.back();
-                            });
-                          } else {
-                            fileController.pickFile();
-                          }
+                          await fileController.pickFile();
                         }),
                     SizedBox(
                       height: 8.h,
                     ),
-                    fileController.isFileUploaded.value
+                    fileController.isFilePicked.value
                         ? FileInfo(
                             fileName: fileController.file!.name,
                             fileSize: fileController.file!.size)
@@ -121,20 +112,20 @@ class Homescreen extends StatelessWidget {
                       height: 28.h,
                     ),
                     FromTo(
-                      text: fileController.isFileUploaded.value
+                      text: fileController.isFilePicked.value
                           ? fileController.file!.extension
                           : "From",
-                      textColor: fileController.isFileUploaded.value
+                      textColor: fileController.isFilePicked.value
                           ? AppColor.whiteColor // Use AppColor
                           : AppColor.secondaryColor, // Use AppColor
-                      borderColor: fileController.isFileUploaded.value
+                      borderColor: fileController.isFilePicked.value
                           ? AppColor.whiteColor // Use AppColor
                           : AppColor.secondaryColor, // Use AppColor
                     ),
                     SizedBox(
                       height: 9.h,
                     ),
-                    fileController.isFileUploaded.value
+                    fileController.isFilePicked.value
                         ? SvgPicture.asset(
                             "icon/enabled/enabled_bottom_arrow.svg")
                         : SvgPicture.asset(

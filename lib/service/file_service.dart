@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'dart:io';
+// import 'dart:io';
 
 import 'package:http/http.dart' as http;
 
@@ -29,7 +29,7 @@ class FileService {
         return validOutputFormats;
       }
     } catch (e) {
-      print('Exception occurred: $e');
+      print('Exception occurred while getting valid output formats: $e');
       return validOutputFormats;
     }
   }

@@ -1,10 +1,10 @@
 import 'dart:io';
 
 class FileModel {
-  final String path;
-   final String name;
-   final String size;
-   final String extension;
+   String path;
+    String name;
+    String size;
+    String extension;
   // Map<String, List<String>>? validOutputFormats = {};
 
      FileModel({ required this.path,
