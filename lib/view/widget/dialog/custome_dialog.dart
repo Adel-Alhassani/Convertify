@@ -1,4 +1,4 @@
-import 'package:convertify/core/constant/color.dart';
+import 'package:convertify/core/constant/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -13,8 +13,10 @@ class CustomeDialog {
       barrierDismissible: barrierDismissible ?? true,
       content: Text(
         content,
+        style: Get.textTheme.bodyMedium!.copyWith(color: AppColor.blackColor),
       ),
-      titleStyle: TextStyle(fontSize: 20.sp),
+      titleStyle: Get.textTheme.bodyLarge!
+          .copyWith(color: AppColor.blackColor, fontWeight: FontWeight.bold),
       confirm: MaterialButton(
         minWidth: 80.w,
         height: 30.h,
@@ -24,7 +26,10 @@ class CustomeDialog {
         onPressed: () {
           onPressed();
         },
-        child: Text(confirmTxt),
+        child: Text(
+          confirmTxt,
+          style: Get.textTheme.bodyMedium!.copyWith(color: AppColor.whiteColor),
+        ),
       ),
     );
   }
@@ -38,7 +43,8 @@ class CustomeDialog {
       content: Text(
         content,
       ),
-      titleStyle: TextStyle(fontSize: 20.sp),
+      titleStyle: Get.textTheme.headlineSmall!
+          .copyWith(color: AppColor.blackColor, fontWeight: FontWeight.bold),
     );
   }
 }

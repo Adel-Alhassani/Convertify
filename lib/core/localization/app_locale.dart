@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class Local extends Translations {
+class AppLocale extends Translations {
   @override
   // TODO: implement keys
   Map<String, Map<String, String>> get keys => {
@@ -28,7 +28,7 @@ class Local extends Translations {
           'convert': 'تحويل',
           'download': 'تحميل',
           'supports_all_file_formats': "معظم صيغ الملفات مدعومة",
-          'tap_here_to_pick_file': 'اضغط هنا لرفع ملف',
+          'tap_here_to_pick_file': 'اضغط هنا لإختيار ملف',
           'from': 'من',
           'select_output_format': 'اختر الصيغة',
           'to': 'إلى',

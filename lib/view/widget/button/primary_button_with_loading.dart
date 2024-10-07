@@ -1,6 +1,7 @@
-import 'package:convertify/core/constant/color.dart';
+import 'package:convertify/core/constant/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class PrimaryButtonWithLoading extends StatelessWidget {
@@ -23,7 +24,8 @@ class PrimaryButtonWithLoading extends StatelessWidget {
     required this.btnColor,
     required this.textColor,
     required this.isLoading,
-    required this.disabled, required this.loadingWidgetColor,
+    required this.disabled,
+    required this.loadingWidgetColor,
   });
 
   @override
@@ -41,13 +43,12 @@ class PrimaryButtonWithLoading extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.r)),
         child: isLoading
             ? LoadingAnimationWidget.waveDots(
-                color:loadingWidgetColor, size: 25.w)
+                color: loadingWidgetColor, size: 25.w)
             : Text(
                 text,
-                style: TextStyle(
-                  fontSize: 18.sp,
-                  fontWeight: FontWeight.bold,
+                style: Get.textTheme.headlineSmall!.copyWith(
                   color: textColor,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
       ),

@@ -1,14 +1,15 @@
-import 'package:convertify/core/constant/color.dart';
+import 'package:convertify/core/constant/app_color.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 
-class UploadFile extends StatelessWidget {
+class PickFile extends StatelessWidget {
   final String iconAsset;
   final String content;
   final void Function() onTap;
-  const UploadFile({
+  const PickFile({
     super.key,
     required this.iconAsset,
     required this.content,
@@ -46,6 +47,8 @@ class UploadFile extends StatelessWidget {
                   ),
                   Text(
                     content,
+                    style: Get.textTheme.bodySmall!
+                        .copyWith(color: AppColor.blackColor),
                   )
                 ],
               ),

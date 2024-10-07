@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 
 class FromTo extends StatelessWidget {
   final String text;
@@ -25,7 +26,9 @@ class FromTo extends StatelessWidget {
       height: 30.h,
       child: Text(
         text,
-        style: TextStyle(fontSize: 16.sp, color: textColor),
+        style: Get.textTheme.bodyMedium!.copyWith(
+          color: textColor
+        ),
       ),
     );
   }

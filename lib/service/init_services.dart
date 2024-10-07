@@ -11,7 +11,6 @@ class InitServices extends GetxService {
         ignoreSsl:
             true // option: set to false to disable working with http links (default: false)
         );
-    print("init");
     return this;
   }
 }

@@ -1,4 +1,4 @@
-import 'package:convertify/core/constant/color.dart';
+import 'package:convertify/core/constant/app_color.dart';
 import 'package:convertify/controller/file_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -65,7 +65,8 @@ class ButtonCollectionDialog extends StatelessWidget {
                                 Text(
                                   category[i],
                                   style: TextStyle(
-                                      fontSize: 18.sp,
+                                      fontFamily: "Inter",
+                                      fontSize: 16.sp,
                                       fontWeight: FontWeight.w500,
                                       color: AppColor.whiteColor),
                                 ),
@@ -104,7 +105,8 @@ class ButtonCollectionDialog extends StatelessWidget {
                                     child: Text(
                                       value.toString(),
                                       style: TextStyle(
-                                        fontSize: 16.sp,
+                                        fontFamily: "Inter",
+                                        fontSize: 14.sp,
                                         fontWeight: FontWeight.bold,
                                         color: AppColor.primaryColor,
                                       ),

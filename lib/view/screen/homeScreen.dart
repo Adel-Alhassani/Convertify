@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:convertify/core/constant/color.dart';
+import 'package:convertify/core/constant/app_color.dart';
 import 'package:convertify/controller/file_controller.dart';
 import 'package:convertify/controller/network_controller.dart';
 import 'package:convertify/view/widget/bottomsheet/success_bottomsheet.dart';
@@ -9,7 +9,7 @@ import 'package:convertify/view/widget/button/primary_button_with_loading.dart';
 import 'package:convertify/view/widget/dialog/custome_dialog.dart';
 import 'package:convertify/view/widget/file_info_widget.dart';
 import 'package:convertify/view/widget/from_to.dart';
-import 'package:convertify/view/widget/upload_file_widget.dart';
+import 'package:convertify/view/widget/pick_file_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -57,15 +57,15 @@ class Homescreen extends StatelessWidget {
                         ? AppColor.tertiaryColor
                         : AppColor.whiteColor, // Use AppColor
                     onPressed: () async {
-                      await fileController.convertFile();
+                      // await fileController.convertFile();
                       SuccessBottomsheet.showSuccessWithBtnBottomsheet(
                         "file_converted_successfully".tr,
                         "download".tr,
                         "click_to_download".tr,
                         "download".tr,
                         () {
-                          fileController.downloadFile();
-                          Get.back();
+                          // fileController.downloadFile();
+                          // Get.back();
                         },
                       );
                     }))
@@ -86,18 +86,15 @@ class Homescreen extends StatelessWidget {
                       child: Text(
                         "supports_all_file_formats".tr,
                         textAlign: TextAlign.center,
-                        style: GoogleFonts.manjari(
-                          textStyle: TextStyle(
-                            fontSize: 24.sp,
-                            color: AppColor.whiteColor, // Use AppColor
-                          ),
+                        style: Get.textTheme.headlineMedium!.copyWith(
+                          color: AppColor.whiteColor,
                         ),
                       ),
                     ),
                     SizedBox(
                       height: 20.h,
                     ),
-                    UploadFile(
+                    PickFile(
                         iconAsset: "icon/add_file.svg",
                         content: "tap_here_to_pick_file".tr,
                         onTap: () async {

@@ -1,8 +1,9 @@
-import 'package:convertify/core/constant/color.dart';
+import 'package:convertify/core/constant/app_color.dart';
 import 'package:convertify/view/screen/homeScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 
 class FileInfo extends StatelessWidget {
   final String fileName;
@@ -22,7 +23,7 @@ class FileInfo extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Container(
-              margin: EdgeInsets.only(right: 15.w),
+              margin: EdgeInsets.symmetric(horizontal: 10.w),
               child: SvgPicture.asset(
                 "icon/file_info.svg",
               )),
@@ -32,13 +33,19 @@ class FileInfo extends StatelessWidget {
               Text(
                 fileName,
                 style: TextStyle(
-                    fontSize: 15.sp,
-                    fontWeight: FontWeight.bold,
-                    color: AppColor.whiteColor),
+                  fontFamily: "inter",
+                  fontSize: 13.sp,
+                  color: AppColor.whiteColor,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               Text(
                 fileSize,
-                style: TextStyle(fontSize: 15.sp, color: AppColor.whiteColor),
+                style: TextStyle(
+                  fontFamily: "inter",
+                  fontSize: 13.sp,
+                  color: AppColor.whiteColor,
+                ),
               )
             ],
           )
