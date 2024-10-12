@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 // import 'dart:io';
-
 import 'package:http/http.dart' as http;
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class FileService {
   final String apiKey =
@@ -39,6 +41,9 @@ class FileService {
     String inputFormat,
     String outputFormat,
   ) async {
+    // _downloadUrl = await _getFileDownloadUrlFromAPI(
+    //     "46473b0d-e6fb-4193-9782-9331a33e0c11");
+    // return;
     // API endpoint for creating a job
     final String url = 'https://api.cloudconvert.com/v2/jobs';
 
@@ -115,7 +120,6 @@ class FileService {
     if (uploadResponse.statusCode == 201) {
       return true;
     } else {
-
       return false;
     }
   }

@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:convertify/core/constant/app_color.dart';
 import 'package:convertify/controller/file_controller.dart';
 import 'package:convertify/controller/network_controller.dart';
-import 'package:convertify/view/widget/bottomsheet/success_bottomsheet.dart';
+import 'package:convertify/view/widget/bottomsheet/custom_bottomsheet.dart';
 import 'package:convertify/view/widget/dialog/button_collection_dialog.dart';
 import 'package:convertify/view/widget/button/primary_button_with_loading.dart';
 import 'package:convertify/view/widget/dialog/custome_dialog.dart';
@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
 
@@ -48,7 +49,7 @@ class Homescreen extends StatelessWidget {
                     height: 47.h,
                     disabled:
                         fileController.getOutputFormat().isEmpty ? true : false,
-                    isLoading: fileController.isConverting.value ? true : false,
+                    isLoading: false,
                     loadingWidgetColor: AppColor.whiteColor,
                     btnColor: fileController.getOutputFormat().isEmpty
                         ? AppColor.secondaryColor
@@ -57,15 +58,17 @@ class Homescreen extends StatelessWidget {
                         ? AppColor.tertiaryColor
                         : AppColor.whiteColor, // Use AppColor
                     onPressed: () async {
-                      // await fileController.convertFile();
-                      SuccessBottomsheet.showSuccessWithBtnBottomsheet(
+                      CustomBottomsheet.showLoadingBottomsheet();
+                      await fileController.convertFile();
+                      Get.back();
+                      CustomBottomsheet.showSuccessWithBtnBottomsheet(
                         "file_converted_successfully".tr,
                         "download".tr,
                         "click_to_download".tr,
                         "download".tr,
                         () {
-                          // fileController.downloadFile();
-                          // Get.back();
+                          fileController.downloadFile();
+                          Get.back();
                         },
                       );
                     }))
@@ -123,7 +126,7 @@ class Homescreen extends StatelessWidget {
                     FromTo(
                       text: fileController.isFilePicked.value
                           ? fileController.file!.extension
-                          : "from".tr,
+                          : "-".tr,
                       textColor: fileController.isFilePicked.value
                           ? AppColor.whiteColor // Use AppColor
                           : AppColor.secondaryColor, // Use AppColor
@@ -177,7 +180,7 @@ class Homescreen extends StatelessWidget {
                     ),
                     FromTo(
                       text: fileController.getOutputFormat().isEmpty
-                          ? "to".tr
+                          ? "-".tr
                           : fileController.getOutputFormat(),
                       textColor: fileController.getOutputFormat().isEmpty
                           ? AppColor.secondaryColor

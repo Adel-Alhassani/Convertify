@@ -71,8 +71,6 @@ class FileController extends GetxController {
       if (!await directory.exists()) {
         await directory.create(recursive: true);
         print('Folder created at: ${directory.path}');
-      } else {
-        print('Folder already exists at: ${directory.path}');
       }
       return directory.path;
     } catch (e) {

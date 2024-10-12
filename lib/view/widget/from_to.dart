@@ -26,8 +26,11 @@ class FromTo extends StatelessWidget {
       height: 30.h,
       child: Text(
         text,
-        style: Get.textTheme.bodyMedium!.copyWith(
-          color: textColor
+        style: TextStyle(
+          fontFamily: "Inter",
+          fontSize: 14.sp,
+          fontWeight: FontWeight.bold,
+          color: textColor,
         ),
       ),
     );
