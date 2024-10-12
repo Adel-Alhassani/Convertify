@@ -8,7 +8,6 @@ class AppLocale extends Translations {
         'en': {
           'convert': 'Convert',
           'download': 'Download',
-          'supports_all_file_formats': 'Supports nearly all file formats',
           'tap_here_to_pick_file': 'Tap here to pick a file',
           'from': 'From',
           'select_output_format': 'Select output format',
@@ -27,7 +26,6 @@ class AppLocale extends Translations {
         'ar': {
           'convert': 'تحويل',
           'download': 'تحميل',
-          'supports_all_file_formats': "معظم صيغ الملفات مدعومة",
           'tap_here_to_pick_file': 'اضغط هنا لإختيار ملف',
           'from': 'من',
           'select_output_format': 'اختر الصيغة',

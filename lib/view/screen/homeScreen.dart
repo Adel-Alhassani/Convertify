@@ -83,19 +83,7 @@ class Homescreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     SizedBox(
-                      height: 65.h,
-                    ),
-                    Container(
-                      child: Text(
-                        "supports_all_file_formats".tr,
-                        textAlign: TextAlign.center,
-                        style: Get.textTheme.headlineMedium!.copyWith(
-                          color: AppColor.whiteColor,
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 20.h,
+                      height: 85.h,
                     ),
                     PickFile(
                         iconAsset: "icon/add_file.svg",
