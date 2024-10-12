@@ -79,10 +79,13 @@ class FileController extends GetxController {
     }
   }
 
-  Future<void> convertFile() async {
+  Future<bool> convertFile() async {
     isConverting.value = true;
-    await _fileService.convert(file!.path, file!.extension, getOutputFormat());
+    bool isSuccessConversion = false;
+    isSuccessConversion = await _fileService.convert(
+        file!.path, file!.extension, getOutputFormat());
     isConverting.value = false;
+    return isSuccessConversion;
   }
 
   void downloadFile() async {

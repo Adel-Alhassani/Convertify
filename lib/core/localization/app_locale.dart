@@ -13,15 +13,19 @@ class AppLocale extends Translations {
           'select_output_format': 'Select output format',
           'to': 'To',
           'file_converted_successfully':
-                  'The file has been converted successfully.\n Click ',
+              'The file has been converted successfully.\n Click ',
           'click_to_download': ' to download it.',
           'no_internet_connection': "No Internet Connection!",
           'check_internet_connection':
-                "Please check your internet connection and try again.",
+              "Please check your internet connection and try again.",
           'ok': "Ok",
           'file_size_large': "File's size is large!",
           'file_size_limit':
               "The file size cannot be more than @limitSizeInMB MB",
+          'error': "Error!",
+          'coverting_error': 'An error occurred while converting the file!',
+          'get_valid_output_formats_error': 'An error occurred while trying to get the valid output formats!',
+          'unknown_error': 'An unknown error occurred!'
         },
         'ar': {
           'convert': 'تحويل',
@@ -39,7 +43,10 @@ class AppLocale extends Translations {
           'file_size_large': 'حجم الملف كبير!',
           'file_size_limit':
               'حجم الملف لا يمكن أن يتجاوز @limitSizeInMB ميجابايت',
+          'error': "خطأ!",
+          'coverting_error': 'حدث خطأ أثناء تحويل الملف!',
+          'get_valid_output_formats_error': 'حدث خطأ أثناء استرداد الصيغ المتاحة!',
+          'unknown_error': 'حدث خطأ غير معروف!'
         },
-
       };
 }

@@ -17,6 +17,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class Homescreen extends StatelessWidget {
   const Homescreen({super.key});
@@ -58,19 +59,23 @@ class Homescreen extends StatelessWidget {
                         ? AppColor.tertiaryColor
                         : AppColor.whiteColor, // Use AppColor
                     onPressed: () async {
-                      CustomBottomsheet.showLoadingBottomsheet();
-                      await fileController.convertFile();
-                      Get.back();
-                      CustomBottomsheet.showSuccessWithBtnBottomsheet(
-                        "file_converted_successfully".tr,
-                        "download".tr,
-                        "click_to_download".tr,
-                        "download".tr,
-                        () {
-                          fileController.downloadFile();
+                      if (await fileController.convertFile()) {
+                        CustomBottomsheet.showSuccessWithBtnBottomsheet(
+                          "file_converted_successfully".tr,
+                          "download".tr,
+                          "click_to_download".tr,
+                          "download".tr,
+                          () {
+                            fileController.downloadFile();
+                            Get.back();
+                          },
+                        );
+                      } else {
+                        CustomeDialog.showConfirmDialog(
+                            "error".tr, "coverting_error".tr, "ok".tr, () {
                           Get.back();
-                        },
-                      );
+                        });
+                      }
                     }))
               ],
             ),
@@ -184,7 +189,17 @@ class Homescreen extends StatelessWidget {
                 ),
               ),
             ),
-          )
+          ),
+          Obx(() => fileController.isConverting.value
+              ? IgnorePointer(
+                  ignoring: false,
+                  child: Container(
+                    color: AppColor.blackColor.withOpacity(0.7),
+                    child: Center(
+                        child: LoadingAnimationWidget.waveDots(
+                            color: AppColor.primaryColor, size: 50.w)),
+                  ))
+              : const SizedBox.shrink())
         ],
       ),
     );
