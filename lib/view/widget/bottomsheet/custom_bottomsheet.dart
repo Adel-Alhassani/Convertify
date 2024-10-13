@@ -19,7 +19,7 @@ class CustomBottomsheet {
       child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SvgPicture.asset("icon/file_success.svg"),
+                SvgPicture.asset("assets/icon/file_success.svg"),
                 SizedBox(
                   height: 29.h,
                 ),

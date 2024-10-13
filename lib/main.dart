@@ -2,7 +2,7 @@ import 'package:convertify/controller/config_controller.dart';
 import 'package:convertify/core/constant/app_theme.dart';
 import 'package:convertify/core/localization/app_locale.dart';
 import 'package:convertify/service/init_services.dart';
-import 'package:convertify/view/screen/homeScreen.dart';
+import 'package:convertify/view/screen/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';

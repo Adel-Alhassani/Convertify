@@ -6,12 +6,10 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
 class PickFile extends StatelessWidget {
-  final String iconAsset;
   final String content;
   final void Function() onTap;
   const PickFile({
     super.key,
-    required this.iconAsset,
     required this.content,
     required this.onTap,
   });
@@ -38,7 +36,7 @@ class PickFile extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   SvgPicture.asset(
-                    "icon/add_file.svg",
+                    "assets/icon/add_file.svg",
                     height: 65.h,
                     width: 65.w,
                   ),

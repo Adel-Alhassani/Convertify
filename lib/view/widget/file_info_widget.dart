@@ -1,5 +1,5 @@
 import 'package:convertify/core/constant/app_color.dart';
-import 'package:convertify/view/screen/homeScreen.dart';
+import 'package:convertify/view/screen/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -25,7 +25,7 @@ class FileInfo extends StatelessWidget {
           Container(
               margin: EdgeInsets.symmetric(horizontal: 10.w),
               child: SvgPicture.asset(
-                "icon/file_info.svg",
+                "assets/icon/file_info.svg",
               )),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,

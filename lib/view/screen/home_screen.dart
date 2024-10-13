@@ -91,7 +91,6 @@ class Homescreen extends StatelessWidget {
                       height: 85.h,
                     ),
                     PickFile(
-                        iconAsset: "icon/add_file.svg",
                         content: "tap_here_to_pick_file".tr,
                         onTap: () async {
                           if (!await networkController.isInternetConnected()) {
@@ -132,9 +131,9 @@ class Homescreen extends StatelessWidget {
                     ),
                     fileController.isFilePicked.value
                         ? SvgPicture.asset(
-                            "icon/enabled/enabled_bottom_arrow.svg")
+                            "assets/icon/enabled/enabled_bottom_arrow.svg")
                         : SvgPicture.asset(
-                            "icon/disabled/disabled_bottom_arrow.svg"),
+                            "assets/icon/disabled/disabled_bottom_arrow.svg"),
                     SizedBox(
                       height: 9.h,
                     ),
@@ -165,9 +164,9 @@ class Homescreen extends StatelessWidget {
                     ),
                     fileController.getOutputFormat().isEmpty
                         ? SvgPicture.asset(
-                            "icon/disabled/disabled_head_arrow.svg")
+                            "assets/icon/disabled/disabled_head_arrow.svg")
                         : SvgPicture.asset(
-                            "icon/enabled/enabled_head_arrow.svg"),
+                            "assets/icon/enabled/enabled_head_arrow.svg"),
                     SizedBox(
                       height: 9.h,
                     ),
