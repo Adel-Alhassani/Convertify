@@ -4,18 +4,21 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class ConfigController extends GetxController {
-  Locale? locale = Get.deviceLocale;
+  Locale? getLocale() {
+    Locale? locale = Get.deviceLocale;
+    if (locale!.languageCode == "ar") {
+      return locale;
+    } else {
+      locale = const Locale("en");
+      return locale;
+    }
+  }
 
   ThemeData getAppTheme() {
-    print(locale);
-    switch (locale!.languageCode) {
-      case "ar":
-        print("ar");
-        return AppTheme.arabicTheme;
-      case "en":
-        print("en");
-        return AppTheme.englishTheme;
+    if (getLocale()!.languageCode == "ar") {
+      return AppTheme.arabicTheme;
+    } else {
+      return AppTheme.englishTheme;
     }
-    return AppTheme.englishTheme;
   }
 }
