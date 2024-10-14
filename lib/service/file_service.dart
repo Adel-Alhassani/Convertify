@@ -3,14 +3,14 @@ import 'dart:convert';
 import 'dart:io';
 // import 'dart:io';
 import 'package:convertify/view/widget/dialog/custome_dialog.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 // import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:http/http.dart' as http;
 // import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class FileService {
-  final String apiKey =
-      'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiM2RiYzJiNmI1M2JiOTVjZDk0YWM2YmMxMGFmMDIwYzI3YWFiMjBhZDMyMGY1MWM1YzhjMzkxMmJmNTQwODZkOTEyMGNlNTk2NGE4OThlMjMiLCJpYXQiOjE3MjQxNjI1MDMuNTA1MzA1LCJuYmYiOjE3MjQxNjI1MDMuNTA1MzA2LCJleHAiOjQ4Nzk4MzYxMDMuNTAwMDg4LCJzdWIiOiI2OTMzNTIxMyIsInNjb3BlcyI6WyJ1c2VyLnJlYWQiLCJ1c2VyLndyaXRlIiwidGFzay5yZWFkIiwidGFzay53cml0ZSIsIndlYmhvb2sucmVhZCIsIndlYmhvb2sud3JpdGUiLCJwcmVzZXQucmVhZCIsInByZXNldC53cml0ZSJdfQ.fQQK3-XOCTWDtKIzxJ6jbpGunNEHnqQbJN9K8kT5moiiJvFePqtdMOeT65QMly96ZK7Jbw9Fm3aq5847UDlHFBv-VGQoY0FyX5lOk10yhZFHFQsQ9C6NaoLI7VEWEjG8FHceu_mDN-A7wU8nfi7_z39qvoeRwJptitoIuKCDSnpPYBcXrxJnuMdCf0CQUHoqHrhrBmCfqclWR_ZlV-3yktnTtck5VNS-chgJLhHUdDyDHynKeUcs2dlft7CZdPaz70E9HWIiDQHbWZmX9RbWCoB7tDBDe2OSdMUfohU-JZWqs2XgVK9LxKfkJyqi-RIaXellfmYCPG8qO81hlN1aObIQsHOm9xfNg0zLvTBz3hFlzAklwklGI-mW-VJWHbpY3lZvXz5wZ_pgzqkiumm8B9tn2W7SnSS775hoF_vHJKoRbd6-UoatsFQLP6yaqm3MXANKhJ7x1NS_U1zj5W8yrXaHFfAgEVmkoEW-Ohv_e23EBWP9lOLVfQorltLhiBr9WU1n1cuGTzgTxRJUPUX0Bo84QCzfSQTrZvOGVGOOjH6wJqKysQ2rDKZwXrO-1FIRpsHgTBqVr2cqhkP7AHi04ucJGe6WRfKnFNDQM_c0MUh_qJy-dzavooXTqkW4hCmSbCKO7gmeFTkxKj1uRiZQsmBEWkT78_prF6SjWArmOto';
+  final String? apiKey = dotenv.env["API_KEY"];
   late String _downloadUrl;
 
   Future<Map<String, List<String>>> getValidOutputFormatsOf(
