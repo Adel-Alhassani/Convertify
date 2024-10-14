@@ -24,30 +24,39 @@ class FileController extends GetxController {
   RxString _outputFormat = "".obs;
 
   pickFile() async {
-    _outputFormat.value = "";
-    FilePickerResult? result = await FilePicker.platform.pickFiles();
-    if (result != null) {
-      File selectedFile = File(result.files.single.path!);
-      PlatformFile selectedFileInfo = result.files.first;
-      if (selectedFileInfo.extension == null) {
-        CustomeDialog.showConfirmDialog(
-            "error".tr, "format_unknown".tr, "ok".tr, () {
-          Get.back();
-        });
-      }
+    try {
+      _outputFormat.value = "";
+      FilePickerResult? result = await FilePicker.platform.pickFiles();
+      if (result != null) {
+        File selectedFile = File(result.files.single.path!);
+        PlatformFile selectedFileInfo = result.files.first;
+        if (selectedFileInfo.extension == null) {
+          CustomeDialog.showConfirmDialog(
+              "error".tr, "format_unknown".tr, "ok".tr, () {
+            Get.back();
+          });
+        }
 
-      file.path = selectedFile.path;
-      file.name = fileUtils.limitFileName(selectedFileInfo.name);
-      file.size = fileUtils.formatFileSize(selectedFileInfo.size);
-      file.extension = selectedFileInfo.extension;
+        file.path = selectedFile.path;
+        file.name = fileUtils.limitFileName(selectedFileInfo.name);
+        file.size = fileUtils.formatFileSize(selectedFileInfo.size);
+        file.extension = selectedFileInfo.extension;
 
-      isValidOutputFormatLoading.value = true;
-      validOutputFormats.value = await _fileService
-          .getValidOutputFormatsOf("${selectedFileInfo.extension}");
-      isValidOutputFormatLoading.value = false;
+        isValidOutputFormatLoading.value = true;
+        validOutputFormats.value = await _fileService
+            .getValidOutputFormatsOf("${selectedFileInfo.extension}");
+        isValidOutputFormatLoading.value = false;
 
-      isFilePicked.value = true;
-    } else {}
+        isFilePicked.value = true;
+      } else {}
+    } catch (e) {
+      print("Error when trying to pick a file: $e");
+      CustomeDialog.showConfirmDialog("error".tr, "unknown_error".tr, "ok".tr,
+          () {
+        Get.back();
+      });
+      return;
+    }
   }
 
   void setOutputFormat(String outputFormat) {
