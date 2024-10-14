@@ -22,7 +22,6 @@ class FileController extends GetxController {
   RxBool isValidOutputFormatLoading = false.obs;
   RxMap<String, List<String>> validOutputFormats = <String, List<String>>{}.obs;
   RxString _outputFormat = "".obs;
- 
 
   pickFile() async {
     _outputFormat.value = "";
@@ -36,7 +35,7 @@ class FileController extends GetxController {
           Get.back();
         });
       }
-      
+
       file.path = selectedFile.path;
       file.name = fileUtils.limitFileName(selectedFileInfo.name);
       file.size = fileUtils.formatFileSize(selectedFileInfo.size);
@@ -46,11 +45,9 @@ class FileController extends GetxController {
       validOutputFormats.value = await _fileService
           .getValidOutputFormatsOf("${selectedFileInfo.extension}");
       isValidOutputFormatLoading.value = false;
-   
+
       isFilePicked.value = true;
-    } else {
-      
-    }
+    } else {}
   }
 
   void setOutputFormat(String outputFormat) {
@@ -59,23 +56,6 @@ class FileController extends GetxController {
 
   String getOutputFormat() {
     return _outputFormat.value;
-  }
-
-  Future<String> createPublicFolder(String folderName) async {
-    // Get the path to the public Documents directory
-    final directory = Directory('/storage/emulated/0/Documents/$folderName');
-
-    try {
-      // Check if the directory exists; if not, create it
-      if (!await directory.exists()) {
-        await directory.create(recursive: true);
-        print('Folder created at: ${directory.path}');
-      }
-      return directory.path;
-    } catch (e) {
-      print('Error creating folder: $e');
-      return '';
-    }
   }
 
   Future<bool> convertFile() async {
@@ -88,14 +68,12 @@ class FileController extends GetxController {
   }
 
   void downloadFile() async {
-    final taskId = await FlutterDownloader.enqueue(
+    await FlutterDownloader.enqueue(
         url: _fileService.getDownloadUrl(),
-        // 'https://file-examples.com/storage/fe58a1f07d66f447a9512f1/2017/04/file_example_MP4_1920_18MG.mp4',
-        savedDir: await createPublicFolder("convertify"),
+        savedDir: "/", // will be ignored cuz saveInPublicStorage is true
         showNotification:
             true, // show download progress in status bar (for Android)
         openFileFromNotification: true,
-        // fileName: file.name
         saveInPublicStorage: true);
   }
 }
