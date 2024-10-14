@@ -107,11 +107,11 @@ class Homescreen extends StatelessWidget {
                     SizedBox(
                       height: 8.h,
                     ),
-                    fileController.isFilePicked.value
-                        ? FileInfo(
-                            fileName: fileController.file!.name,
-                            fileSize: fileController.file!.size)
-                        : SizedBox.shrink(),
+                  
+                       FileInfo(
+                            fileName: fileController.file?.name?? "",
+                            fileSize: fileController.file?.size?? ""),
+                        
                     SizedBox(
                       height: 28.h,
                     ),

@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 
 class FileUtils {
   String limitFileName(String name) {
-    int lengthLimit = 15;
+    int lengthLimit = 12;
     if (name.length <= lengthLimit) {
       return name;
     } else {
@@ -14,10 +14,10 @@ class FileUtils {
   bool validateFileSize(int bytes, int limitSizeInMB) {
     double fileSizeInMB = bytes / (1024 * 1024);
     if (fileSizeInMB >= limitSizeInMB) {
-      CustomeDialog.showConfirmDialog("file_size_large".tr,
-          "file_size_limit".trParams(({
-            "limitSizeInMB" : "$limitSizeInMB"
-          })), "ok".tr, () {
+      CustomeDialog.showConfirmDialog(
+          "file_size_large".tr,
+          "file_size_limit".trParams(({"limitSizeInMB": "$limitSizeInMB"})),
+          "ok".tr, () {
         Get.back();
       });
       return false;

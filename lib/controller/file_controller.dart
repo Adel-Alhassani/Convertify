@@ -48,12 +48,6 @@ class FileController extends GetxController {
     }
   }
 
-  void clearData() {
-    _outputFormat.value = "";
-    file!.extension = "";
-    validOutputFormats.value = {};
-  }
-
   void setOutputFormat(String outputFormat) {
     _outputFormat.value = outputFormat;
   }
