@@ -25,7 +25,8 @@ class AppLocale extends Translations {
           'error': "Error!",
           'coverting_error': 'An error occurred while converting the file!',
           'get_valid_output_formats_error': 'An error occurred while trying to get the valid output formats!',
-          'unknown_error': 'An unknown error occurred!'
+          'unknown_error': 'An unknown error occurred!',
+          'format_unknown' : "File format is unknown!"
         },
         'ar': {
           'convert': 'تحويل',
@@ -46,7 +47,8 @@ class AppLocale extends Translations {
           'error': "خطأ!",
           'coverting_error': 'حدث خطأ أثناء تحويل الملف!',
           'get_valid_output_formats_error': 'حدث خطأ أثناء استرداد الصيغ المتاحة!',
-          'unknown_error': 'حدث خطأ غير معروف!'
+          'unknown_error': 'حدث خطأ غير معروف!',
+          'format_unknown': "صيغة الملف غير معروفة!"
         },
       };
 }

@@ -16,37 +16,35 @@ class FileInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 5.w),
-      width: 221.w,
-      height: 35.h,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Container(
-          //     margin: EdgeInsets.symmetric(horizontal: 10.w),
-          //     child: SvgPicture.asset(
-          //       "assets/icon/file_info.svg",
-          //     )),
-          Text(
-            fileName,
-            style: TextStyle(
-              fontFamily: "inter",
-              fontSize: 13.sp,
-              color: AppColor.whiteColor,
-              fontWeight: FontWeight.bold,
+    return Directionality(
+      textDirection: TextDirection.ltr ,
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 5.w),
+        width: 221.w,
+        height: 35.h,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              fileName,
+              style: TextStyle(
+                fontFamily: "inter",
+                fontSize: 13.sp,
+                color: AppColor.whiteColor,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-          Text(
-            fileSize,
-            style: TextStyle(
-              fontFamily: "inter",
-              fontSize: 13.sp,
-              color: AppColor.whiteColor,
-            ),
-          )
-        ],
+            Text(
+              fileSize,
+              style: TextStyle(
+                fontFamily: "inter",
+                fontSize: 13.sp,
+                color: AppColor.whiteColor,
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
