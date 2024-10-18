@@ -50,7 +50,7 @@ class FileService {
     String outputFormat,
   ) async {
     // _downloadUrl = await _getFileDownloadUrlFromAPI(
-    //     "b984fe23-28e6-4da3-b777-7cb07c45f667");
+    //     "9f2fa6d3-3948-4059-ada9-9a6c41cb9714");
     // return true;
     // API endpoint for creating a job
     try {
@@ -113,7 +113,7 @@ class FileService {
         return false;
       }
     } catch (e) {
-      print("an error while converting $e");
+      print("Error while converting $e");
 
       return false;
     }
@@ -143,6 +143,7 @@ class FileService {
         return false;
       }
     } catch (e) {
+      print("Failed to upload the file");
       return false;
     }
   }
