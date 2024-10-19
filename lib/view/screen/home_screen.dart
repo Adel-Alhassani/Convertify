@@ -109,15 +109,15 @@ class Homescreen extends StatelessWidget {
                     ),
                   
                        FileInfo(
-                            fileName: fileController.file.name?? "",
-                            fileSize: fileController.file.size?? ""),
+                            fileName: fileController.name?? "",
+                            fileSize: fileController.size?? ""),
                         
                     SizedBox(
                       height: 28.h,
                     ),
                     FromTo(
                       text: fileController.isFilePicked.value
-                          ? fileController.file.extension!
+                          ? fileController.extension!
                           : "-".tr,
                       textColor: fileController.isFilePicked.value
                           ? AppColor.whiteColor // Use AppColor

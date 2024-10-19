@@ -1,11 +1,8 @@
-import 'dart:io';
+// import 'dart:io';
 
-class FileModel {
-   String? path;
-    String? name;
-    String? size;
-    String? extension;
-    
-
- 
-}
+// class FileModel {
+  //  String? path;
+  //   String? name;
+  //   String? size;
+  //   String? extension;
+// }

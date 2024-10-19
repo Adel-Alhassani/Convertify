@@ -12,7 +12,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class FileController extends GetxController {
-  FileModel file = FileModel();
+  // FileModel file = FileModel();
 
   final FileService _fileService = FileService();
   final FileUtils fileUtils = FileUtils();
@@ -22,6 +22,10 @@ class FileController extends GetxController {
   RxBool isValidOutputFormatLoading = false.obs;
   RxMap<String, List<String>> validOutputFormats = <String, List<String>>{}.obs;
   RxString _outputFormat = "".obs;
+    String? path;
+    String? name;
+    String? size;
+    String? extension;
 
   pickFile() async {
     try {
@@ -37,10 +41,10 @@ class FileController extends GetxController {
           });
         }
 
-        file.path = selectedFile.path;
-        file.name = fileUtils.limitFileName(selectedFileInfo.name);
-        file.size = fileUtils.formatFileSize(selectedFileInfo.size);
-        file.extension = selectedFileInfo.extension;
+        path = selectedFile.path;
+        name = fileUtils.limitFileName(selectedFileInfo.name);
+        size = fileUtils.formatFileSize(selectedFileInfo.size);
+        extension = selectedFileInfo.extension;
 
         isValidOutputFormatLoading.value = true;
         validOutputFormats.value = await _fileService
@@ -71,7 +75,7 @@ class FileController extends GetxController {
     isConverting.value = true;
     bool isSuccessConversion = false;
     isSuccessConversion = await _fileService.convert(
-        file.path!, file.extension!, getOutputFormat());
+        path!, extension!, getOutputFormat());
     isConverting.value = false;
     return isSuccessConversion;
   }
@@ -94,9 +98,6 @@ class FileController extends GetxController {
   }
 
   void downloadFile() async {
-    DateTime now = DateTime.now();
-    String date =
-        "${now.year}${now.month}${now.day}${now.hour}${now.minute}${now.second}${now.millisecond}";
     var status = await Permission.storage.status;
     if (!status.isGranted) {
       await Permission.storage.request();
@@ -107,7 +108,6 @@ class FileController extends GetxController {
         showNotification:
             true, // show download progress in status bar (for Android)
         openFileFromNotification: true,
-        fileName: "Convertify_$date.${getOutputFormat()}"
         // saveInPublicStorage: true
         );
   }

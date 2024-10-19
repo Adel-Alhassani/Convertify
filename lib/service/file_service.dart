@@ -50,11 +50,14 @@ class FileService {
     String outputFormat,
   ) async {
     // _downloadUrl = await _getFileDownloadUrlFromAPI(
-    //     "9f2fa6d3-3948-4059-ada9-9a6c41cb9714");
+    //     "77cbc2d2-b152-42d3-8c7e-8efa8c057492");
     // return true;
     // API endpoint for creating a job
     try {
       final String url = 'https://api.cloudconvert.com/v2/jobs';
+       DateTime now = DateTime.now();
+    String date =
+        "${now.year}${now.month}${now.day}${now.hour}${now.minute}${now.second}${now.millisecond}";
 
       // Define the headers including your API key
       final headers = {
@@ -73,6 +76,7 @@ class FileService {
             "input": "import-a2",
             "input_format": inputFormat,
             "output_format": outputFormat,
+            "filename" : "Convertify_$date.$outputFormat",
           },
           "export-a2": {
             "operation": "export/url",
