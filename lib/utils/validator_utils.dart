@@ -1,8 +1,8 @@
 import 'package:convertify/view/widget/dialog/custome_dialog.dart';
 import 'package:get/get.dart';
 
-class FileUtils {
-  String limitFileName(String name) {
+class ValidatorUtils {
+  static String limitFileName(String name) {
     int lengthLimit = 12;
     if (name.length <= lengthLimit) {
       return name;
@@ -11,7 +11,7 @@ class FileUtils {
     }
   }
 
-  bool validateFileSize(int bytes, int limitSizeInMB) {
+  static bool validateFileSize(int bytes, int limitSizeInMB) {
     double fileSizeInMB = bytes / (1024 * 1024);
     if (fileSizeInMB >= limitSizeInMB) {
       CustomeDialog.showConfirmDialog(
@@ -25,7 +25,7 @@ class FileUtils {
     return true;
   }
 
-  String formatFileSize(int bytes) {
+  static String formatFileSize(int bytes) {
     if (bytes <= 0) return "0 B";
 
     const int kb = 1024;

@@ -1,35 +1,33 @@
 import 'dart:io';
 
-import 'package:convertify/model/file_model.dart';
 import 'package:convertify/service/file_service.dart';
-import 'package:convertify/service/network_service.dart';
+import 'package:convertify/utils/network_utils.dart';
 import 'package:convertify/view/widget/dialog/custome_dialog.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:get/get.dart';
-import 'package:convertify/utils/file_utils.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:convertify/utils/validator_utils.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class FileController extends GetxController {
-  // FileModel file = FileModel();
-
   final FileService _fileService = FileService();
-  final FileUtils fileUtils = FileUtils();
   RxBool isFilePicked = false.obs;
   RxBool isConverting = false.obs;
   int fileSizeLimitInMB = 30;
   RxBool isValidOutputFormatLoading = false.obs;
   RxMap<String, List<String>> validOutputFormats = <String, List<String>>{}.obs;
-  RxString _outputFormat = "".obs;
-    String? path;
-    String? name;
-    String? size;
-    String? extension;
+  RxString outputFormat = "".obs;
+  String? path;
+  String? name;
+  String? size;
+  String? extension;
 
   pickFile() async {
     try {
-      _outputFormat.value = "";
+      if (! await NetworkUtils.checkInternet()) {
+        return;
+      }
+      outputFormat.value = "";
       FilePickerResult? result = await FilePicker.platform.pickFiles();
       if (result != null) {
         File selectedFile = File(result.files.single.path!);
@@ -42,8 +40,8 @@ class FileController extends GetxController {
         }
 
         path = selectedFile.path;
-        name = fileUtils.limitFileName(selectedFileInfo.name);
-        size = fileUtils.formatFileSize(selectedFileInfo.size);
+        name = ValidatorUtils.limitFileName(selectedFileInfo.name);
+        size = ValidatorUtils.formatFileSize(selectedFileInfo.size);
         extension = selectedFileInfo.extension;
 
         isValidOutputFormatLoading.value = true;
@@ -64,18 +62,14 @@ class FileController extends GetxController {
   }
 
   void setOutputFormat(String outputFormat) {
-    _outputFormat.value = outputFormat;
-  }
-
-  String getOutputFormat() {
-    return _outputFormat.value;
+    this.outputFormat.value = outputFormat;
   }
 
   Future<bool> convertFile() async {
     isConverting.value = true;
     bool isSuccessConversion = false;
-    isSuccessConversion = await _fileService.convert(
-        path!, extension!, getOutputFormat());
+    isSuccessConversion =
+        await _fileService.convert(path!, extension!, outputFormat.value);
     isConverting.value = false;
     return isSuccessConversion;
   }
@@ -103,12 +97,12 @@ class FileController extends GetxController {
       await Permission.storage.request();
     }
     await FlutterDownloader.enqueue(
-        url: _fileService.getDownloadUrl(),
-        savedDir: await getAppDirectory(),
-        showNotification:
-            true, // show download progress in status bar (for Android)
-        openFileFromNotification: true,
-        // saveInPublicStorage: true
-        );
+      url: _fileService.getDownloadUrl(),
+      savedDir: await getAppDirectory(),
+      showNotification:
+          true, // show download progress in status bar (for Android)
+      openFileFromNotification: true,
+      // saveInPublicStorage: true
+    );
   }
 }

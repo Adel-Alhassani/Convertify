@@ -1,5 +1,4 @@
 import 'package:convertify/controller/file_controller.dart';
-import 'package:convertify/service/network_service.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:get/get.dart';

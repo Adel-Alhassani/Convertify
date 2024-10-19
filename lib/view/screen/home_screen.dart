@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:convertify/core/constant/app_color.dart';
 import 'package:convertify/controller/file_controller.dart';
-import 'package:convertify/controller/network_controller.dart';
 import 'package:convertify/view/widget/bottomsheet/custom_bottomsheet.dart';
 import 'package:convertify/view/widget/dialog/button_collection_dialog.dart';
 import 'package:convertify/view/widget/button/primary_button_with_loading.dart';
@@ -24,7 +23,6 @@ class Homescreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final NetworkController networkController = Get.put(NetworkController());
     final FileController fileController = Get.put(FileController());
     final double statusBarHeight = MediaQuery.of(context).viewPadding.top;
     return Scaffold(
@@ -49,13 +47,13 @@ class Homescreen extends StatelessWidget {
                     minWidth: 170.w,
                     height: 47.h,
                     disabled:
-                        fileController.getOutputFormat().isEmpty ? true : false,
+                        fileController.outputFormat.value.isEmpty ? true : false,
                     isLoading: false,
                     loadingWidgetColor: AppColor.whiteColor,
-                    btnColor: fileController.getOutputFormat().isEmpty
+                    btnColor: fileController.outputFormat.value.isEmpty
                         ? AppColor.secondaryColor
                         : AppColor.primaryColor, // Use AppColor
-                    textColor: fileController.getOutputFormat().isEmpty
+                    textColor: fileController.outputFormat.value.isEmpty
                         ? AppColor.tertiaryColor
                         : AppColor.whiteColor, // Use AppColor
                     onPressed: () async {
@@ -93,16 +91,7 @@ class Homescreen extends StatelessWidget {
                     PickFile(
                         content: "tap_here_to_pick_file".tr,
                         onTap: () async {
-                          if (!await networkController.isInternetConnected()) {
-                            CustomeDialog.showConfirmDialog(
-                                "no_internet_connection".tr,
-                                "check_internet_connection".tr,
-                                "ok".tr, () {
-                              Get.back();
-                            });
-                          } else {
                             await fileController.pickFile();
-                          }
                         }),
                     SizedBox(
                       height: 8.h,
@@ -162,7 +151,7 @@ class Homescreen extends StatelessWidget {
                     SizedBox(
                       height: 9.h,
                     ),
-                    fileController.getOutputFormat().isEmpty
+                    fileController.outputFormat.value.isEmpty
                         ? SvgPicture.asset(
                             "assets/icon/disabled/disabled_head_arrow.svg")
                         : SvgPicture.asset(
@@ -171,13 +160,13 @@ class Homescreen extends StatelessWidget {
                       height: 9.h,
                     ),
                     FromTo(
-                      text: fileController.getOutputFormat().isEmpty
+                      text: fileController.outputFormat.value.isEmpty
                           ? "-".tr
-                          : fileController.getOutputFormat(),
-                      textColor: fileController.getOutputFormat().isEmpty
+                          : fileController.outputFormat.value,
+                      textColor: fileController.outputFormat.value.isEmpty
                           ? AppColor.secondaryColor
                           : AppColor.whiteColor, // Use AppColor
-                      borderColor: fileController.getOutputFormat().isEmpty
+                      borderColor: fileController.outputFormat.value.isEmpty
                           ? AppColor.secondaryColor
                           : AppColor.whiteColor, // Use AppColor
                     ),
