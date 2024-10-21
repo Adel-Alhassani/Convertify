@@ -1,8 +1,11 @@
 import 'dart:io';
 
 import 'package:convertify/service/file_service.dart';
+import 'package:convertify/utils/format_utils.dart';
 import 'package:convertify/utils/network_utils.dart';
+import 'package:convertify/utils/permission_utils.dart';
 import 'package:convertify/view/widget/dialog/custome_dialog.dart';
+import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:get/get.dart';
@@ -10,6 +13,7 @@ import 'package:convertify/utils/validator_utils.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class FileController extends GetxController {
+  Dio dio = Dio();
   final FileService _fileService = FileService();
   RxBool isFilePicked = false.obs;
   RxBool isConverting = false.obs;
@@ -17,14 +21,45 @@ class FileController extends GetxController {
   RxBool isValidOutputFormatLoading = false.obs;
   RxMap<String, List<String>> validOutputFormats = <String, List<String>>{}.obs;
   RxString outputFormat = "".obs;
+  RxDouble downloadProgress = 0.0.obs;
+  // RxBool isDownloadComplete = false.obs;
+  RxBool isFileDownloading = false.obs;
   String? path;
   String? name;
   String? size;
   String? extension;
+  RxList files = [
+    {
+      "fileName": "Convertify_20241122562.docx",
+      "fileSize": "3.56 MB",
+      "fileType": "DOCX",
+      "fileStatu": "converting",
+    },
+    {
+      "fileName": "Convertify_hhhhhh.docx",
+      "fileSize": "7.56 MB",
+      "fileType": "PDF",
+      "fileStatu": "downloadable",
+    },
+    {
+      "fileName": "Convertify_aaaa62.docx",
+      "fileSize": "3.56 MB",
+      "fileType": "PNG",
+      "fileStatu": "complate",
+    },
+  ].obs;
+  RxList searchResult = <Map<String, String>>[].obs;
+
+  @override
+  void onInit() {
+    // Get called when controller is created
+    print(searchResult.isEmpty);
+    super.onInit();
+  }
 
   pickFile() async {
     try {
-      if (! await NetworkUtils.checkInternet()) {
+      if (!await NetworkUtils.checkInternet()) {
         return;
       }
       outputFormat.value = "";
@@ -40,8 +75,8 @@ class FileController extends GetxController {
         }
 
         path = selectedFile.path;
-        name = ValidatorUtils.limitFileName(selectedFileInfo.name);
-        size = ValidatorUtils.formatFileSize(selectedFileInfo.size);
+        name = FormatUtils.formatFileName(selectedFileInfo.name);
+        size = FormatUtils.formatFileSizeWithUnits(selectedFileInfo.size);
         extension = selectedFileInfo.extension;
 
         isValidOutputFormatLoading.value = true;
@@ -92,17 +127,33 @@ class FileController extends GetxController {
   }
 
   void downloadFile() async {
-    var status = await Permission.storage.status;
-    if (!status.isGranted) {
-      await Permission.storage.request();
-    }
-    await FlutterDownloader.enqueue(
-      url: _fileService.getDownloadUrl(),
-      savedDir: await getAppDirectory(),
-      showNotification:
-          true, // show download progress in status bar (for Android)
-      openFileFromNotification: true,
-      // saveInPublicStorage: true
+    PermissionUtils.getStoragePermission();
+    DateTime now = DateTime.now();
+    String date =
+        "${now.year}${now.month}${now.day}${now.hour}${now.minute}${now.second}${now.millisecond}";
+    await dio.download(
+      _fileService.getDownloadUrl(),
+      "${await getAppDirectory()}/Convertify_$date.$outputFormat",
+      onReceiveProgress: (count, total) {
+        if (total != -1) {
+          downloadProgress.value = FormatUtils.formatFileSize(count / total);
+        }
+      },
     );
+    // await FlutterDownloader.enqueue(
+    //   url: _fileService.getDownloadUrl(),
+    //   savedDir: await getAppDirectory(),
+    //   showNotification:
+    //       true, // show download progress in status bar (for Android)
+    //   openFileFromNotification: true,
+    //   // saveInPublicStorage: true
+    // );
+  }
+
+  void searchFor(String value) {
+    searchResult.value =
+        files.where((i) => i["fileName"].toString().contains(value)).toList();
+    print(value);
+    print(searchResult.length);
   }
 }

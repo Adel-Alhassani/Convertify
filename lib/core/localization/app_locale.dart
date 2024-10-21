@@ -26,7 +26,10 @@ class AppLocale extends Translations {
           'coverting_error': 'An error occurred while converting the file!',
           'get_valid_output_formats_error': 'An error occurred while trying to get the valid output formats!',
           'unknown_error': 'An unknown error occurred!',
-          'format_unknown' : "File format is unknown!"
+          'format_unknown' : "File format is unknown!",
+          'my_files' : "My Files",
+          "search_in_files" : "Search for file...",
+          "no_converted_files" : "You didn’t converted any file.",
         },
         'ar': {
           'convert': 'تحويل',
@@ -48,7 +51,10 @@ class AppLocale extends Translations {
           'coverting_error': 'حدث خطأ أثناء تحويل الملف!',
           'get_valid_output_formats_error': 'حدث خطأ أثناء استرداد الصيغ المتاحة!',
           'unknown_error': 'حدث خطأ غير معروف!',
-          'format_unknown': "صيغة الملف غير معروفة!"
+          'format_unknown': "صيغة الملف غير معروفة!",
+          'my_files' : "ملفاتي",
+          "search_in_files": "ابحث عن ملف...",
+          "no_converted_files": "لم تحوّل أي ملف.",
         },
       };
 }

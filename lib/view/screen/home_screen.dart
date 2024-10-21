@@ -17,10 +17,10 @@ import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:percent_indicator/circular_percent_indicator.dart';
 
 class Homescreen extends StatelessWidget {
   const Homescreen({super.key});
-
   @override
   Widget build(BuildContext context) {
     final FileController fileController = Get.put(FileController());
@@ -42,39 +42,56 @@ class Homescreen extends StatelessWidget {
                     height: 717.h,
                   ),
                 ),
-                Obx(() => PrimaryButtonWithLoading(
-                    text: "convert".tr,
-                    minWidth: 170.w,
-                    height: 47.h,
-                    disabled:
-                        fileController.outputFormat.value.isEmpty ? true : false,
-                    isLoading: false,
-                    loadingWidgetColor: AppColor.whiteColor,
-                    btnColor: fileController.outputFormat.value.isEmpty
-                        ? AppColor.secondaryColor
-                        : AppColor.primaryColor, // Use AppColor
-                    textColor: fileController.outputFormat.value.isEmpty
-                        ? AppColor.tertiaryColor
-                        : AppColor.whiteColor, // Use AppColor
-                    onPressed: () async {
-                      if (await fileController.convertFile()) {
-                        CustomBottomsheet.showSuccessWithBtnBottomsheet(
-                          "file_converted_successfully".tr,
-                          "download".tr,
-                          "click_to_download".tr,
-                          "download".tr,
-                          () {
-                            fileController.downloadFile();
-                            Get.back();
-                          },
-                        );
-                      } else {
-                        CustomeDialog.showConfirmDialog(
-                            "error".tr, "coverting_error".tr, "ok".tr, () {
-                          Get.back();
-                        });
-                      }
-                    }))
+                Obx(() => Column(
+                      children: [
+                        PrimaryButtonWithLoading(
+                            text: "convert".tr,
+                            minWidth: 170.w,
+                            height: 47.h,
+                            disabled: fileController.outputFormat.value.isEmpty
+                                ? true
+                                : false,
+                            isLoading: false,
+                            loadingWidgetColor: AppColor.whiteColor,
+                            btnColor: fileController.outputFormat.value.isEmpty
+                                ? AppColor.secondaryColor
+                                : AppColor.primaryColor, // Use AppColor
+                            textColor: fileController.outputFormat.value.isEmpty
+                                ? AppColor.tertiaryColor
+                                : AppColor.whiteColor, // Use AppColor
+                            onPressed: () async {
+                              if (await fileController.convertFile()) {
+                                CustomBottomsheet.showSuccessWithBtnBottomsheet(
+                                  "file_converted_successfully".tr,
+                                  "download".tr,
+                                  "click_to_download".tr,
+                                  "download".tr,
+                                  () {
+                                    fileController.downloadFile();
+                                    Get.back();
+                                  },
+                                );
+                              } else {
+                                CustomeDialog.showConfirmDialog(
+                                    "error".tr, "coverting_error".tr, "ok".tr,
+                                    () {
+                                  Get.back();
+                                });
+                              }
+                            }),
+                        SizedBox(
+                          height: 10.h,
+                        ),
+                        CircularPercentIndicator(
+                          radius: 40.0.r,
+                          lineWidth: 5.0.w,
+                          percent: fileController.downloadProgress.value,
+                          center: Text(
+                              "${(fileController.downloadProgress.value * 100).toInt()}%"),
+                          progressColor: AppColor.secondaryColor,
+                        )
+                      ],
+                    ))
               ],
             ),
           ),
@@ -91,16 +108,14 @@ class Homescreen extends StatelessWidget {
                     PickFile(
                         content: "tap_here_to_pick_file".tr,
                         onTap: () async {
-                            await fileController.pickFile();
+                          await fileController.pickFile();
                         }),
                     SizedBox(
                       height: 8.h,
                     ),
-                  
-                       FileInfo(
-                            fileName: fileController.name?? "",
-                            fileSize: fileController.size?? ""),
-                        
+                    FileInfo(
+                        fileName: fileController.name ?? "",
+                        fileSize: fileController.size ?? ""),
                     SizedBox(
                       height: 28.h,
                     ),

@@ -3,6 +3,7 @@ import 'package:convertify/core/constant/app_theme.dart';
 import 'package:convertify/core/localization/app_locale.dart';
 import 'package:convertify/service/init_services.dart';
 import 'package:convertify/view/screen/home_screen.dart';
+import 'package:convertify/view/screen/my_files_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -27,16 +28,17 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     ConfigController configController = Get.put(ConfigController());
     return ScreenUtilInit(
-        designSize: const Size(430, 932),
-        minTextAdapt: true,
-        splitScreenMode: true,
-        builder: (context, child) => GetMaterialApp(
-          locale: configController.getLocale(),
-          theme: configController.getAppTheme(),
-          translations: AppLocale(),
-          debugShowCheckedModeBanner: false,
-          home: child,
-        ),
-        child: const Homescreen(),);
+      designSize: const Size(430, 932),
+      minTextAdapt: true,
+      splitScreenMode: true,
+      builder: (context, child) => GetMaterialApp(
+        locale: configController.getLocale(),
+        theme: configController.getAppTheme(),
+        translations: AppLocale(),
+        debugShowCheckedModeBanner: false,
+        home: child,
+      ),
+      child: const MyFilesScreen(),
+    );
   }
 }
