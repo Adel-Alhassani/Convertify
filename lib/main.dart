@@ -4,6 +4,7 @@ import 'package:convertify/core/localization/app_locale.dart';
 import 'package:convertify/service/init_services.dart';
 import 'package:convertify/view/screen/home_screen.dart';
 import 'package:convertify/view/screen/my_files_screen.dart';
+import 'package:convertify/view/widget/bottom_nav_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -38,7 +39,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         home: child,
       ),
-      child: const MyFilesScreen(),
+      child: const BottomNavBar(),
     );
   }
 }

@@ -19,8 +19,8 @@ import 'package:get/get.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
-class Homescreen extends StatelessWidget {
-  const Homescreen({super.key});
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
   @override
   Widget build(BuildContext context) {
     final FileController fileController = Get.put(FileController());
@@ -30,7 +30,9 @@ class Homescreen extends StatelessWidget {
         children: [
           Container(
             color: AppColor.whiteColor, // Use AppColor
-            child: Column(
+            child: ListView(
+              physics: NeverScrollableScrollPhysics(),
+              padding: EdgeInsets.all(0),
               children: [
                 Container(
                     height: statusBarHeight,
@@ -79,17 +81,17 @@ class Homescreen extends StatelessWidget {
                                 });
                               }
                             }),
-                        SizedBox(
-                          height: 10.h,
-                        ),
-                        CircularPercentIndicator(
-                          radius: 40.0.r,
-                          lineWidth: 5.0.w,
-                          percent: fileController.downloadProgress.value,
-                          center: Text(
-                              "${(fileController.downloadProgress.value * 100).toInt()}%"),
-                          progressColor: AppColor.secondaryColor,
-                        )
+                        // SizedBox(
+                        //   height: 10.h,
+                        // ),
+                        // CircularPercentIndicator(
+                        //   radius: 40.0.r,
+                        //   lineWidth: 5.0.w,
+                        //   percent: fileController.downloadProgress.value,
+                        //   center: Text(
+                        //       "${(fileController.downloadProgress.value * 100).toInt()}%"),
+                        //   progressColor: AppColor.secondaryColor,
+                        // )
                       ],
                     ))
               ],

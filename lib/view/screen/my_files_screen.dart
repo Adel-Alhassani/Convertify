@@ -14,7 +14,7 @@ class MyFilesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    FileController fileController = Get.put(FileController());
+    FileController fileController = Get.find();
     final double statusBarHeight = MediaQuery.of(context).viewPadding.top;
     return Scaffold(
       body: Obx(() => Container(
