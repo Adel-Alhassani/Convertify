@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:convertify/core/constant/app_Images.dart';
 import 'package:convertify/core/constant/app_color.dart';
 import 'package:convertify/controller/file_controller.dart';
 import 'package:convertify/view/widget/bottomsheet/custom_bottomsheet.dart';
@@ -136,10 +137,8 @@ class HomeScreen extends StatelessWidget {
                       height: 9.h,
                     ),
                     fileController.isFilePicked.value
-                        ? SvgPicture.asset(
-                            "assets/icon/enabled/enabled_bottom_arrow.svg")
-                        : SvgPicture.asset(
-                            "assets/icon/disabled/disabled_bottom_arrow.svg"),
+                        ? AppImages.enabledBottomArrowIcon
+                        : AppImages.disabledBottomArrowIcon,
                     SizedBox(
                       height: 9.h,
                     ),
@@ -169,10 +168,8 @@ class HomeScreen extends StatelessWidget {
                       height: 9.h,
                     ),
                     fileController.outputFormat.value.isEmpty
-                        ? SvgPicture.asset(
-                            "assets/icon/disabled/disabled_head_arrow.svg")
-                        : SvgPicture.asset(
-                            "assets/icon/enabled/enabled_head_arrow.svg"),
+                        ? AppImages.disabledHeadArrowIcon
+                        : AppImages.enabledHeadArrowIcon,
                     SizedBox(
                       height: 9.h,
                     ),

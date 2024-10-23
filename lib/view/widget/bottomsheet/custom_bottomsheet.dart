@@ -1,3 +1,4 @@
+import 'package:convertify/core/constant/app_Images.dart';
 import 'package:convertify/core/constant/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -19,7 +20,7 @@ class CustomBottomsheet {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SvgPicture.asset("assets/icon/file_success.svg"),
+          AppImages.fileSuccessIcon,
           SizedBox(
             height: 29.h,
           ),

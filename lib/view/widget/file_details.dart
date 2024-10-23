@@ -1,3 +1,4 @@
+import 'package:convertify/core/constant/app_Images.dart';
 import 'package:convertify/core/constant/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -26,7 +27,7 @@ class FileDetails extends StatelessWidget {
             Stack(
               alignment: AlignmentDirectional.center,
               children: [
-                SvgPicture.asset("assets/icon/empty_file.svg"),
+                AppImages.emptyFile,
                 Container(
                   width: 32.w,
                   height: 50.h,
@@ -72,7 +73,7 @@ class FileDetails extends StatelessWidget {
           height: 0,
           splashColor: Colors.blue,
           onPressed: () {},
-          child: SvgPicture.asset("assets/icon/converting.svg"),
+          child: AppImages.converting,
         )
       ],
     );

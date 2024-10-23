@@ -1,3 +1,4 @@
+import 'package:convertify/core/constant/app_Images.dart';
 import 'package:convertify/core/constant/app_color.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
@@ -35,11 +36,7 @@ class PickFile extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SvgPicture.asset(
-                    "assets/icon/add_file.svg",
-                    height: 65.h,
-                    width: 65.w,
-                  ),
+                  AppImages.addFile,
                   SizedBox(
                     height: 17.h,
                   ),
