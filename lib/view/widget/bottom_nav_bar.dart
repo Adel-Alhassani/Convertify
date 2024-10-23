@@ -1,8 +1,10 @@
+import 'package:convertify/controller/file_controller.dart';
 import 'package:convertify/core/constant/app_color.dart';
 import 'package:convertify/view/screen/home_screen.dart';
 import 'package:convertify/view/screen/my_files_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 
 class BottomNavBar extends StatefulWidget {
@@ -53,40 +55,41 @@ class _BottomNavBarState extends State<BottomNavBar> {
 
   @override
   Widget build(BuildContext context) {
-    return PersistentTabView(
-      context,
-      controller: _controller,
-      screens: _buildScreens(),
-      items: _navBarsItems(),
-      
-      handleAndroidBackButtonPress: true, // Default is true.
-      resizeToAvoidBottomInset:
-          true, // This needs to be true if you want to move up the screen on a non-scrollable screen when keyboard appears. Default is true.
-      stateManagement: true, // Default is true.
-      hideNavigationBarWhenKeyboardAppears: true,
-      // popBehaviorOnSelectedNavBarItemPress: PopActionScreensType.all,
-      // padding: const EdgeInsets.only(top: 8),
-      // bottomScreenMargin: 25.h,
-
-      backgroundColor: AppColor.whiteColor,
-      isVisible: true,
-      animationSettings: const NavBarAnimationSettings(
-        navBarItemAnimation: ItemAnimationSettings(
-          // Navigation Bar's items animation properties.
-          duration: Duration(milliseconds: 300),
-          curve: Curves.ease,
-        ),
-        screenTransitionAnimation: ScreenTransitionAnimationSettings(
-          // Screen transition animation on change of selected tab.
-          animateTabTransition: true,
-          duration: Duration(milliseconds: 300),
-          screenTransitionAnimationType: ScreenTransitionAnimationType.slide,
-        ),
-      ),
-      confineToSafeArea: true,
-      navBarHeight: kBottomNavigationBarHeight,
-      navBarStyle:
-          NavBarStyle.style2, // Choose the nav bar style with this property
-    );
+    FileController fileController = Get.find();
+    return Obx(() => PersistentTabView(
+          context,
+          controller: _controller,
+          screens: _buildScreens(),
+          items: _navBarsItems(),
+          handleAndroidBackButtonPress: true, // Default is true.
+          resizeToAvoidBottomInset:
+              true, // This needs to be true if you want to move up the screen on a non-scrollable screen when keyboard appears. Default is true.
+          stateManagement: true, // Default is true.
+          hideNavigationBarWhenKeyboardAppears: true,
+          // popBehaviorOnSelectedNavBarItemPress: PopActionScreensType.all,
+          // padding: const EdgeInsets.only(top: 8),
+          // bottomScreenMargin: 25.h,
+          
+          backgroundColor: AppColor.whiteColor,
+          isVisible: fileController.isConverting.value? false : true,
+          animationSettings: const NavBarAnimationSettings(
+            navBarItemAnimation: ItemAnimationSettings(
+              // Navigation Bar's items animation properties.
+              duration: Duration(milliseconds: 300),
+              curve: Curves.ease,
+            ),
+            screenTransitionAnimation: ScreenTransitionAnimationSettings(
+              // Screen transition animation on change of selected tab.
+              animateTabTransition: true,
+              duration: Duration(milliseconds: 300),
+              screenTransitionAnimationType:
+                  ScreenTransitionAnimationType.slide,
+            ),
+          ),
+          confineToSafeArea: true,
+          navBarHeight: kBottomNavigationBarHeight,
+          navBarStyle:
+              NavBarStyle.style2, // Choose the nav bar style with this property
+        ));
   }
 }

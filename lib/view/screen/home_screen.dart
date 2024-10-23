@@ -24,7 +24,7 @@ class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
   @override
   Widget build(BuildContext context) {
-    final FileController fileController = Get.put(FileController());
+    final FileController fileController = Get.find();
     final double statusBarHeight = MediaQuery.of(context).viewPadding.top;
     return Scaffold(
       body: Stack(
