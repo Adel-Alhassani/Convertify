@@ -55,8 +55,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
 
   @override
   Widget build(BuildContext context) {
-    FileController fileController = Get.find();
-    return Obx(() => PersistentTabView(
+    return PersistentTabView(
           context,
           controller: _controller,
           screens: _buildScreens(),
@@ -71,7 +70,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
           // bottomScreenMargin: 25.h,
           
           backgroundColor: AppColor.whiteColor,
-          isVisible: fileController.isConverting.value? false : true,
+          isVisible: true,
           animationSettings: const NavBarAnimationSettings(
             navBarItemAnimation: ItemAnimationSettings(
               // Navigation Bar's items animation properties.
@@ -90,6 +89,6 @@ class _BottomNavBarState extends State<BottomNavBar> {
           navBarHeight: kBottomNavigationBarHeight,
           navBarStyle:
               NavBarStyle.style2, // Choose the nav bar style with this property
-        ));
+        );
   }
 }

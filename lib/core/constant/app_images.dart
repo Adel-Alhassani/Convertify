@@ -21,4 +21,6 @@ class AppImages {
     height: 65.h,
     width: 65.w,
   );
+  static final SvgPicture downloadIcon =
+      SvgPicture.asset("assets/icon/download.svg");
 }

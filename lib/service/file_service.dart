@@ -194,4 +194,37 @@ class FileService {
     print("downlaod url is: $_downloadUrl");
     return _downloadUrl;
   }
+
+  Future<int> getFileSize() async {
+    try {
+      // Send a HEAD request to get only headers
+      var response = await http.head(Uri.parse(getDownloadUrl()));
+
+      if (response.statusCode == 200) {
+        // Check if 'Content-Length' header exists
+        if (response.headers.containsKey('content-length')) {
+          // Get the file size from the 'Content-Length' header
+          String? contentLength = response.headers['content-length'];
+          if (contentLength != null) {
+            int fileSize = int.parse(contentLength);
+            print('File size: $fileSize bytes');
+            return fileSize;
+          } else {
+            print("Content-Length found, but it's null");
+            return 0;
+          }
+        } else {
+          print('Content-Length header not found.');
+          return 0;
+        }
+      } else {
+        print(
+            'Failed to fetch file headers. Status code: ${response.statusCode}');
+        return 0;
+      }
+    } catch (e) {
+      print("Error: failed to get the size of the file");
+      return 0;
+    }
+  }
 }

@@ -5,15 +5,15 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 
 class FileDetails extends StatelessWidget {
-  final String fileType;
   final String fileName;
   final String fileSize;
-  final String fileStatuIcon;
+  final String fileExtension;
+  final SvgPicture fileStatuIcon;
   const FileDetails({
     super.key,
-    required this.fileType,
     required this.fileName,
     required this.fileSize,
+    required this.fileExtension,
     required this.fileStatuIcon,
   });
 
@@ -34,7 +34,7 @@ class FileDetails extends StatelessWidget {
                   // color: Colors.amber,
                   child: Center(
                     child: Text(
-                      fileType,
+                      fileExtension,
                       style: TextStyle(
                           fontFamily: "Inter",
                           fontWeight: FontWeight.w900,
@@ -73,7 +73,7 @@ class FileDetails extends StatelessWidget {
           height: 0,
           splashColor: Colors.blue,
           onPressed: () {},
-          child: AppImages.converting,
+          child: fileStatuIcon,
         )
       ],
     );

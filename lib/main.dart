@@ -1,7 +1,7 @@
 import 'package:convertify/controller/config_controller.dart';
 import 'package:convertify/core/constant/app_theme.dart';
 import 'package:convertify/core/localization/app_locale.dart';
-import 'package:convertify/service/init_services.dart';
+import 'package:convertify/service/setting_services.dart';
 import 'package:convertify/view/screen/home_screen.dart';
 import 'package:convertify/view/screen/my_files_screen.dart';
 import 'package:convertify/view/widget/bottom_nav_bar.dart';
@@ -17,7 +17,7 @@ void main() async {
 
 Future initServices() async {
   await Get.putAsync(
-    () => InitServices().init(),
+    () => SettingServices().init(),
   );
 }
 

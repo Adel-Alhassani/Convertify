@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:convertify/core/constant/app_Images.dart';
 import 'package:convertify/core/constant/app_color.dart';
 import 'package:convertify/controller/file_controller.dart';
+import 'package:convertify/view/screen/my_files_screen.dart';
 import 'package:convertify/view/widget/bottomsheet/custom_bottomsheet.dart';
 import 'package:convertify/view/widget/dialog/button_collection_dialog.dart';
 import 'package:convertify/view/widget/button/primary_button_with_loading.dart';
@@ -24,7 +25,7 @@ class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
   @override
   Widget build(BuildContext context) {
-    final FileController fileController = Get.find();
+    final FileController fileController = Get.put(FileController());
     final double statusBarHeight = MediaQuery.of(context).viewPadding.top;
     return Scaffold(
       body: Stack(
@@ -51,29 +52,36 @@ class HomeScreen extends StatelessWidget {
                             text: "convert".tr,
                             minWidth: 170.w,
                             height: 47.h,
-                            disabled: fileController.outputFormat.value.isEmpty
+                            disabled: (fileController
+                                        .outputFormat.value.isEmpty ||
+                                    fileController.isConverting.value == true)
                                 ? true
                                 : false,
                             isLoading: false,
                             loadingWidgetColor: AppColor.whiteColor,
-                            btnColor: fileController.outputFormat.value.isEmpty
+                            btnColor: (fileController
+                                        .outputFormat.value.isEmpty ||
+                                    fileController.isConverting.value == true)
                                 ? AppColor.secondaryColor
                                 : AppColor.primaryColor, // Use AppColor
-                            textColor: fileController.outputFormat.value.isEmpty
+                            textColor: (fileController
+                                        .outputFormat.value.isEmpty ||
+                                    fileController.isConverting.value == true)
                                 ? AppColor.tertiaryColor
                                 : AppColor.whiteColor, // Use AppColor
                             onPressed: () async {
+                              // Get.to(const MyFilesScreen());
                               if (await fileController.convertFile()) {
-                                CustomBottomsheet.showSuccessWithBtnBottomsheet(
-                                  "file_converted_successfully".tr,
-                                  "download".tr,
-                                  "click_to_download".tr,
-                                  "download".tr,
-                                  () {
-                                    fileController.downloadFile();
-                                    Get.back();
-                                  },
-                                );
+                                // CustomBottomsheet.showSuccessWithBtnBottomsheet(
+                                //   "file_converted_successfully".tr,
+                                //   "download".tr,
+                                //   "click_to_download".tr,
+                                //   "download".tr,
+                                //   () {
+                                //     fileController.downloadFile();
+                                //     Get.back();
+                                //   },
+                                // );
                               } else {
                                 CustomeDialog.showConfirmDialog(
                                     "error".tr, "coverting_error".tr, "ok".tr,
@@ -192,16 +200,16 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
           ),
-          Obx(() => fileController.isConverting.value
-              ? IgnorePointer(
-                  ignoring: false,
-                  child: Container(
-                    color: AppColor.blackColor.withOpacity(0.7),
-                    child: Center(
-                        child: LoadingAnimationWidget.waveDots(
-                            color: AppColor.primaryColor, size: 50.w)),
-                  ))
-              : const SizedBox.shrink())
+          // Obx(() => fileController.isConverting.value
+          //     ? IgnorePointer(
+          //         ignoring: false,
+          //         child: Container(
+          //           color: AppColor.blackColor.withOpacity(0.7),
+          //           child: Center(
+          //               child: LoadingAnimationWidget.waveDots(
+          //                   color: AppColor.primaryColor, size: 50.w)),
+          //         ))
+          //     : const SizedBox.shrink())
         ],
       ),
     );
