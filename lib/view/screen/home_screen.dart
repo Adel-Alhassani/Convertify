@@ -52,42 +52,38 @@ class HomeScreen extends StatelessWidget {
                             text: "convert".tr,
                             minWidth: 170.w,
                             height: 47.h,
-                            disabled: (fileController
-                                        .outputFormat.value.isEmpty ||
-                                    fileController.isConverting.value == true)
-                                ? true
-                                : false,
-                            isLoading: false,
+                            disabled:
+                                (fileController.outputFormat.value.isEmpty ||
+                                        fileController.isFileUploading.value ==
+                                            true)
+                                    ? true
+                                    : false,
+                            isLoading:
+                                fileController.isFileUploading.value == true
+                                    ? true
+                                    : false,
                             loadingWidgetColor: AppColor.whiteColor,
-                            btnColor: (fileController
-                                        .outputFormat.value.isEmpty ||
-                                    fileController.isConverting.value == true)
-                                ? AppColor.secondaryColor
-                                : AppColor.primaryColor, // Use AppColor
+                            btnColor:
+                                (fileController.outputFormat.value.isEmpty ||
+                                        fileController.isFileUploading.value ==
+                                            true)
+                                    ? AppColor.secondaryColor
+                                    : AppColor.primaryColor, // Use AppColor
                             textColor: (fileController
                                         .outputFormat.value.isEmpty ||
-                                    fileController.isConverting.value == true)
+                                    fileController.isFileUploading.value ==
+                                        true)
                                 ? AppColor.tertiaryColor
                                 : AppColor.whiteColor, // Use AppColor
                             onPressed: () async {
-                              // Get.to(const MyFilesScreen());
                               if (await fileController.convertFile()) {
-                                // CustomBottomsheet.showSuccessWithBtnBottomsheet(
-                                //   "file_converted_successfully".tr,
-                                //   "download".tr,
-                                //   "click_to_download".tr,
-                                //   "download".tr,
-                                //   () {
-                                //     fileController.downloadFile();
-                                //     Get.back();
-                                //   },
-                                // );
+                                Get.to(const MyFilesScreen());
                               } else {
-                                CustomeDialog.showConfirmDialog(
-                                    "error".tr, "coverting_error".tr, "ok".tr,
-                                    () {
-                                  Get.back();
-                                });
+                                // CustomeDialog.showConfirmDialog(
+                                //     "error".tr, "coverting_error".tr, "ok".tr,
+                                //     () {
+                                //   Get.back();
+                                // });
                               }
                             }),
                         // SizedBox(

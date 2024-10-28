@@ -35,8 +35,7 @@ class FormatUtils {
     }
   }
 
-  static String formatFileName(String name) {
-    int lengthLimit = 12;
+  static String formatFileName(String name, int lengthLimit) {
     if (name.length <= lengthLimit) {
       return name;
     } else {

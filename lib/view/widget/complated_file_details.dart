@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 
-class FileDetails extends StatelessWidget {
+class ComplatedFileDetails extends StatelessWidget {
   final String fileName;
   final String fileSize;
   final String fileExtension;
   final SvgPicture fileStatuIcon;
-  const FileDetails({
+  const ComplatedFileDetails({
     super.key,
     required this.fileName,
     required this.fileSize,

@@ -44,7 +44,7 @@ class FileService {
     }
   }
 
-  Future<bool> convert(
+  Future<String> convert(
     String filePath,
     String inputFormat,
     String outputFormat,
@@ -55,9 +55,6 @@ class FileService {
     // API endpoint for creating a job
     try {
       final String url = 'https://api.cloudconvert.com/v2/jobs';
-      //    DateTime now = DateTime.now();
-      // String date =
-      //     "${now.year}${now.month}${now.day}${now.hour}${now.minute}${now.second}${now.millisecond}";
 
       // Define the headers including your API key
       final headers = {
@@ -76,7 +73,6 @@ class FileService {
             "input": "import-a2",
             "input_format": inputFormat,
             "output_format": outputFormat,
-            // "filename" : "Convertify_$date.$outputFormat",
           },
           "export-a2": {
             "operation": "export/url",
@@ -104,22 +100,21 @@ class FileService {
         if (await uploadFile(uploadUrl, parameters, filePath)) {
           // Now we wait for the job to complete and download the file
           final String jobId = data['id'];
-          _downloadUrl = await _getFileDownloadUrlFromAPI(jobId);
-          if (_downloadUrl.isEmpty) {
-            return false;
-          }
-          return true;
+          // _downloadUrl = await _getFileDownloadUrl(jobId);
+          // if (_downloadUrl.isEmpty) {
+          //   return false;
+          // }
+          return jobId;
         } else {
-          return false;
+          return "";
         }
       } else {
         print('Failed to create job: ${response.statusCode}');
-        return false;
+        return "";
       }
     } catch (e) {
       print("Error while converting $e");
-
-      return false;
+      return "";
     }
   }
 
@@ -152,7 +147,7 @@ class FileService {
     }
   }
 
-  Future<String> _getFileDownloadUrlFromAPI(String jobId) async {
+  Future<String> getFileDownloadUrl(String jobId) async {
     try {
       final String jobStatusUrl = 'https://api.cloudconvert.com/v2/jobs/$jobId';
       final headers = {
@@ -190,15 +185,15 @@ class FileService {
     }
   }
 
-  String getDownloadUrl() {
-    print("downlaod url is: $_downloadUrl");
-    return _downloadUrl;
-  }
+  // String getDownloadUrl() {
+  //   print("downlaod url is: $_downloadUrl");
+  //   return _downloadUrl;
+  // }
 
-  Future<int> getFileSize() async {
+  Future<int> getFileSize(String fileUrl) async {
     try {
       // Send a HEAD request to get only headers
-      var response = await http.head(Uri.parse(getDownloadUrl()));
+      var response = await http.head(Uri.parse(fileUrl));
 
       if (response.statusCode == 200) {
         // Check if 'Content-Length' header exists

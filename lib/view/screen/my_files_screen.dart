@@ -4,7 +4,9 @@ import 'package:convertify/controller/file_controller.dart';
 import 'package:convertify/core/constant/app_color.dart';
 import 'package:convertify/core/constant/app_images.dart';
 import 'package:convertify/core/enums/file_statu.dart';
-import 'package:convertify/view/widget/file_details.dart';
+import 'package:convertify/view/widget/converting_file_details.dart';
+import 'package:convertify/view/widget/downloadable_file_details.dart';
+import 'package:convertify/view/widget/complated_file_details.dart';
 import 'package:convertify/view/widget/search_file_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -50,11 +52,12 @@ class MyFilesScreen extends StatelessWidget {
               ),
               fileController.convertingFile.isEmpty
                   ? Text("No Converting file")
-                  : FileDetails(
+                  : ConvertingFileDetails(
                       fileName: fileController.convertingFile["fileName"],
                       fileSize: fileController.convertingFile["fileSize"],
-                      fileExtension:  fileController.convertingFile["fileExtension"],
-                      fileStatuIcon: AppImages.converting),
+                      fileExtension:
+                          fileController.convertingFile["fileExtension"],
+                    ),
               SizedBox(
                 height: 20.h,
               ),
@@ -65,11 +68,18 @@ class MyFilesScreen extends StatelessWidget {
               ),
               fileController.downloadableFile.isEmpty
                   ? Text("No downloadable file")
-                  : FileDetails(
+                  : DownloadableFileDetails(
                       fileName: fileController.downloadableFile["fileName"],
                       fileSize: fileController.downloadableFile["fileSize"],
-                      fileExtension:  fileController.downloadableFile["fileExtension"],
-                      fileStatuIcon: AppImages.downloadIcon)
+                      fileExtension:
+                          fileController.downloadableFile["fileExtension"],
+                      onPressed: () {
+                        fileController.downloadFile(
+                          fileController.downloadableFile["fileName"],
+                          fileController.downloadableFile["fileDownloadUrl"]
+                        );
+                      },
+                    )
 
               // Container(
               //     // color: Colors.amber,
