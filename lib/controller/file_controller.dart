@@ -17,7 +17,7 @@ import 'package:convertify/utils/validator_utils.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class FileController extends GetxController {
-  Dio _dio = Dio();
+  final Dio _dio = Dio();
   final FileService _fileService = FileService();
   final SettingServices settingServicesController = Get.find();
   RxBool isFilePicked = false.obs;
@@ -240,11 +240,29 @@ class FileController extends GetxController {
     }
   }
 
+  Future<bool> isFileAlreadyDownloaded(String filName) async {
+    final String dir = await getAppDirectory();
+    if (dir.isNotEmpty) {
+      final String filePath = "$dir/$filName";
+      return await File(filePath).exists();
+    }
+    print("*** dir is empty");
+    return false;
+  }
+
   void downloadFile(String fileName, String downloadUrl) async {
     PermissionUtils.getStoragePermission();
+    // if (await isFileAlreadyDownloaded(fileName)) {
+    //   CustomeDialog.showConfirmDialog(
+    //       "error".tr, "file_already_downloaded".tr, "ok".tr, () {
+    //     Get.back();
+    //   });
+    //   return;
+    // }
     String fileDownloadUrl = downloadUrl;
     print("in downloadFile fileName is: $fileName");
     print("fileDownloadUrl is: $fileDownloadUrl".substring(0, 35));
+    isFileDownloading.value = true;
     await _dio.download(
       fileDownloadUrl,
       "${await getAppDirectory()}/$fileName",
@@ -254,6 +272,7 @@ class FileController extends GetxController {
         }
       },
     );
+    isFileDownloading.value = false;
     // await FlutterDownloader.enqueue(
     //   url: _fileService.getDownloadUrl(),
     //   savedDir: await getAppDirectory(),

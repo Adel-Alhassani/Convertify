@@ -30,6 +30,7 @@ class AppLocale extends Translations {
           'my_files' : "My Files",
           "search_in_files" : "Search for file...",
           "no_converted_files" : "You didn’t converted any file.",
+          "file_already_downloaded" : "File is already downloaded.",
         },
         'ar': {
           'convert': 'تحويل',
@@ -55,6 +56,7 @@ class AppLocale extends Translations {
           'my_files' : "ملفاتي",
           "search_in_files": "ابحث عن ملف...",
           "no_converted_files": "لم تحوّل أي ملف.",
+          "file_already_downloaded": "الملف تم تحميله بالفعل.",
         },
       };
 }

@@ -73,11 +73,12 @@ class MyFilesScreen extends StatelessWidget {
                       fileSize: fileController.downloadableFile["fileSize"],
                       fileExtension:
                           fileController.downloadableFile["fileExtension"],
-                      onPressed: () {
+                      isDownloading: fileController.isFileDownloading.value,
+                      downloadingProgressValue: fileController.downloadProgress.value,
+                      onDownloadIconPressed: () {
                         fileController.downloadFile(
-                          fileController.downloadableFile["fileName"],
-                          fileController.downloadableFile["fileDownloadUrl"]
-                        );
+                            fileController.downloadableFile["fileName"],
+                            fileController.downloadableFile["fileDownloadUrl"]);
                       },
                     )
 

@@ -1,19 +1,26 @@
 import 'package:convertify/core/constant/app_Images.dart';
 import 'package:convertify/core/constant/app_color.dart';
+import 'package:convertify/utils/format_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:percent_indicator/circular_percent_indicator.dart';
 
 class DownloadableFileDetails extends StatelessWidget {
   final String fileName;
   final String fileSize;
   final String fileExtension;
-  final void Function()? onPressed;
+  final bool isDownloading;
+  final double downloadingProgressValue;
+  final void Function()? onDownloadIconPressed;
   const DownloadableFileDetails({
     super.key,
     required this.fileName,
     required this.fileSize,
-    required this.fileExtension, required this.onPressed,
+    required this.fileExtension,
+    required this.isDownloading,
+    required this.downloadingProgressValue,
+    required this.onDownloadIconPressed,
   });
 
   @override
@@ -33,7 +40,7 @@ class DownloadableFileDetails extends StatelessWidget {
                   // color: Colors.amber,
                   child: Center(
                     child: Text(
-                      fileExtension,
+                      FormatUtils.formatFileName(fileExtension, 25),
                       style: TextStyle(
                           fontFamily: "Inter",
                           fontWeight: FontWeight.w900,
@@ -66,13 +73,29 @@ class DownloadableFileDetails extends StatelessWidget {
             ),
           ],
         ),
-        MaterialButton(
-          padding: EdgeInsets.all(0),
-          minWidth: 0,
-          height: 0,
-          splashColor: Colors.blue,
-          onPressed: onPressed,
-          child: AppImages.downloadIcon,
+        CircularPercentIndicator(
+          radius: 20.0.r,
+          lineWidth: 2.0.w,
+          percent: isDownloading ? downloadingProgressValue : 1.0,
+          center: isDownloading
+              ? Text(
+                  "${(downloadingProgressValue * 100).toInt()}%",
+                  style: TextStyle(
+                      fontFamily: "Inter",
+                      fontSize: 10.sp,
+                      fontWeight: FontWeight.w900,
+                      color: AppColor.extraPrimaryColor),
+                )
+              : IconButton(
+                  alignment: Alignment.center,
+                  iconSize: 22.r,
+                  onPressed: onDownloadIconPressed,
+                  icon: const Icon(
+                    Icons.arrow_downward_rounded,
+                    color: AppColor.extraPrimaryColor,
+                    // weight: 8.w,
+                  )),
+          progressColor: AppColor.extraPrimaryColor,
         )
       ],
     );
