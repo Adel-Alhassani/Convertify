@@ -100,7 +100,7 @@ class DownloadableFileDetails extends StatelessWidget {
                   ],
                 )
               : IconButton(
-                  alignment: Alignment.center,
+                  padding: EdgeInsets.all(0),
                   iconSize: 22.r,
                   onPressed: onDownloadIconPressed,
                   icon: const Icon(

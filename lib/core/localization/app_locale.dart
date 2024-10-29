@@ -31,6 +31,9 @@ class AppLocale extends Translations {
           "search_in_files" : "Search for file...",
           "no_converted_files" : "You didn’t converted any file.",
           "file_already_downloaded" : "File is already downloaded.",
+          "donwloaded_complate" : "Download Complete",
+          "file_downloaded_successfully" : "file downloaded successfully in \n@appDir.",
+          "downloading_error" : "An error occurred while downloading the file!",
         },
         'ar': {
           'convert': 'تحويل',
@@ -57,6 +60,10 @@ class AppLocale extends Translations {
           "search_in_files": "ابحث عن ملف...",
           "no_converted_files": "لم تحوّل أي ملف.",
           "file_already_downloaded": "الملف تم تحميله بالفعل.",
+          "donwloaded_complate": "اكتمل التنزيل.",
+          "file_downloaded_successfully":
+              "\nتم تنزيل الملف بنجاح في @appDir.",
+              "downloading_error": "حدث خطأ أثناء تنزيل الملف!",
         },
       };
 }

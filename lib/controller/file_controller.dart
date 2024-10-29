@@ -41,7 +41,7 @@ class FileController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    _removeAllADateFromSharedPref();
+    // _removeAllADateFromSharedPref();
     loadDataFormSharedPref();
   }
 
@@ -250,47 +250,51 @@ class FileController extends GetxController {
     }
   }
 
-  Future<bool> isFileAlreadyDownloaded(String filName) async {
-    final String dir = await getAppDirectory();
-    if (dir.isNotEmpty) {
-      final String filePath = "$dir/$filName";
+  Future<bool> isFileAlreadyDownloaded(String filName, String directory) async {
+    if (directory.isNotEmpty) {
+      final String filePath = "$directory/$filName";
       return await File(filePath).exists();
     }
-    print("*** dir is empty");
+    print("*** directory is empty");
     return false;
   }
 
   void downloadFile(String fileName, String downloadUrl) async {
+    if (! await NetworkUtils.checkInternet()) {
+      return;
+    }
     PermissionUtils.getStoragePermission();
-    // if (await isFileAlreadyDownloaded(fileName)) {
-    //   CustomeDialog.showConfirmDialog(
-    //       "error".tr, "file_already_downloaded".tr, "ok".tr, () {
-    //     Get.back();
-    //   });
-    //   return;
-    // }
-    String fileDownloadUrl = downloadUrl;
+    final String fileDownloadUrl = downloadUrl;
+    final String appDir = await getAppDirectory();
     print("in downloadFile fileName is: $fileName");
     print("fileDownloadUrl is: $fileDownloadUrl".substring(0, 35));
     isFileDownloading.value = true;
-    await _dio.download(
-      fileDownloadUrl,
-      "${await getAppDirectory()}/$fileName",
-      onReceiveProgress: (count, total) {
-        if (total != -1) {
-          downloadProgress.value = FormatUtils.formatFileSize(count / total);
-        }
-      },
-    );
-    isFileDownloading.value = false;
-    // await FlutterDownloader.enqueue(
-    //   url: _fileService.getDownloadUrl(),
-    //   savedDir: await getAppDirectory(),
-    //   showNotification:
-    //       true, // show download progress in status bar (for Android)
-    //   openFileFromNotification: true,
-    //   // saveInPublicStorage: true
-    // );
+    try {
+      await _dio.download(
+        fileDownloadUrl,
+        "$appDir/$fileName",
+        onReceiveProgress: (count, total) {
+          if (total != -1) {
+            downloadProgress.value = FormatUtils.formatFileSize(count / total);
+          }
+        },
+      );
+    } catch (e) {
+      print("Error while downloading the file");
+      CustomeDialog.showConfirmDialog(
+          "error".tr, "downloading_error".tr, "ok".tr, () {
+        Get.back();
+      });
+      return;
+    } finally {
+      isFileDownloading.value = false;
+    }
+    CustomeDialog.showConfirmDialog(
+        "donwloaded_complate".tr,
+        "file_downloaded_successfully".trParams(({"appDir": appDir})),
+        "ok".tr, () {
+      Get.back();
+    });
   }
 
   // void searchFor(String value) {
