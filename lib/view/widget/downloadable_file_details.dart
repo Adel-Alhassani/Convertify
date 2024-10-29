@@ -74,17 +74,30 @@ class DownloadableFileDetails extends StatelessWidget {
           ],
         ),
         CircularPercentIndicator(
-          radius: 20.0.r,
+          radius: 18.0.r,
           lineWidth: 2.0.w,
           percent: isDownloading ? downloadingProgressValue : 1.0,
           center: isDownloading
-              ? Text(
-                  "${(downloadingProgressValue * 100).toInt()}%",
-                  style: TextStyle(
-                      fontFamily: "Inter",
-                      fontSize: 10.sp,
-                      fontWeight: FontWeight.w900,
-                      color: AppColor.extraPrimaryColor),
+              ? Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "${(downloadingProgressValue * 100).toInt()}",
+                      style: TextStyle(
+                          fontFamily: "Inter",
+                          fontSize: 10.sp,
+                          fontWeight: FontWeight.w900,
+                          color: AppColor.extraPrimaryColor),
+                    ),
+                    Text(
+                      "%",
+                      style: TextStyle(
+                          fontFamily: "Inter",
+                          fontSize: 8.sp,
+                          fontWeight: FontWeight.w900,
+                          color: AppColor.extraPrimaryColor),
+                    ),
+                  ],
                 )
               : IconButton(
                   alignment: Alignment.center,
