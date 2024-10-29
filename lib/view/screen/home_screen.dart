@@ -76,27 +76,8 @@ class HomeScreen extends StatelessWidget {
                                 ? AppColor.tertiaryColor
                                 : AppColor.whiteColor, // Use AppColor
                             onPressed: () async {
-                              if (await fileController.convertFile()) {
-                                Get.to(const MyFilesScreen());
-                              } else {
-                                // CustomeDialog.showConfirmDialog(
-                                //     "error".tr, "coverting_error".tr, "ok".tr,
-                                //     () {
-                                //   Get.back();
-                                // });
-                              }
-                            }),
-                        // SizedBox(
-                        //   height: 10.h,
-                        // ),
-                        // CircularPercentIndicator(
-                        //   radius: 40.0.r,
-                        //   lineWidth: 5.0.w,
-                        //   percent: fileController.downloadProgress.value,
-                        //   center: Text(
-                        //       "${(fileController.downloadProgress.value * 100).toInt()}%"),
-                        //   progressColor: AppColor.secondaryColor,
-                        // )
+                              await fileController.convertFile();
+                            })
                       ],
                     ))
               ],

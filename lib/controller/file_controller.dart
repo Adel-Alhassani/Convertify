@@ -95,21 +95,31 @@ class FileController extends GetxController {
     this.outputFormat.value = outputFormat;
   }
 
-  Future<bool> convertFile() async {
-    isFileUploading.value = true;
-    String jobId =
-        await _fileService.convert(path!, extension!, outputFormat.value);
-    isFileUploading.value = false;
-    if (jobId.isNotEmpty) {
-      await _storeConvertingFileData(jobId);
-      isFileConverting.value = true;
-      await _storeDownloadableFileData(await getDownloadUrl());
-      removeConvertingFileData();
-      isFileConverting.value = false;
-      return true;
-    } else {
-      print("jobId is empty");
-      return false;
+  Future<void> convertFile() async {
+    try {
+      isFileUploading.value = true;
+      String jobId =
+          await _fileService.convert(path!, extension!, outputFormat.value);
+      isFileUploading.value = false;
+      if (jobId.isNotEmpty) {
+        await _storeConvertingFileData(jobId);
+        isFileConverting.value = true;
+        await _storeDownloadableFileData(await getDownloadUrl());
+        removeConvertingFileData();
+        isFileConverting.value = false;
+      } else {
+        print("jobId is empty");
+        CustomeDialog.showConfirmDialog(
+            "error".tr, "coverting_error".tr, "ok".tr, () {
+          Get.back();
+        });
+      }
+    } catch (e) {
+      print("Error while converting $e");
+      CustomeDialog.showConfirmDialog("error".tr, "coverting_error".tr, "ok".tr,
+          () {
+        Get.back();
+      });
     }
   }
 
