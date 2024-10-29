@@ -70,7 +70,7 @@ class FileController extends GetxController {
         }
 
         path = selectedFile.path;
-        name = FormatUtils.formatFileName(selectedFileInfo.name, 15);
+        name = selectedFileInfo.name;
         size = FormatUtils.formatFileSizeWithUnits(selectedFileInfo.size);
         extension = selectedFileInfo.extension;
 
@@ -157,15 +157,15 @@ class FileController extends GetxController {
     if (downloadUrl.isEmpty) {
       return;
     }
-    String fileName =
-        "${GenerateUtils.generateNameWithDate("Convertify")}.$outputFormat";
+    // String fileName =
+    //     "${GenerateUtils.generateNameWithDate("Convertify")}.$outputFormat";
 
     String fileSize = FormatUtils.formatFileSizeWithUnits(
         await _fileService.getFileSize(downloadUrl));
     String fileExtension = outputFormat.value;
     String fileDownloadUrl = downloadUrl;
     Map<String, String> data = {
-      "fileName": fileName,
+      "fileName": name!,
       "fileSize": fileSize,
       "fileExtension": fileExtension,
       "fileDownloadUrl": fileDownloadUrl
@@ -260,7 +260,7 @@ class FileController extends GetxController {
   }
 
   void downloadFile(String fileName, String downloadUrl) async {
-    if (! await NetworkUtils.checkInternet()) {
+    if (!await NetworkUtils.checkInternet()) {
       return;
     }
     PermissionUtils.getStoragePermission();
@@ -280,7 +280,7 @@ class FileController extends GetxController {
         },
       );
     } catch (e) {
-      print("Error while downloading the file");
+      print("Error while downloading the file $e");
       CustomeDialog.showConfirmDialog(
           "error".tr, "downloading_error".tr, "ok".tr, () {
         Get.back();

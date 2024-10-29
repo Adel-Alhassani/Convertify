@@ -40,7 +40,7 @@ class DownloadableFileDetails extends StatelessWidget {
                   // color: Colors.amber,
                   child: Center(
                     child: Text(
-                      FormatUtils.formatFileName(fileExtension, 25),
+                      fileExtension,
                       style: TextStyle(
                           fontFamily: "Inter",
                           fontWeight: FontWeight.w900,
@@ -57,7 +57,7 @@ class DownloadableFileDetails extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(fileName,
+                Text(FormatUtils.formatFileName(fileName, 20),
                     style: TextStyle(
                       fontFamily: "Inter",
                       fontWeight: FontWeight.w700,

@@ -1,4 +1,5 @@
 import 'package:convertify/core/constant/app_color.dart';
+import 'package:convertify/utils/format_utils.dart';
 import 'package:convertify/view/screen/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -27,7 +28,7 @@ class FileInfo extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              fileName,
+              FormatUtils.formatFileName(fileName, 15),
               style: TextStyle(
                 fontFamily: "inter",
                 fontSize: 13.sp,
