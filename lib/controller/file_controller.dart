@@ -47,8 +47,14 @@ class FileController extends GetxController {
 
   Future<void> loadDataFormSharedPref() async {
     print("loading data");
-    await _getConvertingFileData();
-    await _getDownloadableFileDataFromSharedPref();
+    Map<String, dynamic> convertingData = await _getConvertingFileData();
+    if (convertingData.isNotEmpty) {
+      isFileConverting.value = true;
+      await _storeDownloadableFileData(await getDownloadUrl());
+      removeConvertingFileData();
+      isFileConverting.value = false;
+    }
+    await _loadDownloadableFileData();
     print("data laoded");
   }
 
@@ -103,6 +109,7 @@ class FileController extends GetxController {
       isFileUploading.value = false;
       if (jobId.isNotEmpty) {
         await _storeConvertingFileData(jobId);
+        exit(0);
         isFileConverting.value = true;
         await _storeDownloadableFileData(await getDownloadUrl());
         removeConvertingFileData();
@@ -144,10 +151,13 @@ class FileController extends GetxController {
     Map<String, String?> convertingFileData = {
       "fileName": name,
       "fileSize": size,
-      "fileExtension": extension,
-      "jobId": jobId
+      "inputFormat": extension,
+      "outputFormat": outputFormat.value,
+      "jobId": jobId,
     };
-    convertingFile.value = Map.from(convertingFileData)..remove("jobId");
+    convertingFile.value = Map.from(convertingFileData)
+      ..remove("outputFormat")
+      ..remove("jobId");
     await settingServicesController.sharedPreferences
         .setString("convertingFileData", jsonEncode(convertingFileData));
     print("set converting data to sharedPref");
@@ -157,18 +167,19 @@ class FileController extends GetxController {
     if (downloadUrl.isEmpty) {
       return;
     }
-    String fileName = FormatUtils.changeFileExtension(name!, outputFormat.value);
+    Map<String, dynamic> convertingFileData = await _getConvertingFileData();
+    String fileName = FormatUtils.changeFileExtension(
+        convertingFileData["fileName"]!, convertingFileData["outputFormat"]);
     //     "${GenerateUtils.generateNameWithDate("Convertify")}.$outputFormat";
 
     String fileSize = FormatUtils.formatFileSizeWithUnits(
         await _fileService.getFileSize(downloadUrl));
-    String fileExtension = outputFormat.value;
+    String fileOutputFormat = convertingFileData["outputFormat"];
     String fileDownloadUrl = downloadUrl;
-    print("----- name is $name ");
     Map<String, String> data = {
       "fileName": fileName,
       "fileSize": fileSize,
-      "fileExtension": fileExtension,
+      "outputFormat": fileOutputFormat,
       "fileDownloadUrl": fileDownloadUrl
     };
     downloadableFile.value = data;
@@ -196,7 +207,7 @@ class FileController extends GetxController {
     return data;
   }
 
-  Future<void> _getDownloadableFileDataFromSharedPref() async {
+  Future<void> _loadDownloadableFileData() async {
     if (settingServicesController.sharedPreferences
             .getString("downloadableData") !=
         null) {

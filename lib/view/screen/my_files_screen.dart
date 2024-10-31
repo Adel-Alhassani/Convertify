@@ -56,7 +56,7 @@ class MyFilesScreen extends StatelessWidget {
                       fileName: fileController.convertingFile["fileName"],
                       fileSize: fileController.convertingFile["fileSize"],
                       fileExtension:
-                          fileController.convertingFile["fileExtension"],
+                          fileController.convertingFile["inputFormat"],
                     ),
               SizedBox(
                 height: 20.h,
@@ -72,7 +72,7 @@ class MyFilesScreen extends StatelessWidget {
                       fileName: fileController.downloadableFile["fileName"],
                       fileSize: fileController.downloadableFile["fileSize"],
                       fileExtension:
-                          fileController.downloadableFile["fileExtension"],
+                          fileController.downloadableFile["outputFormat"],
                       isDownloading: fileController.isFileDownloading.value,
                       downloadingProgressValue: fileController.downloadProgress.value,
                       onDownloadIconPressed: () {
