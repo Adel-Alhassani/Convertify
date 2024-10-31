@@ -157,15 +157,16 @@ class FileController extends GetxController {
     if (downloadUrl.isEmpty) {
       return;
     }
-    // String fileName =
+    String fileName = FormatUtils.changeFileExtension(name!, outputFormat.value);
     //     "${GenerateUtils.generateNameWithDate("Convertify")}.$outputFormat";
 
     String fileSize = FormatUtils.formatFileSizeWithUnits(
         await _fileService.getFileSize(downloadUrl));
     String fileExtension = outputFormat.value;
     String fileDownloadUrl = downloadUrl;
+    print("----- name is $name ");
     Map<String, String> data = {
-      "fileName": name!,
+      "fileName": fileName,
       "fileSize": fileSize,
       "fileExtension": fileExtension,
       "fileDownloadUrl": fileDownloadUrl

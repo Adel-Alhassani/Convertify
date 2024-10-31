@@ -18,7 +18,7 @@ class FormatUtils {
   }
 
   static double formatFileSize(double bytes) {
-    if (bytes <= 0) return 0 ;
+    if (bytes <= 0) return 0;
 
     const int kb = 1024;
     const int mb = 1024 * kb;
@@ -41,5 +41,19 @@ class FormatUtils {
     } else {
       return "${name.substring(0, lengthLimit)}...";
     }
+  }
+
+  static String changeFileExtension(String fileName, String outputExtension) {
+    int formatLength = 0;
+    for (int i = fileName.length - 1; i > 0; i--) {
+      if (fileName[i] == ".") {
+        break;
+      }
+      formatLength++;
+    }
+    formatLength++;
+    String newName =
+        "${fileName.substring(0, fileName.length - formatLength)}.$outputExtension";
+    return newName;
   }
 }
