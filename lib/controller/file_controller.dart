@@ -2,12 +2,14 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:convertify/core/enums/file_statu.dart';
+import 'package:convertify/data/preferences_helper.dart';
 import 'package:convertify/service/file_service.dart';
 import 'package:convertify/service/setting_services.dart';
 import 'package:convertify/utils/format_utils.dart';
 import 'package:convertify/utils/generate_utils.dart';
 import 'package:convertify/utils/network_utils.dart';
 import 'package:convertify/utils/permission_utils.dart';
+import 'package:convertify/utils/storage_utils.dart';
 import 'package:convertify/view/widget/dialog/custome_dialog.dart';
 import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
@@ -19,7 +21,7 @@ import 'package:permission_handler/permission_handler.dart';
 class FileController extends GetxController {
   final Dio _dio = Dio();
   final FileService _fileService = FileService();
-  final SettingServices settingServicesController = Get.find();
+  final PreferencesHelper _preferencesHelper = PreferencesHelper();
   RxBool isFilePicked = false.obs;
   RxBool isFileConverting = false.obs;
   RxBool isFileUploading = false.obs;
@@ -42,20 +44,39 @@ class FileController extends GetxController {
   void onInit() {
     super.onInit();
     // _removeAllADateFromSharedPref();
-    loadDataFormSharedPref();
+    loadData();
   }
 
-  Future<void> loadDataFormSharedPref() async {
+  void loadData() async {
     print("loading data");
-    Map<String, dynamic> convertingData = await _getConvertingFileData();
-    if (convertingData.isNotEmpty) {
-      isFileConverting.value = true;
-      await _storeDownloadableFileData(await getDownloadUrl());
-      removeConvertingFileData();
-      isFileConverting.value = false;
-    }
+    await _loadConvertingFileData();
     await _loadDownloadableFileData();
     print("data laoded");
+  }
+
+  Future<void> _loadConvertingFileData() async {
+    Map<String, dynamic> data =
+        await _preferencesHelper.fetchConvertingFileData();
+    if (data.isNotEmpty) {
+      _getConvertingFileData();
+      isFileConverting.value = true;
+      String fileDownloadUrl = await getDownloadUrl();
+      String fileSize = FormatUtils.formatFileSizeWithUnits(
+          await _fileService.getFileSize(fileDownloadUrl));
+      await _preferencesHelper.storeDownloadableFileData(
+          fileSize, fileDownloadUrl);
+      _preferencesHelper.removeConvertingFileData();
+      _clearConvertingFileMap();
+      isFileConverting.value = false;
+    }
+  }
+
+  Future<void> _loadDownloadableFileData() async {
+    Map<String, dynamic> data =
+        await _preferencesHelper.fetchDownloadableFileData();
+    if (data.isNotEmpty) {
+      _getDownloadableFileData();
+    }
   }
 
   pickFile() async {
@@ -74,17 +95,14 @@ class FileController extends GetxController {
             Get.back();
           });
         }
-
         path = selectedFile.path;
         name = selectedFileInfo.name;
         size = FormatUtils.formatFileSizeWithUnits(selectedFileInfo.size);
         extension = selectedFileInfo.extension;
-
         isValidOutputFormatLoading.value = true;
         validOutputFormats.value = await _fileService
             .getValidOutputFormatsOf("${selectedFileInfo.extension}");
         isValidOutputFormatLoading.value = false;
-
         isFilePicked.value = true;
       } else {}
     } catch (e) {
@@ -97,10 +115,6 @@ class FileController extends GetxController {
     }
   }
 
-  void setOutputFormat(String outputFormat) {
-    this.outputFormat.value = outputFormat;
-  }
-
   Future<void> convertFile() async {
     try {
       isFileUploading.value = true;
@@ -108,11 +122,18 @@ class FileController extends GetxController {
           await _fileService.convert(path!, extension!, outputFormat.value);
       isFileUploading.value = false;
       if (jobId.isNotEmpty) {
-        await _storeConvertingFileData(jobId);
-        exit(0);
+        await _preferencesHelper.storeConvertingFileData(
+            name!, size!, extension!, outputFormat.value, jobId);
+        _getConvertingFileData();
         isFileConverting.value = true;
-        await _storeDownloadableFileData(await getDownloadUrl());
-        removeConvertingFileData();
+        String fileDownloadUrl = await getDownloadUrl();
+        String fileSize = FormatUtils.formatFileSizeWithUnits(
+            await _fileService.getFileSize(fileDownloadUrl));
+        await _preferencesHelper.storeDownloadableFileData(
+            fileSize, fileDownloadUrl);
+        _getDownloadableFileData();
+        _preferencesHelper.removeConvertingFileData();
+        _clearConvertingFileMap();
         isFileConverting.value = false;
       } else {
         print("jobId is empty");
@@ -130,14 +151,24 @@ class FileController extends GetxController {
     }
   }
 
-  Future<String> _getJobId() async {
-    Map<String, dynamic> convertingFileData = await _getConvertingFileData();
-    String jobId = convertingFileData["jobId"];
-    return jobId;
+  void _getConvertingFileData() async {
+    convertingFile.value =
+        Map.from(await _preferencesHelper.fetchConvertingFileData())
+          ..remove("outputFormat")
+          ..remove("jobId");
+  }
+
+  void _clearConvertingFileMap() {
+    convertingFile.clear();
+  }
+
+  void _getDownloadableFileData() async {
+    downloadableFile.value =
+        Map.from(await _preferencesHelper.fetchDownloadableFileData());
   }
 
   Future<String> getDownloadUrl() async {
-    String jobId = await _getJobId();
+    String jobId = await _preferencesHelper.getJobId();
     String downloadUrl = await _fileService.getFileDownloadUrl(jobId);
     if (downloadUrl.isNotEmpty) {
       return downloadUrl;
@@ -147,120 +178,12 @@ class FileController extends GetxController {
     }
   }
 
-  Future<void> _storeConvertingFileData(String jobId) async {
-    Map<String, String?> convertingFileData = {
-      "fileName": name,
-      "fileSize": size,
-      "inputFormat": extension,
-      "outputFormat": outputFormat.value,
-      "jobId": jobId,
-    };
-    convertingFile.value = Map.from(convertingFileData)
-      ..remove("outputFormat")
-      ..remove("jobId");
-    await settingServicesController.sharedPreferences
-        .setString("convertingFileData", jsonEncode(convertingFileData));
-    print("set converting data to sharedPref");
-  }
-
-  Future<void> _storeDownloadableFileData(String downloadUrl) async {
-    if (downloadUrl.isEmpty) {
-      return;
-    }
-    Map<String, dynamic> convertingFileData = await _getConvertingFileData();
-    String fileName = FormatUtils.changeFileExtension(
-        convertingFileData["fileName"]!, convertingFileData["outputFormat"]);
-    //     "${GenerateUtils.generateNameWithDate("Convertify")}.$outputFormat";
-
-    String fileSize = FormatUtils.formatFileSizeWithUnits(
-        await _fileService.getFileSize(downloadUrl));
-    String fileOutputFormat = convertingFileData["outputFormat"];
-    String fileDownloadUrl = downloadUrl;
-    Map<String, String> data = {
-      "fileName": fileName,
-      "fileSize": fileSize,
-      "outputFormat": fileOutputFormat,
-      "fileDownloadUrl": fileDownloadUrl
-    };
-    downloadableFile.value = data;
-    await settingServicesController.sharedPreferences
-        .setString("downloadableData", jsonEncode(data));
-    print("set downloadable data to sharedPref");
-  }
-
-  Future<Map<String, dynamic>> _getConvertingFileData() async {
-    Map<String, dynamic> data = <String, dynamic>{};
-    if (settingServicesController.sharedPreferences
-            .getString("convertingFileData") !=
-        null) {
-      String dataJson = settingServicesController.sharedPreferences
-          .getString("convertingFileData")!;
-      if (dataJson.isNotEmpty) {
-        data = jsonDecode(dataJson);
-        return data;
-      } else {
-        print("data of convertingFile is empty");
-        return data;
-      }
-    }
-    print("data of convertingFile is null");
-    return data;
-  }
-
-  Future<void> _loadDownloadableFileData() async {
-    if (settingServicesController.sharedPreferences
-            .getString("downloadableData") !=
-        null) {
-      String data = settingServicesController.sharedPreferences
-          .getString("downloadableData")!;
-      if (data.isNotEmpty) {
-        downloadableFile.value = jsonDecode(data);
-        print("add data form sharedPref to downloadableFile");
-      } else {
-        print("data of downloadableFile is empty");
-      }
-    }
-    print("data of downloadableFile is null");
-  }
-
-  Future<void> removeConvertingFileData() async {
-    if (await settingServicesController.sharedPreferences
-        .remove("convertingFileData")) {
-      convertingFile.clear();
-      print("converting data removed");
-    }
-    print("converting data DID not removed");
-  }
-
   // Future<void> _removeDownloadableFileDataFromSharedPref() async {
   //   return await settingServicesController.sharedPreferences
   //           .remove("downloadableData")
   //       ? print("downloadable data removed")
   //       : print("downloadable data DID not removed");
   // }
-
-  Future<void> _removeAllADateFromSharedPref() async {
-    return await settingServicesController.sharedPreferences.clear()
-        ? print("All data removed")
-        : print("All data DID not removed");
-  }
-
-  Future<String> getAppDirectory() async {
-    // Get the path to the public Download directory
-    final directory = Directory('/storage/emulated/0/Download/Convertify');
-    try {
-      // Check if the directory exists; if not, create it
-      if (!await directory.exists()) {
-        await directory.create(recursive: true);
-        print('Folder created at: ${directory.path}');
-      }
-      print(directory.path);
-      return directory.path;
-    } catch (e) {
-      print('Error creating folder: $e');
-      return '';
-    }
-  }
 
   Future<bool> isFileAlreadyDownloaded(String filName, String directory) async {
     if (directory.isNotEmpty) {
@@ -277,7 +200,7 @@ class FileController extends GetxController {
     }
     PermissionUtils.getStoragePermission();
     final String fileDownloadUrl = downloadUrl;
-    final String appDir = await getAppDirectory();
+    final String appDir = await StorageUtils.getAppDirectory();
     print("in downloadFile fileName is: $fileName");
     print("fileDownloadUrl is: $fileDownloadUrl".substring(0, 35));
     isFileDownloading.value = true;

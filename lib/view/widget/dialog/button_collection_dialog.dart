@@ -95,7 +95,7 @@ class ButtonCollectionDialog extends StatelessWidget {
                                         MaterialTapTargetSize.shrinkWrap,
                                     onPressed: () {
                                       fileController
-                                          .setOutputFormat(value.toString());
+                                          .outputFormat.value = value.toString();
                                       Get.back();
                                     },
                                     color: AppColor.whiteColor,
