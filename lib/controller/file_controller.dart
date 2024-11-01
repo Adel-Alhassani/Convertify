@@ -10,6 +10,7 @@ import 'package:convertify/utils/generate_utils.dart';
 import 'package:convertify/utils/network_utils.dart';
 import 'package:convertify/utils/permission_utils.dart';
 import 'package:convertify/utils/storage_utils.dart';
+import 'package:convertify/view/screen/my_files_screen.dart';
 import 'package:convertify/view/widget/dialog/custome_dialog.dart';
 import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
@@ -17,11 +18,13 @@ import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:get/get.dart';
 import 'package:convertify/utils/validator_utils.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 
 class FileController extends GetxController {
   final Dio _dio = Dio();
   final FileService _fileService = FileService();
   final PreferencesHelper _preferencesHelper = PreferencesHelper();
+  PersistentTabController _persistentTabController = Get.find();
   RxBool isFilePicked = false.obs;
   RxBool isFileConverting = false.obs;
   RxBool isFileUploading = false.obs;
@@ -115,12 +118,20 @@ class FileController extends GetxController {
     }
   }
 
-  Future<void> convertFile() async {
-    try {
-      isFileUploading.value = true;
+  void pushToMyFilesScreen(){
+        
+
+  }
+
+  Future<void> startFileUpload()async{
+    isFileUploading.value = true;
       await _fileService.creatJob(extension!, outputFormat.value);
       await _fileService.uploadFile(path!);
       isFileUploading.value = false;
+  }
+
+  Future<void> convertFile() async {
+    try {
       String jobId = _fileService.getJobId();
       if (jobId.isNotEmpty) {
         await _preferencesHelper.storeConvertingFileData(

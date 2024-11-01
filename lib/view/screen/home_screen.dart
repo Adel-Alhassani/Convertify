@@ -20,6 +20,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
+import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -76,6 +77,16 @@ class HomeScreen extends StatelessWidget {
                                 ? AppColor.tertiaryColor
                                 : AppColor.whiteColor, // Use AppColor
                             onPressed: () async {
+                              await fileController.startFileUpload();
+                              if (!context.mounted) return;
+                              PersistentNavBarNavigator.pushNewScreen(
+                                context,
+                                screen: const MyFilesScreen(),
+                                withNavBar:
+                                    true, // OPTIONAL VALUE. True by default.
+                                pageTransitionAnimation:
+                                    PageTransitionAnimation.cupertino,
+                              );
                               await fileController.convertFile();
                             })
                       ],
