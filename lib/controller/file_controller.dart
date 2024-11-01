@@ -24,7 +24,6 @@ class FileController extends GetxController {
   final Dio _dio = Dio();
   final FileService _fileService = FileService();
   final PreferencesHelper _preferencesHelper = PreferencesHelper();
-  PersistentTabController _persistentTabController = Get.find();
   RxBool isFilePicked = false.obs;
   RxBool isFileConverting = false.obs;
   RxBool isFileUploading = false.obs;

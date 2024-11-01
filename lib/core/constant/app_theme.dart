@@ -20,6 +20,7 @@ class AppTheme {
       bodyLarge: TextStyle(
         fontSize: 20.sp,
       ),
+      displaySmall: TextStyle(fontSize: 12.sp)
     ),
   );
   static ThemeData englishTheme = ThemeData(
@@ -40,6 +41,9 @@ class AppTheme {
       bodyLarge: TextStyle(
         fontSize: 16.sp,
       ),
+      displaySmall: TextStyle(
+        fontSize: 12.sp
+      )
     ),
   );
 }

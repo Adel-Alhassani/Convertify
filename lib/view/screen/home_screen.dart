@@ -88,7 +88,15 @@ class HomeScreen extends StatelessWidget {
                                     PageTransitionAnimation.cupertino,
                               );
                               await fileController.convertFile();
-                            })
+                            }),
+                        SizedBox(
+                          height: 10.h,
+                        ),
+                        fileController.isFileUploading.value
+                            ? Text("preparing_file".tr,
+                                style: Get.textTheme.displaySmall!
+                                    .copyWith(color: AppColor.tertiaryColor))
+                            : const SizedBox.shrink()
                       ],
                     ))
               ],

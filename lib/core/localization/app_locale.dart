@@ -24,16 +24,19 @@ class AppLocale extends Translations {
               "The file size cannot be more than @limitSizeInMB MB",
           'error': "Error!",
           'coverting_error': 'An error occurred while converting the file!',
-          'get_valid_output_formats_error': 'An error occurred while trying to get the valid output formats!',
+          'get_valid_output_formats_error':
+              'An error occurred while trying to get the valid output formats!',
           'unknown_error': 'An unknown error occurred!',
-          'format_unknown' : "File format is unknown!",
-          'my_files' : "My Files",
-          "search_in_files" : "Search for file...",
-          "no_converted_files" : "You didn’t converted any file.",
-          "file_already_downloaded" : "File is already downloaded.",
-          "donwloaded_complate" : "Download Complete",
-          "file_downloaded_successfully" : "file downloaded successfully in \n@appDir.",
-          "downloading_error" : "An error occurred while downloading the file!",
+          'format_unknown': "File format is unknown!",
+          'my_files': "My Files",
+          "search_in_files": "Search for file...",
+          "no_converted_files": "You didn’t converted any file.",
+          "file_already_downloaded": "File is already downloaded.",
+          "donwloaded_complate": "Download Complete",
+          "file_downloaded_successfully":
+              "file downloaded successfully in \n@appDir.",
+          "downloading_error": "An error occurred while downloading the file!",
+          "preparing_file": "The file being preparing, please don't close the app...",
         },
         'ar': {
           'convert': 'تحويل',
@@ -53,17 +56,19 @@ class AppLocale extends Translations {
               'حجم الملف لا يمكن أن يتجاوز @limitSizeInMB ميجابايت',
           'error': "خطأ!",
           'coverting_error': 'حدث خطأ أثناء تحويل الملف!',
-          'get_valid_output_formats_error': 'حدث خطأ أثناء استرداد الصيغ المتاحة!',
+          'get_valid_output_formats_error':
+              'حدث خطأ أثناء استرداد الصيغ المتاحة!',
           'unknown_error': 'حدث خطأ غير معروف!',
           'format_unknown': "صيغة الملف غير معروفة!",
-          'my_files' : "ملفاتي",
+          'my_files': "ملفاتي",
           "search_in_files": "ابحث عن ملف...",
           "no_converted_files": "لم تحوّل أي ملف.",
           "file_already_downloaded": "الملف تم تحميله بالفعل.",
           "donwloaded_complate": "اكتمل التنزيل.",
-          "file_downloaded_successfully":
-              "\nتم تنزيل الملف بنجاح في @appDir.",
-              "downloading_error": "حدث خطأ أثناء تنزيل الملف!",
+          "file_downloaded_successfully": "\nتم تنزيل الملف بنجاح في @appDir.",
+          "downloading_error": "حدث خطأ أثناء تنزيل الملف!",
+          "preparing_file":
+              "الملف قيد التحضير، يرجى عدم إغلاق التطبيق...",
         },
       };
 }
