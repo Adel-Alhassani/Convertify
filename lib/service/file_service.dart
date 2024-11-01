@@ -11,7 +11,10 @@ import 'package:http/http.dart' as http;
 
 class FileService {
   final String? apiKey = dotenv.env["API_KEY"];
-  late String _downloadUrl;
+  // late String _downloadUrl;
+  late final String _jobId;
+  late final String _uploadUrl;
+  late final Map _parameters;
 
   Future<Map<String, List<String>>> getValidOutputFormatsOf(
       String inputFormat) async {
@@ -44,12 +47,10 @@ class FileService {
     }
   }
 
-  Future<String> convert(
-    String filePath,
+  Future<void> creatJob(
     String inputFormat,
     String outputFormat,
   ) async {
-    // return "e51bb62f-815d-4a81-aa6c-bde55713cae4";
     // _downloadUrl = await getFileDownloadUrl(
     //     "e25e8cb0-20cb-40ca-a5ca-6559257e7f0a");
     // return true;
@@ -89,48 +90,31 @@ class FileService {
         print("Job created");
         var responseBody = jsonDecode(response.body);
         final data = responseBody['data'];
-
-        // Extract the upload URL and parameters
-        final String uploadUrl =
-            responseBody['data']['tasks'][0]['result']['form']['url'];
-        final Map parameters =
-            responseBody['data']['tasks'][0]['result']['form']['parameters'];
-
-        print("Upload URL: $uploadUrl");
-
-        if (await uploadFile(uploadUrl, parameters, filePath)) {
-          // Now we wait for the job to complete and download the file
-          final String jobId = data['id'];
-          // _downloadUrl = await _getFileDownloadUrl(jobId);
-          // if (_downloadUrl.isEmpty) {
-          //   return false;
-          // }
-          return jobId;
-        } else {
-          return "";
-        }
+        _jobId = data['id'];
+        _uploadUrl = data['tasks'][0]['result']['form']['url'];
+        _parameters = data['tasks'][0]['result']['form']['parameters'];
+        print("job id: $_jobId");
+        print("Upload URL: $_uploadUrl");
       } else {
         print('Failed to create job: ${response.statusCode}');
-        return "";
       }
     } catch (e) {
       print("Error while converting $e");
-      return "";
     }
   }
 
-  Future<bool> uploadFile(
-      String uploadUrl, Map parameters, String filePath) async {
+  Future<bool> uploadFile(String filePath) async {
     // Create the multipart request
     try {
-      final uploadRequest = http.MultipartRequest("POST", Uri.parse(uploadUrl));
+      final uploadRequest =
+          http.MultipartRequest("POST", Uri.parse(_uploadUrl));
 
       // Add the file to the request
       uploadRequest.files
           .add(await http.MultipartFile.fromPath("file", filePath));
 
       // Add the additional parameters to the request
-      parameters.forEach((key, value) {
+      _parameters.forEach((key, value) {
         uploadRequest.fields[key] = value;
       });
 
@@ -184,6 +168,11 @@ class FileService {
       print("an error while converting $e");
       return "";
     }
+  }
+
+  String getJobId() {
+    return "a2c09548-1d63-4379-a62e-038a376aeb41";
+    return _jobId;
   }
 
   // String getDownloadUrl() {

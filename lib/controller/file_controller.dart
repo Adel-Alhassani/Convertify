@@ -118,9 +118,10 @@ class FileController extends GetxController {
   Future<void> convertFile() async {
     try {
       isFileUploading.value = true;
-      String jobId =
-          await _fileService.convert(path!, extension!, outputFormat.value);
+      await _fileService.creatJob(extension!, outputFormat.value);
+      await _fileService.uploadFile(path!);
       isFileUploading.value = false;
+      String jobId = _fileService.getJobId();
       if (jobId.isNotEmpty) {
         await _preferencesHelper.storeConvertingFileData(
             name!, size!, extension!, outputFormat.value, jobId);
@@ -168,7 +169,7 @@ class FileController extends GetxController {
   }
 
   Future<String> getDownloadUrl() async {
-    String jobId = await _preferencesHelper.getJobId();
+    String jobId = await _preferencesHelper.fetchJobId();
     String downloadUrl = await _fileService.getFileDownloadUrl(jobId);
     if (downloadUrl.isNotEmpty) {
       return downloadUrl;

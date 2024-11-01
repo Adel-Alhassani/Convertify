@@ -85,7 +85,7 @@ class PreferencesHelper {
     return data;
   }
 
-  Future<String> getJobId() async {
+  Future<String> fetchJobId() async {
     Map<String, dynamic> convertingFileData = await fetchConvertingFileData();
     String jobId = convertingFileData["jobId"];
     return jobId;
