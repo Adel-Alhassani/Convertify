@@ -177,10 +177,10 @@ class FileController extends GetxController {
     }
   }
 
-  void deleteDownloadableFile(String id) async {
-    if (await _preferencesHelper.deleteDownloadableFile(id)) {
+  void deleteDownloadableFile(String fileId) async {
+    if (await _preferencesHelper.deleteDownloadableFile(fileId)) {
       final int fileIndex =
-          downloadableFiles.indexWhere((file) => file["id"] == id);
+          downloadableFiles.indexWhere((file) => file["fileId"] == fileId);
       downloadableFiles.removeAt(fileIndex);
     } else {
       CustomeDialog.showConfirmDialogNoTitle("delete_failed".tr, "ok".tr, () {
@@ -200,21 +200,21 @@ class FileController extends GetxController {
     }
   }
 
-  void downloadFile(String fileName, String downloadUrl) async {
+  void downloadFile(String fileId, String fileName, String downloadUrl) async {
     if (!await NetworkUtils.checkInternet()) {
       return;
     }
     PermissionUtils.getStoragePermission();
     final String fileDownloadUrl = downloadUrl;
     final String appDir = await StorageUtils.getAppDirectory();
-    isFileDownloading[fileName] = true.obs;
+    isFileDownloading[fileId] = true.obs;
     try {
       await _dio.download(
         fileDownloadUrl,
         "$appDir/$fileName",
         onReceiveProgress: (count, total) {
           if (total != -1) {
-            downloadProgress[fileName] =
+            downloadProgress[fileId] =
                 FormatUtils.formatFileSize(count / total).obs;
           }
         },
@@ -227,7 +227,7 @@ class FileController extends GetxController {
       });
       return;
     } finally {
-      isFileDownloading[fileName] = false.obs;
+      isFileDownloading[fileId] = false.obs;
     }
     CustomeDialog.showConfirmDialog(
         "donwloaded_complate".tr,

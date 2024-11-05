@@ -77,8 +77,8 @@ class MyFilesScreen extends StatelessWidget {
                           return Obx(() => Column(
                                 children: [
                                   DownloadableFileDetails(
-                                    id: fileController.downloadableFiles[index]
-                                        ["id"],
+                                    fileId: fileController.downloadableFiles[index]
+                                        ["fileId"],
                                     fileName: fileController
                               .downloadableFiles[index]["fileName"],
                                     fileSize: fileController

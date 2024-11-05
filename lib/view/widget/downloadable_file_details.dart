@@ -10,14 +10,14 @@ import 'package:get/get.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
 class DownloadableFileDetails extends StatelessWidget {
-  final String id;
+  final String fileId;
   final String fileName;
   final String fileSize;
   final String fileExtension;
   final String downloadUrl;
   const DownloadableFileDetails({
     super.key,
-    required this.id,
+    required this.fileId,
     required this.fileName,
     required this.fileSize,
     required this.fileExtension,
@@ -76,9 +76,9 @@ class DownloadableFileDetails extends StatelessWidget {
         ),
         Obx(() {
           bool isDownloading =
-              fileController.isFileDownloading[fileName]?.value ?? false;
+              fileController.isFileDownloading[fileId]?.value ?? false;
           double downloadingProgressValue =
-              fileController.downloadProgress[fileName]?.value ?? 1.0;
+              fileController.downloadProgress[fileId]?.value ?? 1.0;
           return Row(
             // mainAxisAlignment: MainAxisAlignment.end,
             children: [
@@ -112,7 +112,7 @@ class DownloadableFileDetails extends StatelessWidget {
                           padding: const EdgeInsets.all(0),
                           iconSize: 20.r,
                           onPressed: () {
-                            fileController.downloadFile(fileName, downloadUrl);
+                            fileController.downloadFile(fileId,fileName, downloadUrl);
                           },
                           icon: const Icon(
                             Icons.arrow_downward_rounded,
@@ -129,7 +129,7 @@ class DownloadableFileDetails extends StatelessWidget {
                       "confirm_delete".tr,
                       "yes".tr,
                       () {
-                        fileController.deleteDownloadableFile(id);
+                        fileController.deleteDownloadableFile(fileId);
                         Get.back();
                       },
                       "no".tr,

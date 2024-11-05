@@ -29,7 +29,7 @@ class PreferencesHelper {
       print("outputFileSize or fileDownloadUrl are Empty");
       return;
     }
-    String id = "${GenerateUtils.generateNameWithDate("Convertify")}";
+    String fileId = "${GenerateUtils.generateNameWithDate("Convertify")}";
     Map<String, dynamic> convertingFileData = await fetchConvertingFileData();
     String fileName = FormatUtils.changeFileExtension(
         convertingFileData["fileName"]!, convertingFileData["outputFormat"]);
@@ -37,7 +37,7 @@ class PreferencesHelper {
     String fileSize = outputFileSize;
     String fileOutputFormat = convertingFileData["outputFormat"];
     Map<String, dynamic> data = {
-      "id": id,
+      "fileId": fileId,
       "fileName": fileName,
       "fileSize": fileSize,
       "outputFormat": fileOutputFormat,
@@ -102,9 +102,9 @@ class PreferencesHelper {
     print("converting data DID not removed");
   }
 
-  Future<bool> deleteDownloadableFile(String id) async {
+  Future<bool> deleteDownloadableFile(String fileId) async {
     final List<Map<String, dynamic>> downloadableData = await fetchDownloadableFilesData();
-    final int fileIndex = downloadableData.indexWhere((file) => file['id'] == id);
+    final int fileIndex = downloadableData.indexWhere((file) => file['fileId'] == fileId);
     if (fileIndex != -1) {
       downloadableData.removeAt(fileIndex);
       await _settingServicesController.sharedPreferences
