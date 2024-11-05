@@ -1,3 +1,3 @@
 # convertify
 
-Android app for file format conversion.
+Android app developed for easy filea conversion. Whether you need to convert documents, images, videos, or audio files,
