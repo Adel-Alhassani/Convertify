@@ -17,4 +17,13 @@ class StorageUtils {
       return '';
     }
   }
+
+  static Future<bool> isFileAlreadyDownloaded(String filName, String directory) async {
+    if (directory.isNotEmpty) {
+      final String filePath = "$directory/$filName";
+      return await File(filePath).exists();
+    }
+    print("*** directory is empty");
+    return false;
+  }
 }

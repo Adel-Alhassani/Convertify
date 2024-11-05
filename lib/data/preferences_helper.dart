@@ -22,7 +22,7 @@ class PreferencesHelper {
     print("set converting data to sharedPref");
   }
 
-  Future<void> storeDownloadableFileData(
+  Future<void> storeDownloadableFilesData(
       String outputFileSize, String fileDownloadUrl) async {
     if (outputFileSize.isEmpty || fileDownloadUrl.isEmpty) {
       print("outputFileSize or fileDownloadUrl are Empty");
@@ -35,15 +35,17 @@ class PreferencesHelper {
 
     String fileSize = outputFileSize;
     String fileOutputFormat = convertingFileData["outputFormat"];
-    Map<String, String> data = {
+    Map<String, dynamic> data = {
       "fileName": fileName,
       "fileSize": fileSize,
       "outputFormat": fileOutputFormat,
       "fileDownloadUrl": fileDownloadUrl
     };
-    // downloadableFile.value = data;
+    List<Map<String, dynamic>> downloadableData =
+        await fetchDownloadableFilesData();
+    downloadableData.add(data);
     await _settingServicesController.sharedPreferences
-        .setString("downloadableData", jsonEncode(data));
+        .setString("downloadableData", jsonEncode(downloadableData));
     print("set downloadable data to sharedPref");
   }
 
@@ -66,23 +68,25 @@ class PreferencesHelper {
     return data;
   }
 
-  Future<Map<String, dynamic>> fetchDownloadableFileData() async {
-    Map<String, dynamic> data = <String, dynamic>{};
+  Future<List<Map<String, dynamic>>> fetchDownloadableFilesData() async {
+    late final List<Map<String, dynamic>> data;
     if (_settingServicesController.sharedPreferences
             .getString("downloadableData") !=
         null) {
       String dataJson = _settingServicesController.sharedPreferences
           .getString("downloadableData")!;
       if (dataJson.isNotEmpty) {
-        data = jsonDecode(dataJson);
+        List<dynamic> dynamicList = jsonDecode(dataJson);
+        data =
+            dynamicList.map((e) => e as Map<String, dynamic>).toList();
         return data;
       } else {
         print("data of downloadableFile is empty");
-        return data;
+        return <Map<String, dynamic>>[];
       }
     }
     print("data of downloadableFile is null");
-    return data;
+    return <Map<String, dynamic>>[];
   }
 
   Future<String> fetchJobId() async {
@@ -94,13 +98,11 @@ class PreferencesHelper {
   Future<void> removeConvertingFileData() async {
     if (await _settingServicesController.sharedPreferences
         .remove("convertingFileData")) {
-      // convertingFile.clear();
-      print("converting data removed");
     }
     print("converting data DID not removed");
   }
 
-  Future<void> _removeAllADateFromSharedPref() async {
+  Future<void> removeAllADateFromSharedPref() async {
     return await _settingServicesController.sharedPreferences.clear()
         ? print("All data removed")
         : print("All data DID not removed");

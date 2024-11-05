@@ -45,7 +45,6 @@ class MyFilesScreen extends StatelessWidget {
               SizedBox(
                 height: 20.h,
               ),
-
               Text("Converting", style: Get.textTheme.headlineMedium),
               SizedBox(
                 height: 15.h,
@@ -61,69 +60,40 @@ class MyFilesScreen extends StatelessWidget {
               SizedBox(
                 height: 20.h,
               ),
-
               Text("downloadable", style: Get.textTheme.headlineMedium),
               SizedBox(
                 height: 15.h,
               ),
-              fileController.downloadableFile.isEmpty
-                  ? Text("No downloadable file")
-                  : DownloadableFileDetails(
-                      fileName: fileController.downloadableFile["fileName"],
-                      fileSize: fileController.downloadableFile["fileSize"],
-                      fileExtension:
-                          fileController.downloadableFile["outputFormat"],
-                      isDownloading: fileController.isFileDownloading.value,
-                      downloadingProgressValue: fileController.downloadProgress.value,
-                      onDownloadIconPressed: () {
-                        fileController.downloadFile(
-                            fileController.downloadableFile["fileName"],
-                            fileController.downloadableFile["fileDownloadUrl"]);
-                      },
-                    )
-
-              // Container(
-              //     // color: Colors.amber,
-              //     height: 670.w,
-              //     child: fileController.files.isEmpty
-              //         ? SizedBox()
-              //         : ListView.builder(
-              //             padding: EdgeInsets.all(0),
-              //             itemCount: fileController.searchResult.isEmpty? fileController.files.length : fileController.searchResult.length,
-              //             itemBuilder: (context, index) {
-              //               return fileController.files.isEmpty
-              //                   ? Text("no_converted_files")
-              //                   : Column(
-              //                       children: [
-              //                         InkWell(
-              //                           onTap: () {},
-              //                           child: fileController.searchResult.isEmpty? FileDetails(
-              //                             fileName: fileController.files[index]
-              //                                 ["fileName"],
-              //                             fileSize: fileController.files[index]
-              //                                 ["fileSize"],
-              //                             fileType: fileController.files[index]
-              //                                 ["fileType"],
-              //                             fileStatuIcon:
-              //                                 "assets/icon/converting.svg",
-              //                           ) : FileDetails(
-              //                             fileName: fileController.searchResult[index]
-              //                                 ["fileName"],
-              //                             fileSize: fileController.searchResult[index]
-              //                                 ["fileSize"],
-              //                             fileType: fileController.searchResult[index]
-              //                                 ["fileType"],
-              //                             fileStatuIcon:
-              //                                 "assets/icon/converting.svg",
-              //                           ),
-              //                         ),
-              //                         SizedBox(
-              //                           height: 24.h,
-              //                         )
-              //                       ],
-              //                     );
-              //             }),
-              //   ),
+              Container(
+                height: 670.w,
+                child: fileController.downloadableFiles.isEmpty
+                    ? Text("No downloadable file")
+                    : ListView.builder(
+                        padding: EdgeInsets.all(0),
+                        itemCount: fileController.searchResult.isEmpty
+                            ? fileController.downloadableFiles.length
+                            : fileController.searchResult.length,
+                        itemBuilder: (context, index) {
+                          return Obx(() => Column(
+                                children: [
+                                  DownloadableFileDetails(
+                                    fileName: fileController
+                              .downloadableFiles[index]["fileName"],
+                                    fileSize: fileController
+                                        .downloadableFiles[index]["fileSize"],
+                                    fileExtension:
+                                        fileController.downloadableFiles[index]
+                                            ["outputFormat"],
+                                            downloadUrl:fileController.downloadableFiles[index]
+                                            ["fileDownloadUrl"],
+                                  ),
+                                  SizedBox(
+                                    height: 24.h,
+                                  )
+                                ],
+                              ));
+                        }),
+              ),
             ],
           ),
         ),

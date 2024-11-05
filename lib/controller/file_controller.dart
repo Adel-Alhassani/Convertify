@@ -14,6 +14,7 @@ import 'package:convertify/view/screen/my_files_screen.dart';
 import 'package:convertify/view/widget/dialog/custome_dialog.dart';
 import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:get/get.dart';
 import 'package:convertify/utils/validator_utils.dart';
@@ -27,36 +28,36 @@ class FileController extends GetxController {
   RxBool isFilePicked = false.obs;
   RxBool isFileConverting = false.obs;
   RxBool isFileUploading = false.obs;
-  RxBool isFileDownloading = false.obs;
   RxBool isValidOutputFormatLoading = false.obs;
   int fileSizeLimitInMB = 30;
   RxMap<String, List<String>> validOutputFormats = <String, List<String>>{}.obs;
   RxString outputFormat = "".obs;
-  RxDouble downloadProgress = 0.0.obs;
   String? path;
   String? name;
   String? size;
   String? extension;
   RxMap<String, dynamic> convertingFile = <String, dynamic>{}.obs;
-  RxMap<String, dynamic> downloadableFile = <String, dynamic>{}.obs;
+  RxList<Map<String, dynamic>> downloadableFiles = <Map<String, dynamic>>[].obs;
   RxMap<String, String> files = <String, String>{}.obs;
   RxList searchResult = <Map<String, String>>[].obs;
+  RxMap<String, RxDouble> downloadProgress = <String, RxDouble>{}.obs;
+  RxMap<String, RxBool> isFileDownloading = <String, RxBool>{}.obs;
 
   @override
   void onInit() {
     super.onInit();
-    // _removeAllADateFromSharedPref();
     loadData();
   }
 
   void loadData() async {
     print("loading data");
-    await _loadConvertingFileData();
-    await _loadDownloadableFileData();
+    // await _preferencesHelper.removeAllADateFromSharedPref();
+    _loadConvertingFileData();
+    _getDownloadableFilesData();
     print("data laoded");
   }
 
-  Future<void> _loadConvertingFileData() async {
+  void _loadConvertingFileData() async {
     Map<String, dynamic> data =
         await _preferencesHelper.fetchConvertingFileData();
     if (data.isNotEmpty) {
@@ -65,7 +66,7 @@ class FileController extends GetxController {
       String fileDownloadUrl = await getDownloadUrl();
       String fileSize = FormatUtils.formatFileSizeWithUnits(
           await _fileService.getFileSize(fileDownloadUrl));
-      await _preferencesHelper.storeDownloadableFileData(
+      await _preferencesHelper.storeDownloadableFilesData(
           fileSize, fileDownloadUrl);
       _preferencesHelper.removeConvertingFileData();
       _clearConvertingFileMap();
@@ -74,10 +75,10 @@ class FileController extends GetxController {
   }
 
   Future<void> _loadDownloadableFileData() async {
-    Map<String, dynamic> data =
-        await _preferencesHelper.fetchDownloadableFileData();
+    List<Map<String, dynamic>> data =
+        await _preferencesHelper.fetchDownloadableFilesData();
     if (data.isNotEmpty) {
-      _getDownloadableFileData();
+      _getDownloadableFilesData();
     }
   }
 
@@ -117,16 +118,11 @@ class FileController extends GetxController {
     }
   }
 
-  void pushToMyFilesScreen(){
-        
-
-  }
-
-  Future<void> startFileUpload()async{
+  Future<void> startFileUpload() async {
     isFileUploading.value = true;
-      await _fileService.creatJob(extension!, outputFormat.value);
-      await _fileService.uploadFile(path!);
-      isFileUploading.value = false;
+    await _fileService.creatJob(extension!, outputFormat.value);
+    await _fileService.uploadFile(path!);
+    isFileUploading.value = false;
   }
 
   Future<void> convertFile() async {
@@ -140,9 +136,9 @@ class FileController extends GetxController {
         String fileDownloadUrl = await getDownloadUrl();
         String fileSize = FormatUtils.formatFileSizeWithUnits(
             await _fileService.getFileSize(fileDownloadUrl));
-        await _preferencesHelper.storeDownloadableFileData(
+        await _preferencesHelper.storeDownloadableFilesData(
             fileSize, fileDownloadUrl);
-        _getDownloadableFileData();
+        _getDownloadableFilesData();
         _preferencesHelper.removeConvertingFileData();
         _clearConvertingFileMap();
         isFileConverting.value = false;
@@ -173,9 +169,12 @@ class FileController extends GetxController {
     convertingFile.clear();
   }
 
-  void _getDownloadableFileData() async {
-    downloadableFile.value =
-        Map.from(await _preferencesHelper.fetchDownloadableFileData());
+  void _getDownloadableFilesData() async {
+    List<Map<String, dynamic>> downloadadableDataFiles =
+        await _preferencesHelper.fetchDownloadableFilesData();
+    if (downloadadableDataFiles.isNotEmpty) {
+      downloadableFiles.value = downloadadableDataFiles;
+    }
   }
 
   Future<String> getDownloadUrl() async {
@@ -189,22 +188,6 @@ class FileController extends GetxController {
     }
   }
 
-  // Future<void> _removeDownloadableFileDataFromSharedPref() async {
-  //   return await settingServicesController.sharedPreferences
-  //           .remove("downloadableData")
-  //       ? print("downloadable data removed")
-  //       : print("downloadable data DID not removed");
-  // }
-
-  Future<bool> isFileAlreadyDownloaded(String filName, String directory) async {
-    if (directory.isNotEmpty) {
-      final String filePath = "$directory/$filName";
-      return await File(filePath).exists();
-    }
-    print("*** directory is empty");
-    return false;
-  }
-
   void downloadFile(String fileName, String downloadUrl) async {
     if (!await NetworkUtils.checkInternet()) {
       return;
@@ -212,16 +195,15 @@ class FileController extends GetxController {
     PermissionUtils.getStoragePermission();
     final String fileDownloadUrl = downloadUrl;
     final String appDir = await StorageUtils.getAppDirectory();
-    print("in downloadFile fileName is: $fileName");
-    print("fileDownloadUrl is: $fileDownloadUrl".substring(0, 35));
-    isFileDownloading.value = true;
+    isFileDownloading[fileName] = true.obs;
     try {
       await _dio.download(
         fileDownloadUrl,
         "$appDir/$fileName",
         onReceiveProgress: (count, total) {
           if (total != -1) {
-            downloadProgress.value = FormatUtils.formatFileSize(count / total);
+            downloadProgress[fileName] =
+            FormatUtils.formatFileSize(count / total).obs;
           }
         },
       );
@@ -233,7 +215,7 @@ class FileController extends GetxController {
       });
       return;
     } finally {
-      isFileDownloading.value = false;
+      isFileDownloading[fileName] = false.obs;
     }
     CustomeDialog.showConfirmDialog(
         "donwloaded_complate".tr,

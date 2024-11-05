@@ -36,7 +36,8 @@ class AppLocale extends Translations {
           "file_downloaded_successfully":
               "file downloaded successfully in \n@appDir.",
           "downloading_error": "An error occurred while downloading the file!",
-          "preparing_file": "The file being preparing, please don't close the app...",
+          "preparing_file": "preparing the file, please don't close the app...",
+          "start_downloading": "File downloading...",
         },
         'ar': {
           'convert': 'تحويل',
@@ -69,6 +70,7 @@ class AppLocale extends Translations {
           "downloading_error": "حدث خطأ أثناء تنزيل الملف!",
           "preparing_file":
               "الملف قيد التحضير، يرجى عدم إغلاق التطبيق...",
+              "start_downloading": "جاري تنزيل الملف...",
         },
       };
 }
