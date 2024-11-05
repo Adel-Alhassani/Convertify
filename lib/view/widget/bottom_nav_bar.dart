@@ -32,7 +32,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
   }
 
   List<Widget> _buildScreens() {
-    return [HomeScreen(), MyFilesScreen()];
+    return [HomeScreen(controller:  _controller,), MyFilesScreen()];
   }
 
   List<PersistentBottomNavBarItem> _navBarsItems() {
@@ -65,11 +65,8 @@ class _BottomNavBarState extends State<BottomNavBar> {
               true, // This needs to be true if you want to move up the screen on a non-scrollable screen when keyboard appears. Default is true.
           stateManagement: true, // Default is true.
           hideNavigationBarWhenKeyboardAppears: true,
-          // popBehaviorOnSelectedNavBarItemPress: PopActionScreensType.all,
-          // padding: const EdgeInsets.only(top: 8),
-          // bottomScreenMargin: 25.h,
-          
           backgroundColor: AppColor.whiteColor,
+          
           isVisible: true,
           animationSettings: const NavBarAnimationSettings(
             navBarItemAnimation: ItemAnimationSettings(

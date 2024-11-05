@@ -22,8 +22,15 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+class HomeScreen extends StatefulWidget {
+  final PersistentTabController controller;
+  const HomeScreen({super.key, required this.controller});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final FileController fileController = Get.put(FileController());
@@ -79,14 +86,7 @@ class HomeScreen extends StatelessWidget {
                             onPressed: () async {
                               // await fileController.startFileUpload();
                               if (!context.mounted) return;
-                              PersistentNavBarNavigator.pushNewScreen(
-                                context,
-                                screen: const MyFilesScreen(),
-                                withNavBar:
-                                    true, // OPTIONAL VALUE. True by default.
-                                pageTransitionAnimation:
-                                    PageTransitionAnimation.cupertino,
-                              );
+                              widget.controller.jumpToTab(1);
                               await fileController.convertFile();
                             }),
                         SizedBox(
