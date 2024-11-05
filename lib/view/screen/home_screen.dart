@@ -77,7 +77,7 @@ class HomeScreen extends StatelessWidget {
                                 ? AppColor.tertiaryColor
                                 : AppColor.whiteColor, // Use AppColor
                             onPressed: () async {
-                              await fileController.startFileUpload();
+                              // await fileController.startFileUpload();
                               if (!context.mounted) return;
                               PersistentNavBarNavigator.pushNewScreen(
                                 context,

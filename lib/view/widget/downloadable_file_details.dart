@@ -2,6 +2,7 @@ import 'package:convertify/controller/file_controller.dart';
 import 'package:convertify/core/constant/app_Images.dart';
 import 'package:convertify/core/constant/app_color.dart';
 import 'package:convertify/utils/format_utils.dart';
+import 'package:convertify/view/widget/dialog/custome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -9,12 +10,14 @@ import 'package:get/get.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
 class DownloadableFileDetails extends StatelessWidget {
+  final String id;
   final String fileName;
   final String fileSize;
   final String fileExtension;
   final String downloadUrl;
   const DownloadableFileDetails({
     super.key,
+    required this.id,
     required this.fileName,
     required this.fileSize,
     required this.fileExtension,
@@ -72,49 +75,77 @@ class DownloadableFileDetails extends StatelessWidget {
           ],
         ),
         Obx(() {
-           bool isDownloading =
+          bool isDownloading =
               fileController.isFileDownloading[fileName]?.value ?? false;
           double downloadingProgressValue =
               fileController.downloadProgress[fileName]?.value ?? 1.0;
-          return CircularPercentIndicator(
-              radius: 18.0.r,
-              lineWidth: 2.0.w,
-              percent:  downloadingProgressValue,
-              center: isDownloading
-                  ? Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          "${(downloadingProgressValue * 100).toInt()}",
-                          style: TextStyle(
-                              fontFamily: "Inter",
-                              fontSize: 10.sp,
-                              fontWeight: FontWeight.w900,
-                              color: AppColor.extraPrimaryColor),
-                        ),
-                        Text(
-                          "%",
-                          style: TextStyle(
-                              fontFamily: "Inter",
-                              fontSize: 8.sp,
-                              fontWeight: FontWeight.w900,
-                              color: AppColor.extraPrimaryColor),
-                        ),
-                      ],
-                    )
-                  : IconButton(
-                      padding: EdgeInsets.all(0),
-                      iconSize: 22.r,
-                      onPressed: () {
-                        fileController.downloadFile(
-                            fileName, downloadUrl);
+          return Row(
+            // mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              CircularPercentIndicator(
+                  radius: 15.0.r,
+                  lineWidth: 2.0.w,
+                  percent: downloadingProgressValue,
+                  center: isDownloading
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "${(downloadingProgressValue * 100).toInt()}",
+                              style: TextStyle(
+                                  fontFamily: "Inter",
+                                  fontSize: 8.sp,
+                                  fontWeight: FontWeight.w900,
+                                  color: AppColor.extraPrimaryColor),
+                            ),
+                            Text(
+                              "%",
+                              style: TextStyle(
+                                  fontFamily: "Inter",
+                                  fontSize: 6.sp,
+                                  fontWeight: FontWeight.w900,
+                                  color: AppColor.extraPrimaryColor),
+                            ),
+                          ],
+                        )
+                      : IconButton(
+                          padding: const EdgeInsets.all(0),
+                          iconSize: 20.r,
+                          onPressed: () {
+                            fileController.downloadFile(fileName, downloadUrl);
+                          },
+                          icon: const Icon(
+                            Icons.arrow_downward_rounded,
+                            color: AppColor.extraPrimaryColor,
+                          )),
+                  progressColor: AppColor.extraPrimaryColor),
+              SizedBox(
+                width: 15.w,
+              ),
+              InkWell(
+                splashColor: AppColor.fourthyColor,
+                onTap: () {
+                  CustomeDialog.showConfirmCancleDialog(
+                      "confirm_delete".tr,
+                      "yes".tr,
+                      () {
+                        fileController.deleteDownloadableFile(id);
+                        Get.back();
                       },
-                      icon: const Icon(
-                        Icons.arrow_downward_rounded,
-                        color: AppColor.extraPrimaryColor,
-                      )),
-              progressColor: AppColor.extraPrimaryColor);
-        })
+                      "no".tr,
+                      () {
+                        Get.back();
+                      });
+                },
+                child: Icon(
+                  Icons.delete,
+                  color: AppColor.extraPrimaryColor,
+                  size: 27.r,
+                ),
+              )
+            ],
+          );
+        }),
       ],
     );
   }

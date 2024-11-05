@@ -38,6 +38,11 @@ class AppLocale extends Translations {
           "downloading_error": "An error occurred while downloading the file!",
           "preparing_file": "preparing the file, please don't close the app...",
           "start_downloading": "File downloading...",
+          // "delete_success": "File deleted successfully",
+          "delete_failed": "File deletion failed",
+          "confirm_delete": "Are you sure you want to delete this file?",
+          "confirm": "Yes",
+          "cancel": "No"
         },
         'ar': {
           'convert': 'تحويل',
@@ -71,6 +76,12 @@ class AppLocale extends Translations {
           "preparing_file":
               "الملف قيد التحضير، يرجى عدم إغلاق التطبيق...",
               "start_downloading": "جاري تنزيل الملف...",
+              // "delete_success": "تم حذف الملف بنجاح",
+          "delete_failed": "فشل حذف الملف",
+          "confirm_delete": "هل أنت متأكد من رغبتك في حذف هذا الملف؟",
+          "confirm": "تأكيد",
+          "cancel": "إلغاء"
+
         },
       };
 }

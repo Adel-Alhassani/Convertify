@@ -51,7 +51,7 @@ class FileController extends GetxController {
 
   void loadData() async {
     print("loading data");
-    // await _preferencesHelper.removeAllADateFromSharedPref();
+    await _preferencesHelper.removeAllADateFromSharedPref();
     _loadConvertingFileData();
     _getDownloadableFilesData();
     print("data laoded");
@@ -177,6 +177,18 @@ class FileController extends GetxController {
     }
   }
 
+  void deleteDownloadableFile(String id) async {
+    if (await _preferencesHelper.deleteDownloadableFile(id)) {
+      final int fileIndex =
+          downloadableFiles.indexWhere((file) => file["id"] == id);
+      downloadableFiles.removeAt(fileIndex);
+    } else {
+      CustomeDialog.showConfirmDialogNoTitle("delete_failed".tr, "ok".tr, () {
+        Get.back();
+      });
+    }
+  }
+
   Future<String> getDownloadUrl() async {
     String jobId = await _preferencesHelper.fetchJobId();
     String downloadUrl = await _fileService.getFileDownloadUrl(jobId);
@@ -203,7 +215,7 @@ class FileController extends GetxController {
         onReceiveProgress: (count, total) {
           if (total != -1) {
             downloadProgress[fileName] =
-            FormatUtils.formatFileSize(count / total).obs;
+                FormatUtils.formatFileSize(count / total).obs;
           }
         },
       );

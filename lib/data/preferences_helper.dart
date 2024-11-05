@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:convertify/service/setting_services.dart';
 import 'package:convertify/utils/format_utils.dart';
+import 'package:convertify/utils/generate_utils.dart';
 import 'package:get/get.dart';
 
 class PreferencesHelper {
@@ -28,14 +29,15 @@ class PreferencesHelper {
       print("outputFileSize or fileDownloadUrl are Empty");
       return;
     }
+    String id = "${GenerateUtils.generateNameWithDate("Convertify")}";
     Map<String, dynamic> convertingFileData = await fetchConvertingFileData();
     String fileName = FormatUtils.changeFileExtension(
         convertingFileData["fileName"]!, convertingFileData["outputFormat"]);
-    //     "${GenerateUtils.generateNameWithDate("Convertify")}.$outputFormat";
 
     String fileSize = outputFileSize;
     String fileOutputFormat = convertingFileData["outputFormat"];
     Map<String, dynamic> data = {
+      "id": id,
       "fileName": fileName,
       "fileSize": fileSize,
       "outputFormat": fileOutputFormat,
@@ -77,8 +79,7 @@ class PreferencesHelper {
           .getString("downloadableData")!;
       if (dataJson.isNotEmpty) {
         List<dynamic> dynamicList = jsonDecode(dataJson);
-        data =
-            dynamicList.map((e) => e as Map<String, dynamic>).toList();
+        data = dynamicList.map((e) => e as Map<String, dynamic>).toList();
         return data;
       } else {
         print("data of downloadableFile is empty");
@@ -97,9 +98,20 @@ class PreferencesHelper {
 
   Future<void> removeConvertingFileData() async {
     if (await _settingServicesController.sharedPreferences
-        .remove("convertingFileData")) {
-    }
+        .remove("convertingFileData")) {}
     print("converting data DID not removed");
+  }
+
+  Future<bool> deleteDownloadableFile(String id) async {
+    final List<Map<String, dynamic>> downloadableData = await fetchDownloadableFilesData();
+    final int fileIndex = downloadableData.indexWhere((file) => file['id'] == id);
+    if (fileIndex != -1) {
+      downloadableData.removeAt(fileIndex);
+      await _settingServicesController.sharedPreferences
+          .setString("downloadableData", jsonEncode(downloadableData));
+      return true;
+    }
+    return false;
   }
 
   Future<void> removeAllADateFromSharedPref() async {
