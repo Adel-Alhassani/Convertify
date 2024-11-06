@@ -10,4 +10,5 @@ class AppColor {
   static const fourthyColor = Color(0xffd4dffc);
   static const whiteColor = Colors.white;
   static const blackColor = Colors.black;
+  static const blackSecondaryColor = Color(0xff717171);
 }

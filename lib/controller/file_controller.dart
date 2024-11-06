@@ -46,6 +46,12 @@ class FileController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    // convertingFile.value = {
+    //   "fileName" : "Convertify_20241122562.docx",
+    //   "fileSize": "3.56 MB",
+    //   "inputFormat" : "DOCX",
+    //   "outputFormat" : "PDF"
+    //   };
     loadData();
   }
 
@@ -161,7 +167,6 @@ class FileController extends GetxController {
   void _getConvertingFileData() async {
     convertingFile.value =
         Map.from(await _preferencesHelper.fetchConvertingFileData())
-          ..remove("outputFormat")
           ..remove("jobId");
   }
 

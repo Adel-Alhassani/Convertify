@@ -45,29 +45,37 @@ class MyFilesScreen extends StatelessWidget {
               SizedBox(
                 height: 20.h,
               ),
-              Text("Converting", style: Get.textTheme.headlineMedium),
-              SizedBox(
-                height: 15.h,
-              ),
               fileController.convertingFile.isEmpty
-                  ? Text("No Converting file")
+                  ? Container(
+                      width: 383.w,
+                      height: 85.h,
+                      decoration: BoxDecoration(
+                          color: AppColor.fourthyColor,
+                          borderRadius: BorderRadius.circular(10.r)),
+                      child: Center(
+                          child: Text("no_converting_file".tr,
+                              style: Get.textTheme.bodySmall!.copyWith(
+                                  color: AppColor.blackSecondaryColor))),
+                    )
                   : ConvertingFileDetails(
                       fileName: fileController.convertingFile["fileName"],
                       fileSize: fileController.convertingFile["fileSize"],
-                      fileExtension:
-                          fileController.convertingFile["inputFormat"],
+                      inputFormat: fileController.convertingFile["inputFormat"],
+                      outputFormat:
+                          fileController.convertingFile["outputFormat"],
                     ),
               SizedBox(
                 height: 20.h,
               ),
-              Text("downloadable", style: Get.textTheme.headlineMedium),
-              SizedBox(
-                height: 15.h,
-              ),
               Container(
-                height: 670.w,
+                height: 530.h,
                 child: fileController.downloadableFiles.isEmpty
-                    ? Text("No downloadable file")
+                    ? Center(
+                        child: Text(
+                        "no_downloadable_files".tr,
+                        style: Get.textTheme.bodySmall!
+                            .copyWith(color: AppColor.blackSecondaryColor),
+                      ))
                     : ListView.builder(
                         padding: EdgeInsets.all(0),
                         itemCount: fileController.searchResult.isEmpty
@@ -77,16 +85,17 @@ class MyFilesScreen extends StatelessWidget {
                           return Obx(() => Column(
                                 children: [
                                   DownloadableFileDetails(
-                                    fileId: fileController.downloadableFiles[index]
-                                        ["fileId"],
+                                    fileId: fileController
+                                        .downloadableFiles[index]["fileId"],
                                     fileName: fileController
-                              .downloadableFiles[index]["fileName"],
+                                        .downloadableFiles[index]["fileName"],
                                     fileSize: fileController
                                         .downloadableFiles[index]["fileSize"],
                                     fileExtension:
                                         fileController.downloadableFiles[index]
                                             ["outputFormat"],
-                                            downloadUrl:fileController.downloadableFiles[index]
+                                    downloadUrl:
+                                        fileController.downloadableFiles[index]
                                             ["fileDownloadUrl"],
                                   ),
                                   SizedBox(

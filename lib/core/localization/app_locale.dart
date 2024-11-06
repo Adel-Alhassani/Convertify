@@ -42,7 +42,9 @@ class AppLocale extends Translations {
           "delete_failed": "File deletion failed",
           "confirm_delete": "Are you sure you want to delete this file?",
           "confirm": "Yes",
-          "cancel": "No"
+          "cancel": "No",
+          "no_converting_file": "No file is being converted.",
+          "no_downloadable_files" : "No converted files available for download."
         },
         'ar': {
           'convert': 'تحويل',
@@ -80,7 +82,9 @@ class AppLocale extends Translations {
           "delete_failed": "فشل حذف الملف",
           "confirm_delete": "هل أنت متأكد من رغبتك في حذف هذا الملف؟",
           "confirm": "تأكيد",
-          "cancel": "إلغاء"
+          "cancel": "إلغاء",
+          "no_converting_file": "لا يوجد ملف قيد التحويل.",
+          "no_downloadable_files": "لا توجد ملفات محولة متاحة للتنزيل."
 
         },
       };

@@ -84,7 +84,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ? AppColor.tertiaryColor
                                 : AppColor.whiteColor, // Use AppColor
                             onPressed: () async {
-                              // await fileController.startFileUpload();
+                              await fileController.startFileUpload();
                               if (!context.mounted) return;
                               widget.controller.jumpToTab(1);
                               await fileController.convertFile();
