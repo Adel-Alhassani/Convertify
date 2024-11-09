@@ -77,16 +77,18 @@ class MyFilesScreen extends StatelessWidget {
                             .copyWith(color: AppColor.blackSecondaryColor),
                       ))
                     : ListView.builder(
-                        padding: EdgeInsets.all(0),
+                        padding: const EdgeInsets.all(0),
                         itemCount: fileController.searchResult.isEmpty
                             ? fileController.downloadableFiles.length
                             : fileController.searchResult.length,
                         itemBuilder: (context, index) {
-                          return Obx(() => Column(
-                                children: [
-                                  DownloadableFileDetails(
-                                    fileId: fileController
-                                        .downloadableFiles[index]["fileId"],
+                          return Obx(() {
+                            String fileId = fileController
+                                .downloadableFiles[index]["fileId"];
+                            return Column(
+                              children: [
+                                DownloadableFileDetails(
+                                    fileId: fileId,
                                     fileName: fileController
                                         .downloadableFiles[index]["fileName"],
                                     fileSize: fileController
@@ -97,12 +99,14 @@ class MyFilesScreen extends StatelessWidget {
                                     downloadUrl:
                                         fileController.downloadableFiles[index]
                                             ["fileDownloadUrl"],
-                                  ),
-                                  SizedBox(
-                                    height: 24.h,
-                                  )
-                                ],
-                              ));
+                                    convertedDate: fileController
+                                        .convertedDates[fileId]!.value),
+                                SizedBox(
+                                  height: 24.h,
+                                )
+                              ],
+                            );
+                          });
                         }),
               ),
             ],

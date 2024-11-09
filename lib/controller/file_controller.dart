@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -30,34 +31,29 @@ class FileController extends GetxController {
   RxBool isFileUploading = false.obs;
   RxBool isValidOutputFormatLoading = false.obs;
   int fileSizeLimitInMB = 30;
-  RxMap<String, List<String>> validOutputFormats = <String, List<String>>{}.obs;
   RxString outputFormat = "".obs;
   String? path;
   String? name;
   String? size;
   String? extension;
+  RxMap<String, List<String>> validOutputFormats = <String, List<String>>{}.obs;
   RxMap<String, dynamic> convertingFile = <String, dynamic>{}.obs;
   RxList<Map<String, dynamic>> downloadableFiles = <Map<String, dynamic>>[].obs;
   RxMap<String, String> files = <String, String>{}.obs;
   RxList searchResult = <Map<String, String>>[].obs;
+  RxMap<String, RxString> convertedDates = <String, RxString>{}.obs;
   RxMap<String, RxDouble> downloadProgress = <String, RxDouble>{}.obs;
   RxMap<String, RxBool> isFileDownloading = <String, RxBool>{}.obs;
 
   @override
   void onInit() {
     super.onInit();
-    // convertingFile.value = {
-    //   "fileName" : "Convertify_20241122562.docx",
-    //   "fileSize": "3.56 MB",
-    //   "inputFormat" : "DOCX",
-    //   "outputFormat" : "PDF"
-    //   };
     loadData();
   }
 
   void loadData() async {
     print("loading data");
-    await _preferencesHelper.removeAllADateFromSharedPref();
+    // await _preferencesHelper.removeAllADateFromSharedPref();
     _loadConvertingFileData();
     _getDownloadableFilesData();
     print("data laoded");
@@ -69,24 +65,26 @@ class FileController extends GetxController {
     if (data.isNotEmpty) {
       _getConvertingFileData();
       isFileConverting.value = true;
+      String fileId = "${GenerateUtils.generateIdWithDate("Convertify")}";
       String fileDownloadUrl = await getDownloadUrl();
       String fileSize = FormatUtils.formatFileSizeWithUnits(
           await _fileService.getFileSize(fileDownloadUrl));
+      String fileConvertedDate = DateTime.now().toString();
       await _preferencesHelper.storeDownloadableFilesData(
-          fileSize, fileDownloadUrl);
+          fileId, fileSize, fileDownloadUrl, fileConvertedDate);
       _preferencesHelper.removeConvertingFileData();
       _clearConvertingFileMap();
       isFileConverting.value = false;
     }
   }
 
-  Future<void> _loadDownloadableFileData() async {
-    List<Map<String, dynamic>> data =
-        await _preferencesHelper.fetchDownloadableFilesData();
-    if (data.isNotEmpty) {
-      _getDownloadableFilesData();
-    }
-  }
+  // Future<void> _loadDownloadableFileData() async {
+  //   List<Map<String, dynamic>> data =
+  //       await _preferencesHelper.fetchDownloadableFilesData();
+  //   if (data.isNotEmpty) {
+  //     _getDownloadableFilesData();
+  //   }
+  // }
 
   pickFile() async {
     try {
@@ -139,11 +137,14 @@ class FileController extends GetxController {
             name!, size!, extension!, outputFormat.value, jobId);
         _getConvertingFileData();
         isFileConverting.value = true;
+        String fileId = "${GenerateUtils.generateIdWithDate("Convertify")}";
         String fileDownloadUrl = await getDownloadUrl();
         String fileSize = FormatUtils.formatFileSizeWithUnits(
             await _fileService.getFileSize(fileDownloadUrl));
+        String fileConvertedDate = DateTime.now().toString();
         await _preferencesHelper.storeDownloadableFilesData(
-            fileSize, fileDownloadUrl);
+            fileId, fileSize, fileDownloadUrl, fileConvertedDate);
+        setConvertedDate(fileId, fileConvertedDate);
         _getDownloadableFilesData();
         _preferencesHelper.removeConvertingFileData();
         _clearConvertingFileMap();
@@ -164,6 +165,23 @@ class FileController extends GetxController {
     }
   }
 
+  void setConvertedDate(String fileId, date) {
+    convertedDates[fileId] =
+        FormatUtils.formatTimeAgo(DateTime.parse(date)).obs;
+    Timer.periodic(const Duration(minutes: 1), (timer) {
+      convertedDates[fileId] =
+          FormatUtils.formatTimeAgo(DateTime.parse(date)).obs;
+    });
+  }
+
+  void setConvertedDates(List<Map<String, dynamic>> downloadableFiles) {
+    for (int i = 0; i < downloadableFiles.length; i++) {
+      String fileId = downloadableFiles[i]["fileId"];
+      String fileConvertedDate = downloadableFiles[i]["fileConvertedDate"];
+      setConvertedDate(fileId, fileConvertedDate);
+    }
+  }
+
   void _getConvertingFileData() async {
     convertingFile.value =
         Map.from(await _preferencesHelper.fetchConvertingFileData())
@@ -179,6 +197,7 @@ class FileController extends GetxController {
         await _preferencesHelper.fetchDownloadableFilesData();
     if (downloadadableDataFiles.isNotEmpty) {
       downloadableFiles.value = downloadadableDataFiles;
+      setConvertedDates(downloadableFiles);
     }
   }
 

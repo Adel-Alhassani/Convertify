@@ -1,3 +1,4 @@
+import 'package:convertify/controller/config_controller.dart';
 import 'package:convertify/controller/file_controller.dart';
 import 'package:convertify/core/constant/app_Images.dart';
 import 'package:convertify/core/constant/app_color.dart';
@@ -15,13 +16,14 @@ class DownloadableFileDetails extends StatelessWidget {
   final String fileSize;
   final String fileExtension;
   final String downloadUrl;
+  final String convertedDate;
   const DownloadableFileDetails({
     super.key,
     required this.fileId,
     required this.fileName,
     required this.fileSize,
     required this.fileExtension,
-    required this.downloadUrl,
+    required this.downloadUrl, required this.convertedDate,
   });
 
   @override
@@ -64,7 +66,7 @@ class DownloadableFileDetails extends StatelessWidget {
                       fontWeight: FontWeight.w700,
                       fontSize: 14.sp,
                     )),
-                Text(fileSize,
+                Text("$fileSize, $convertedDate",
                     style: TextStyle(
                       fontFamily: "Inter",
                       fontWeight: FontWeight.w700,

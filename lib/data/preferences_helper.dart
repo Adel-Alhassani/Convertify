@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'dart:ui';
 
+import 'package:convertify/controller/config_controller.dart';
 import 'package:convertify/service/setting_services.dart';
 import 'package:convertify/utils/format_utils.dart';
 import 'package:convertify/utils/generate_utils.dart';
@@ -7,6 +9,7 @@ import 'package:get/get.dart';
 
 class PreferencesHelper {
   final SettingServices _settingServicesController = Get.find();
+  final ConfigController _configController = Get.find();
 
   Future<void> storeConvertingFileData(String name, String size,
       String extension, String outputFormat, String jobId) async {
@@ -23,17 +26,16 @@ class PreferencesHelper {
     print("set converting data to sharedPref");
   }
 
-  Future<void> storeDownloadableFilesData(
-      String outputFileSize, String fileDownloadUrl) async {
+  Future<void> storeDownloadableFilesData(String fileId,
+      String outputFileSize, String fileDownloadUrl, fileConvertedDate) async {
     if (outputFileSize.isEmpty || fileDownloadUrl.isEmpty) {
       print("outputFileSize or fileDownloadUrl are Empty");
       return;
     }
-    String fileId = "${GenerateUtils.generateNameWithDate("Convertify")}";
+
     Map<String, dynamic> convertingFileData = await fetchConvertingFileData();
     String fileName = FormatUtils.changeFileExtension(
         convertingFileData["fileName"]!, convertingFileData["outputFormat"]);
-
     String fileSize = outputFileSize;
     String fileOutputFormat = convertingFileData["outputFormat"];
     Map<String, dynamic> data = {
@@ -41,7 +43,8 @@ class PreferencesHelper {
       "fileName": fileName,
       "fileSize": fileSize,
       "outputFormat": fileOutputFormat,
-      "fileDownloadUrl": fileDownloadUrl
+      "fileDownloadUrl": fileDownloadUrl,
+      "fileConvertedDate": fileConvertedDate
     };
     List<Map<String, dynamic>> downloadableData =
         await fetchDownloadableFilesData();
@@ -103,8 +106,10 @@ class PreferencesHelper {
   }
 
   Future<bool> deleteDownloadableFile(String fileId) async {
-    final List<Map<String, dynamic>> downloadableData = await fetchDownloadableFilesData();
-    final int fileIndex = downloadableData.indexWhere((file) => file['fileId'] == fileId);
+    final List<Map<String, dynamic>> downloadableData =
+        await fetchDownloadableFilesData();
+    final int fileIndex =
+        downloadableData.indexWhere((file) => file['fileId'] == fileId);
     if (fileIndex != -1) {
       downloadableData.removeAt(fileIndex);
       await _settingServicesController.sharedPreferences
