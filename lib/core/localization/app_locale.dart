@@ -24,7 +24,7 @@ class AppLocale extends Translations {
               "The file size cannot be more than @limitSizeInMB MB",
           'error': "Error!",
           'coverting_error': 'An error occurred while converting the file!',
-          'get_valid_output_formats_error':
+          'fetch_valid_output_formats_error':
               'An error occurred while trying to get the valid output formats!',
           'unknown_error': 'An unknown error occurred!',
           'format_unknown': "File format is unknown!",
@@ -64,7 +64,7 @@ class AppLocale extends Translations {
               'حجم الملف لا يمكن أن يتجاوز @limitSizeInMB ميجابايت',
           'error': "خطأ!",
           'coverting_error': 'حدث خطأ أثناء تحويل الملف!',
-          'get_valid_output_formats_error':
+          'fetch_valid_output_formats_error':
               'حدث خطأ أثناء استرداد الصيغ المتاحة!',
           'unknown_error': 'حدث خطأ غير معروف!',
           'format_unknown': "صيغة الملف غير معروفة!",

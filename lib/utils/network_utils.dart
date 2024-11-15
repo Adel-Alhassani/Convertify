@@ -1,23 +1,16 @@
 import 'dart:io';
 
-import 'package:convertify/view/widget/dialog/custome_dialog.dart';
-import 'package:get/get.dart';
+import 'package:convertify/core/exception/network_exceptions.dart';
+import 'package:convertify/core/logger.dart';
 
 class NetworkUtils {
-  static Future<bool> checkInternet() async {
+  static Future<void> checkInternet() async {
     try {
       final result = await InternetAddress.lookup('google.com');
-      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-        return true;
-      }
-      return false;
-    } on SocketException catch (_) {
-      CustomeDialog.showConfirmDialog(
-          "no_internet_connection".tr, "check_internet_connection".tr, "ok".tr,
-          () {
-        Get.back();
-      });
-      return false;
+      result.isEmpty && result[0].rawAddress.isEmpty;
+    } on SocketException catch (e) {
+      logger.e(e);
+      throw NoInternetConnectionException();
     }
   }
 }

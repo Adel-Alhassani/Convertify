@@ -1,4 +1,0 @@
-enum FileStatu {
-  converting,
-  downloadable,
-}

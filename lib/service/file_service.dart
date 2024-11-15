@@ -1,7 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 // import 'dart:io';
+import 'package:convertify/core/exception/network_exceptions.dart';
+import 'package:convertify/core/logger.dart';
 import 'package:convertify/view/widget/dialog/custome_dialog.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
@@ -16,13 +19,12 @@ class FileService {
   late final String _uploadUrl;
   late final Map _parameters;
 
-  Future<Map<String, List<String>>> getValidOutputFormatsOf(
+  Future<Map<String, List<String>>> fetchValidOutputFormatsOf(
       String inputFormat) async {
     Map<String, List<String>> validOutputFormats = {};
     try {
       String apiUrl =
           "https://api.cloudconvert.com/v2/convert/formats?filter[input_format]=$inputFormat";
-
       var res = await http.get(Uri.parse(apiUrl));
       if (res.statusCode == 200) {
         var resBody = jsonDecode(res.body);
@@ -34,16 +36,17 @@ class FileService {
         }
         return validOutputFormats;
       } else {
-        print(res.statusCode);
-        return validOutputFormats;
+        throw ValidOutputFormatsFetchException(res.statusCode);
       }
+    } on ValidOutputFormatsFetchException catch (e) {
+      logger.e(e);
+      rethrow;
+    } on SocketException catch (e) {
+      logger.e(e);
+      throw ValidOutputFormatsSocketException();
     } catch (e) {
-      print('Exception occurred while getting valid output formats: $e');
-      CustomeDialog.showConfirmDialog(
-          "error".tr, "get_valid_output_formats_error".tr, "ok".tr, () {
-        Get.back();
-      });
-      return validOutputFormats;
+      logger.e(e);
+      rethrow;
     }
   }
 
@@ -51,19 +54,13 @@ class FileService {
     String inputFormat,
     String outputFormat,
   ) async {
-    // _downloadUrl = await getFileDownloadUrl(
-    //     "e25e8cb0-20cb-40ca-a5ca-6559257e7f0a");
-    // return true;
-    // API endpoint for creating a job
     try {
       final String url = 'https://api.cloudconvert.com/v2/jobs';
-
       // Define the headers including your API key
       final headers = {
         'Authorization': 'Bearer $apiKey',
         'Content-Type': 'application/json'
       };
-
       // Step 1: Create a job with an import/upload task and a convert task
       var jobBody = jsonEncode({
         "tasks": {
@@ -82,28 +79,33 @@ class FileService {
           }
         }
       });
-
       var response =
           await http.post(Uri.parse(url), headers: headers, body: jobBody);
-      print(response.statusCode);
       if (response.statusCode == 201) {
-        print("Job created");
+        logger.i("Job created");
         var responseBody = jsonDecode(response.body);
         final data = responseBody['data'];
         _jobId = data['id'];
         _uploadUrl = data['tasks'][0]['result']['form']['url'];
         _parameters = data['tasks'][0]['result']['form']['parameters'];
-        print("job id: $_jobId");
-        print("Upload URL: $_uploadUrl");
+        logger.i("job id: $_jobId");
+        logger.i("Upload URL: $_uploadUrl");
       } else {
-        print('Failed to create job: ${response.statusCode}');
+        throw CreateJobException(response.statusCode);
       }
+    } on CreateJobException catch (e) {
+      logger.e(e);
+      rethrow;
+    } on SocketException catch (e) {
+      logger.e(e);
+      throw CreateJobSocketException();
     } catch (e) {
-      print("Error while converting $e");
+      logger.e(e);
+      rethrow;
     }
   }
 
-  Future<bool> uploadFile(String filePath) async {
+  Future<void> uploadFile(String filePath) async {
     // Create the multipart request
     try {
       final uploadRequest =
@@ -121,14 +123,17 @@ class FileService {
       // Send the upload request
       final uploadResponse = await uploadRequest.send();
 
-      if (uploadResponse.statusCode == 201) {
-        return true;
-      } else {
-        return false;
+      if (uploadResponse.statusCode != 201) {
+        throw UploadFileException(uploadResponse.statusCode);
       }
+    } on UploadFileException catch (e) {
+      logger.e(e);
+      rethrow;
+    } on SocketException catch (e) {
+      logger.e(e);
+      throw UploadFileSocketException();
     } catch (e) {
-      print("Failed to upload the file");
-      return false;
+      logger.e(e);
     }
   }
 
@@ -156,22 +161,26 @@ class FileService {
           } else {
             print('-------- Waiting for file conversion to complete...');
             await Future.delayed(
-                Duration(seconds: 1)); // Wait before polling again
+                const Duration(seconds: 1)); // Wait before polling again
           }
         } else {
-          print('Failed to fetch job status: ${response.statusCode}');
-          break;
+          throw FetchFileDownloadUrlException(response.statusCode);
         }
       }
-      return "";
+    } on FetchFileDownloadUrlException catch (e) {
+      logger.e(e);
+      rethrow;
+    } on SocketException catch (e) {
+      logger.e(e);
+      throw FetchFileDownloadUrlSocketException();
     } catch (e) {
-      print("an error while converting $e");
-      return "";
+      logger.e(e);
+      rethrow;
     }
   }
 
   String getJobId() {
-    return "b09ccf12-9154-4f03-9b84-ab5ee8a53036";
+    return "c9fc1585-fe1e-4ea0-b856-45538b26ffad";
     return _jobId;
   }
 
@@ -180,7 +189,8 @@ class FileService {
   //   return _downloadUrl;
   // }
 
-  Future<int> getFileSize(String fileUrl) async {
+  Future<int> fetchFileSize(String fileUrl) async {
+    return 0;
     try {
       // Send a HEAD request to get only headers
       var response = await http.head(Uri.parse(fileUrl));
@@ -203,13 +213,17 @@ class FileService {
           return 0;
         }
       } else {
-        print(
-            'Failed to fetch file headers. Status code: ${response.statusCode}');
-        return 0;
+        throw FetchFileSizeException(response.statusCode);
       }
+    } on FetchFileSizeException catch (e) {
+      logger.e(e);
+      rethrow;
+    } on SocketException catch (e) {
+      logger.e(e);
+      throw FetchFileSizeSocketException();
     } catch (e) {
-      print("Error: failed to get the size of the file");
-      return 0;
+      logger.e(e);
+      rethrow;
     }
   }
 }

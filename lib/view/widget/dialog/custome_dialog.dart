@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 class CustomeDialog {
-  static void showConfirmDialog(String title, String content, String confirmTxt,
+  static void _showConfirmDialog(String title, String content, String confirmTxt,
       void Function() onPressed,
       {bool? barrierDismissible}) {
     Get.defaultDialog(
@@ -34,13 +34,14 @@ class CustomeDialog {
     );
   }
 
-  static void showConfirmDialogNoTitle(
+  static void _showConfirmDialogNoTitle(
       String content, String confirmTxt, void Function() onPressed,
       {bool? barrierDismissible}) {
     Get.defaultDialog(
       contentPadding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 0),
       barrierDismissible: barrierDismissible ?? true,
       title: "",
+            titlePadding: const EdgeInsets.all(0),
       content: Text(
         content,
         style: Get.textTheme.bodyMedium!.copyWith(color: AppColor.blackColor),
@@ -83,7 +84,7 @@ class CustomeDialog {
       titleStyle: Get.textTheme.bodyLarge!
           .copyWith(color: AppColor.blackColor, fontWeight: FontWeight.bold),
       confirm: Container(
-        margin: EdgeInsets.only(left: 5.w),
+        margin: EdgeInsets.only(left: 3.w),
         child: MaterialButton(
           minWidth: 80.w,
           height: 30.h,
@@ -102,7 +103,7 @@ class CustomeDialog {
         ),
       ),
       cancel: Container(
-        margin: EdgeInsets.only(right: 5.w),
+        margin: EdgeInsets.only(right: 3.w),
         child: MaterialButton(
           minWidth: 80.w,
           height: 30.h,
@@ -123,17 +124,81 @@ class CustomeDialog {
     );
   }
 
-  static showTextOnlyDialog(String title, String content,
-      {bool? barrierDismissible}) {
-    Get.defaultDialog(
-      title: title,
-      contentPadding: EdgeInsets.symmetric(horizontal: 20.w),
-      barrierDismissible: barrierDismissible ?? true,
-      content: Text(
-        content,
-      ),
-      titleStyle: Get.textTheme.headlineSmall!
-          .copyWith(color: AppColor.blackColor, fontWeight: FontWeight.bold),
-    );
+  // static showTextOnlyDialog(String title, String content,
+  //     {bool? barrierDismissible}) {
+  //   Get.defaultDialog(
+  //     title: title,
+  //     contentPadding: EdgeInsets.symmetric(horizontal: 20.w),
+  //     barrierDismissible: barrierDismissible ?? true,
+  //     content: Text(
+  //       content,
+  //     ),
+  //     titleStyle: Get.textTheme.headlineSmall!
+  //         .copyWith(color: AppColor.blackColor, fontWeight: FontWeight.bold),
+  //   );
+  // }
+
+  static showFormatErrorDialog(){
+    _showConfirmDialog("error".tr, "format_unknown".tr, "ok".tr,
+        () {
+      Get.back();
+    });
+  }
+  static showUnknownErrorDialog(){
+    _showConfirmDialog("error".tr, "unknown_error".tr, "ok".tr,
+        () {
+      Get.back();
+    });
+  }
+
+  static showConvertingErrorDialog(){
+    _showConfirmDialog(
+            "error".tr, "coverting_error".tr, "ok".tr, () {
+          Get.back();
+        });
+  }
+
+  static showDeleteFailedDialog(){
+    _showConfirmDialogNoTitle("delete_failed".tr, "ok".tr, () {
+      Get.back();
+    });
+  }
+
+  static showDownloadingErrorDialog(){
+    _showConfirmDialog("error".tr, "downloading_error".tr, "ok".tr, () {
+      Get.back();
+    });
+  }
+
+  static showSuccessFileDownloadDialog(String appDir){
+    _showConfirmDialog(
+        "donwloaded_complate".tr,
+        "file_downloaded_successfully".trParams(({"appDir": appDir})),
+        "ok".tr, () {
+      Get.back();
+    });
+  }
+  static showFetchValidFormatErrorDialog(){
+    _showConfirmDialog(
+        "error".tr, "fetch_valid_output_formats_error".tr, "ok".tr, () {
+      Get.back();
+    });
+  }
+
+  static showNoInternetConnectionDialog(){
+    _showConfirmDialog(
+        "no_internet_connection".tr, "check_internet_connection".tr, "ok".tr,
+        () {
+      Get.back();
+    });
+  }
+
+  static showFileSizeLargeDialog(int limitSizeInMB){
+    _showConfirmDialog(
+        "file_size_large".tr,
+        "file_size_limit".trParams(({"limitSizeInMB": "$limitSizeInMB"})),
+        "ok".tr, () {
+      Get.back();
+    });
   }
 }

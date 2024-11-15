@@ -1,11 +1,16 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
-import 'package:convertify/core/enums/file_statu.dart';
+import 'package:convertify/core/exception/file_exceptions.dart';
+import 'package:convertify/core/exception/network_exceptions.dart';
+import 'package:convertify/core/exception/exceptions_handler.dart';
+import 'package:convertify/core/logger.dart';
 import 'package:convertify/data/preferences_helper.dart';
 import 'package:convertify/service/file_service.dart';
 import 'package:convertify/service/setting_services.dart';
+import 'package:convertify/utils/file_utils.dart';
 import 'package:convertify/utils/format_utils.dart';
 import 'package:convertify/utils/generate_utils.dart';
 import 'package:convertify/utils/network_utils.dart';
@@ -19,6 +24,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:get/get.dart';
 import 'package:convertify/utils/validator_utils.dart';
+import 'package:logger/logger.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 
@@ -44,6 +50,7 @@ class FileController extends GetxController {
   RxMap<String, RxString> convertedDates = <String, RxString>{}.obs;
   RxMap<String, RxDouble> downloadProgress = <String, RxDouble>{}.obs;
   RxMap<String, RxBool> isFileDownloading = <String, RxBool>{}.obs;
+  // Logger logger = Logger();
 
   @override
   void onInit() {
@@ -52,73 +59,67 @@ class FileController extends GetxController {
   }
 
   void loadData() async {
-    print("loading data");
+    logger.i("loading data");
     // await _preferencesHelper.removeAllADateFromSharedPref();
     _loadConvertingFileData();
     _getDownloadableFilesData();
-    print("data laoded");
+    logger.i("data laoded");
   }
 
   void _loadConvertingFileData() async {
     Map<String, dynamic> data =
         await _preferencesHelper.fetchConvertingFileData();
     if (data.isNotEmpty) {
-      _getConvertingFileData();
+      logger.i(data);
+      await _getConvertingFileData();
       isFileConverting.value = true;
       String fileId = "${GenerateUtils.generateIdWithDate("Convertify")}";
-      String fileDownloadUrl = await getDownloadUrl();
-      String fileSize = FormatUtils.formatFileSizeWithUnits(
-          await _fileService.getFileSize(fileDownloadUrl));
       String fileConvertedDate = DateTime.now().toString();
-      await _preferencesHelper.storeDownloadableFilesData(
-          fileId, fileSize, fileDownloadUrl, fileConvertedDate);
-      _preferencesHelper.removeConvertingFileData();
-      _clearConvertingFileMap();
+      await _setDownloadableFiles(fileId, convertingFile["fileName"],
+          convertingFile["outputFormat"], fileConvertedDate);
+          setConvertedDate(fileId, fileConvertedDate);
+      await removeConvertingFile();
       isFileConverting.value = false;
     }
   }
 
-  // Future<void> _loadDownloadableFileData() async {
-  //   List<Map<String, dynamic>> data =
-  //       await _preferencesHelper.fetchDownloadableFilesData();
-  //   if (data.isNotEmpty) {
-  //     _getDownloadableFilesData();
-  //   }
-  // }
+  Future<void> setFilePropretis(
+      String? path, String? name, int size, String? extension) async {
+    if (extension == null) throw FileFormatUnknownException;
+    await getValidOutputFormatsOf(extension);
+    this.path = path;
+    this.name = name;
+    this.size = FormatUtils.formatFileSizeWithUnits(size);
+    this.extension = extension;
+  }
+
+  Future<void> getValidOutputFormatsOf(String format) async {
+    try {
+      isValidOutputFormatLoading.value = true;
+      validOutputFormats.value =
+          await _fileService.fetchValidOutputFormatsOf(format);
+    } on Exception catch (e) {
+      logger.e(e);
+      rethrow;
+    } finally {
+      isValidOutputFormatLoading.value = false;
+    }
+  }
 
   pickFile() async {
     try {
-      if (!await NetworkUtils.checkInternet()) {
+      await NetworkUtils.checkInternet();
+      outputFormat.value = "";
+      PlatformFile selectedFile = await FileUtils.pickFile();
+      if (!ValidateUtils.validateFileSize(
+          selectedFile.size, fileSizeLimitInMB)) {
         return;
       }
-      outputFormat.value = "";
-      FilePickerResult? result = await FilePicker.platform.pickFiles();
-      if (result != null) {
-        File selectedFile = File(result.files.single.path!);
-        PlatformFile selectedFileInfo = result.files.first;
-        if (selectedFileInfo.extension == null) {
-          CustomeDialog.showConfirmDialog(
-              "error".tr, "format_unknown".tr, "ok".tr, () {
-            Get.back();
-          });
-        }
-        path = selectedFile.path;
-        name = selectedFileInfo.name;
-        size = FormatUtils.formatFileSizeWithUnits(selectedFileInfo.size);
-        extension = selectedFileInfo.extension;
-        isValidOutputFormatLoading.value = true;
-        validOutputFormats.value = await _fileService
-            .getValidOutputFormatsOf("${selectedFileInfo.extension}");
-        isValidOutputFormatLoading.value = false;
-        isFilePicked.value = true;
-      } else {}
-    } catch (e) {
-      print("Error when trying to pick a file: $e");
-      CustomeDialog.showConfirmDialog("error".tr, "unknown_error".tr, "ok".tr,
-          () {
-        Get.back();
-      });
-      return;
+      await setFilePropretis(selectedFile.path, selectedFile.name,
+          selectedFile.size, selectedFile.extension);
+      isFilePicked.value = true;
+    } on Exception catch (e) {
+      ExceptionsHandler.handle(e, "An error occurred while picking a file.");
     }
   }
 
@@ -132,37 +133,53 @@ class FileController extends GetxController {
   Future<void> convertFile() async {
     try {
       String jobId = _fileService.getJobId();
-      if (jobId.isNotEmpty) {
-        await _preferencesHelper.storeConvertingFileData(
-            name!, size!, extension!, outputFormat.value, jobId);
-        _getConvertingFileData();
-        isFileConverting.value = true;
-        String fileId = "${GenerateUtils.generateIdWithDate("Convertify")}";
-        String fileDownloadUrl = await getDownloadUrl();
-        String fileSize = FormatUtils.formatFileSizeWithUnits(
-            await _fileService.getFileSize(fileDownloadUrl));
-        String fileConvertedDate = DateTime.now().toString();
-        await _preferencesHelper.storeDownloadableFilesData(
-            fileId, fileSize, fileDownloadUrl, fileConvertedDate);
-        setConvertedDate(fileId, fileConvertedDate);
-        _getDownloadableFilesData();
-        _preferencesHelper.removeConvertingFileData();
-        _clearConvertingFileMap();
-        isFileConverting.value = false;
-      } else {
-        print("jobId is empty");
-        CustomeDialog.showConfirmDialog(
-            "error".tr, "coverting_error".tr, "ok".tr, () {
-          Get.back();
-        });
-      }
-    } catch (e) {
-      print("Error while converting $e");
-      CustomeDialog.showConfirmDialog("error".tr, "coverting_error".tr, "ok".tr,
-          () {
-        Get.back();
-      });
+      await _setConvertingFile(
+          name!, size!, extension!, outputFormat.value, jobId);
+      isFileConverting.value = true;
+      String fileId = "${GenerateUtils.generateIdWithDate("Convertify")}";
+      String fileConvertedDate = DateTime.now().toString();
+      await _setDownloadableFiles(
+          fileId, name!, outputFormat.value, fileConvertedDate);
+      setConvertedDate(fileId, fileConvertedDate);
+      await removeConvertingFile();
+      isFileConverting.value = false;
+    } on Exception catch (e) {
+      ExceptionsHandler.handle(e, "Failed to convert the file");
     }
+  }
+
+  Future<void> removeConvertingFile() async {
+    await _preferencesHelper.removeConvertingFileData();
+    convertingFile.clear();
+  }
+
+  Future<void> _setConvertingFile(String fileName, String fileSize,
+      String fileExtension, String fileOutputFormat, String jobId) async {
+    await _preferencesHelper.storeConvertingFileData(
+        fileName, fileSize, fileExtension, fileOutputFormat, jobId);
+    convertingFile.value = {
+      "fileName": fileName,
+      "fileSize": fileSize,
+      "inputFormat": fileExtension,
+      "outputFormat": fileOutputFormat,
+    };
+  }
+
+  Future<void> _setDownloadableFiles(String fileId, String fileName,
+      fileOutputFormat, String fileConvertedDate) async {
+    String fileDownloadUrl = await getDownloadUrl();
+    String fileSize = FormatUtils.formatFileSizeWithUnits(
+        await _fileService.fetchFileSize(fileDownloadUrl));
+    await _preferencesHelper.storeDownloadableFilesData(fileId, fileName,
+        fileSize, fileOutputFormat, fileDownloadUrl, fileConvertedDate);
+    downloadableFiles.add({
+      "fileId": fileId,
+      "fileName": fileName,
+      "fileSize": fileSize,
+      "outputFormat": fileOutputFormat,
+      "fileDownloadUrl": fileDownloadUrl,
+      "fileConvertedDate": fileConvertedDate
+    });
   }
 
   void setConvertedDate(String fileId, date) {
@@ -182,14 +199,10 @@ class FileController extends GetxController {
     }
   }
 
-  void _getConvertingFileData() async {
+  Future<void> _getConvertingFileData() async {
     convertingFile.value =
         Map.from(await _preferencesHelper.fetchConvertingFileData())
           ..remove("jobId");
-  }
-
-  void _clearConvertingFileMap() {
-    convertingFile.clear();
   }
 
   void _getDownloadableFilesData() async {
@@ -207,32 +220,23 @@ class FileController extends GetxController {
           downloadableFiles.indexWhere((file) => file["fileId"] == fileId);
       downloadableFiles.removeAt(fileIndex);
     } else {
-      CustomeDialog.showConfirmDialogNoTitle("delete_failed".tr, "ok".tr, () {
-        Get.back();
-      });
+      CustomeDialog.showDeleteFailedDialog();
     }
   }
 
   Future<String> getDownloadUrl() async {
     String jobId = await _preferencesHelper.fetchJobId();
     String downloadUrl = await _fileService.getFileDownloadUrl(jobId);
-    if (downloadUrl.isNotEmpty) {
-      return downloadUrl;
-    } else {
-      print("download file url is empty");
-      return "";
-    }
+    return downloadUrl;
   }
 
   void downloadFile(String fileId, String fileName, String downloadUrl) async {
-    if (!await NetworkUtils.checkInternet()) {
-      return;
-    }
-    PermissionUtils.getStoragePermission();
-    final String fileDownloadUrl = downloadUrl;
-    final String appDir = await StorageUtils.getAppDirectory();
-    isFileDownloading[fileId] = true.obs;
     try {
+      await NetworkUtils.checkInternet();
+      PermissionUtils.getStoragePermission();
+      final String fileDownloadUrl = downloadUrl;
+      final String appDir = await StorageUtils.getAppDirectory();
+      isFileDownloading[fileId] = true.obs;
       await _dio.download(
         fileDownloadUrl,
         "$appDir/$fileName",
@@ -243,22 +247,12 @@ class FileController extends GetxController {
           }
         },
       );
-    } catch (e) {
-      print("Error while downloading the file $e");
-      CustomeDialog.showConfirmDialog(
-          "error".tr, "downloading_error".tr, "ok".tr, () {
-        Get.back();
-      });
-      return;
+      CustomeDialog.showSuccessFileDownloadDialog(appDir);
+    } on Exception catch (e) {
+      ExceptionsHandler.handle(e, "Failed to download the file");
     } finally {
       isFileDownloading[fileId] = false.obs;
     }
-    CustomeDialog.showConfirmDialog(
-        "donwloaded_complate".tr,
-        "file_downloaded_successfully".trParams(({"appDir": appDir})),
-        "ok".tr, () {
-      Get.back();
-    });
   }
 
   // void searchFor(String value) {
