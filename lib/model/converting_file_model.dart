@@ -44,14 +44,6 @@ class ConvertingFileModel {
     this.jobId = jobId;
   }
 
-  bool get isEmpty {
-    return fileName == null &&
-        fileSize == null &&
-        inputFormat == null &&
-        outputFormat == null &&
-        jobId == null;
-  }
-
   void clear() {
     fileName = null;
     fileSize = null;

@@ -65,16 +65,14 @@ class FileController extends GetxController {
     logger.i("loading data");
     // await _preferencesHelper.removeAllADateFromSharedPref();
     _loadConvertingFileData();
-    _getDownloadableFilesData();
+    _loadDownloadableFilesData();
     logger.i("data laoded");
   }
 
   void _loadConvertingFileData() async {
-    ConvertingFileModel data =
-        await _preferencesHelper.fetchConvertingFileData();
-    if (!data.isEmpty) {
+    ConvertingFileModel? data = await _getConvertingFileData();
+    if (data != null) {
       logger.i(data);
-      await _getConvertingFileData();
       isFileConverting.value = true;
       String fileId = "${GenerateUtils.generateIdWithDate("Convertify")}";
       String fileConvertedDate = DateTime.now().toString();
@@ -83,6 +81,15 @@ class FileController extends GetxController {
       setConvertedDate(fileId, fileConvertedDate);
       await removeConvertingFile();
       isFileConverting.value = false;
+    }
+  }
+
+    void _loadDownloadableFilesData() {
+    List<DownloadableFileModel> downloadadableDataFiles =
+        _preferencesHelper.fetchDownloadableFilesData();
+    if (downloadadableDataFiles.isNotEmpty) {
+      downloadableFiles.value = downloadadableDataFiles;
+      setConvertedDates(downloadableFiles);
     }
   }
 
@@ -159,7 +166,6 @@ class FileController extends GetxController {
       convertingFile!.clear();
     });
     logger.i("Converting file cleared");
-    logger.d(convertingFile.value.isEmpty);
   }
 
   Future<void> _setConvertingFile(String fileName, String fileSize,
@@ -209,17 +215,11 @@ class FileController extends GetxController {
     }
   }
 
-  Future<void> _getConvertingFileData() async {
-    convertingFile.value = await _preferencesHelper.fetchConvertingFileData();
-  }
-
-  void _getDownloadableFilesData() async {
-    List<DownloadableFileModel> downloadadableDataFiles =
-        await _preferencesHelper.fetchDownloadableFilesData();
-    if (downloadadableDataFiles.isNotEmpty) {
-      downloadableFiles.value = downloadadableDataFiles;
-      setConvertedDates(downloadableFiles);
+  Future<ConvertingFileModel?> _getConvertingFileData() async {
+    if (_preferencesHelper.fetchConvertingFileData() != null) {
+      convertingFile.value = (_preferencesHelper.fetchConvertingFileData())!;
     }
+    return null;
   }
 
   void deleteDownloadableFile(String fileId) async {
