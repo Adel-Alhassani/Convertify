@@ -40,7 +40,7 @@ class MyFilesScreen extends StatelessWidget {
               SizedBox(
                 height: 20.h,
               ),
-              fileController.convertingFile.isEmpty
+              !fileController.isFileConverting.value
                   ? Container(
                       width: 383.w,
                       height: 85.h,
@@ -53,11 +53,11 @@ class MyFilesScreen extends StatelessWidget {
                                   color: AppColor.blackSecondaryColor))),
                     )
                   : ConvertingFileDetails(
-                      fileName: fileController.convertingFile["fileName"],
-                      fileSize: fileController.convertingFile["fileSize"],
-                      inputFormat: fileController.convertingFile["inputFormat"],
+                      fileName: fileController.convertingFile.value.fileName!,
+                      fileSize: fileController.convertingFile.value.fileSize!,
+                      inputFormat: fileController.convertingFile.value.inputFormat!,
                       outputFormat:
-                          fileController.convertingFile["outputFormat"],
+                          fileController.convertingFile.value.outputFormat!,
                     ),
               SizedBox(
                 height: 20.h,
@@ -79,21 +79,21 @@ class MyFilesScreen extends StatelessWidget {
                         itemBuilder: (context, index) {
                           return Obx(() {
                             String fileId = fileController
-                                .downloadableFiles[index]["fileId"];
+                                .downloadableFiles[index].fileId!;
                             return Column(
                               children: [
                                 DownloadableFileDetails(
                                     fileId: fileId,
                                     fileName: fileController
-                                        .downloadableFiles[index]["fileName"],
+                                        .downloadableFiles[index].fileName!,
                                     fileSize: fileController
-                                        .downloadableFiles[index]["fileSize"],
+                                        .downloadableFiles[index].fileSize!,
                                     fileExtension:
-                                        fileController.downloadableFiles[index]
-                                            ["outputFormat"],
+                                        fileController.downloadableFiles[index].
+                                            fileOutputFormat!,
                                     downloadUrl:
-                                        fileController.downloadableFiles[index]
-                                            ["fileDownloadUrl"],
+                                        fileController.downloadableFiles[index].
+                                            fileDownloadUrl!,
                                     convertedDate: fileController
                                         .convertedDates[fileId]!.value),
                                 SizedBox(

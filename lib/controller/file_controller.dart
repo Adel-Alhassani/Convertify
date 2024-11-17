@@ -8,6 +8,8 @@ import 'package:convertify/core/exception/network_exceptions.dart';
 import 'package:convertify/core/exception/exceptions_handler.dart';
 import 'package:convertify/core/logger.dart';
 import 'package:convertify/data/preferences_helper.dart';
+import 'package:convertify/model/converting_file_model.dart';
+import 'package:convertify/model/downloadable_file_model.dart';
 import 'package:convertify/service/file_service.dart';
 import 'package:convertify/service/setting_services.dart';
 import 'package:convertify/utils/file_utils.dart';
@@ -43,8 +45,9 @@ class FileController extends GetxController {
   String? size;
   String? extension;
   RxMap<String, List<String>> validOutputFormats = <String, List<String>>{}.obs;
-  RxMap<String, dynamic> convertingFile = <String, dynamic>{}.obs;
-  RxList<Map<String, dynamic>> downloadableFiles = <Map<String, dynamic>>[].obs;
+  var convertingFile = ConvertingFileModel().obs;
+  RxList<DownloadableFileModel> downloadableFiles =
+      <DownloadableFileModel>[].obs;
   RxMap<String, String> files = <String, String>{}.obs;
   RxList searchResult = <Map<String, String>>[].obs;
   RxMap<String, RxString> convertedDates = <String, RxString>{}.obs;
@@ -67,17 +70,17 @@ class FileController extends GetxController {
   }
 
   void _loadConvertingFileData() async {
-    Map<String, dynamic> data =
+    ConvertingFileModel data =
         await _preferencesHelper.fetchConvertingFileData();
-    if (data.isNotEmpty) {
+    if (!data.isEmpty) {
       logger.i(data);
       await _getConvertingFileData();
       isFileConverting.value = true;
       String fileId = "${GenerateUtils.generateIdWithDate("Convertify")}";
       String fileConvertedDate = DateTime.now().toString();
-      await _setDownloadableFiles(fileId, convertingFile["fileName"],
-          convertingFile["outputFormat"], fileConvertedDate);
-          setConvertedDate(fileId, fileConvertedDate);
+      await _setDownloadableFiles(
+          fileId, data.fileName!, data.outputFormat, fileConvertedDate);
+      setConvertedDate(fileId, fileConvertedDate);
       await removeConvertingFile();
       isFileConverting.value = false;
     }
@@ -128,6 +131,7 @@ class FileController extends GetxController {
     await _fileService.creatJob(extension!, outputFormat.value);
     await _fileService.uploadFile(path!);
     isFileUploading.value = false;
+    logger.i("File uploaded");
   }
 
   Future<void> convertFile() async {
@@ -143,6 +147,7 @@ class FileController extends GetxController {
       setConvertedDate(fileId, fileConvertedDate);
       await removeConvertingFile();
       isFileConverting.value = false;
+      logger.i("File converted");
     } on Exception catch (e) {
       ExceptionsHandler.handle(e, "Failed to convert the file");
     }
@@ -150,19 +155,25 @@ class FileController extends GetxController {
 
   Future<void> removeConvertingFile() async {
     await _preferencesHelper.removeConvertingFileData();
-    convertingFile.clear();
+    convertingFile.update((convertingFile) {
+      convertingFile!.clear();
+    });
+    logger.i("Converting file cleared");
+    logger.d(convertingFile.value.isEmpty);
   }
 
   Future<void> _setConvertingFile(String fileName, String fileSize,
       String fileExtension, String fileOutputFormat, String jobId) async {
     await _preferencesHelper.storeConvertingFileData(
         fileName, fileSize, fileExtension, fileOutputFormat, jobId);
-    convertingFile.value = {
-      "fileName": fileName,
-      "fileSize": fileSize,
-      "inputFormat": fileExtension,
-      "outputFormat": fileOutputFormat,
-    };
+    convertingFile.update((convertingFile) {
+      convertingFile!.setFields(
+          fileName: fileName,
+          fileSize: fileSize,
+          inputFormat: fileExtension,
+          outputFormat: fileOutputFormat,
+          jobId: jobId);
+    });
   }
 
   Future<void> _setDownloadableFiles(String fileId, String fileName,
@@ -172,14 +183,13 @@ class FileController extends GetxController {
         await _fileService.fetchFileSize(fileDownloadUrl));
     await _preferencesHelper.storeDownloadableFilesData(fileId, fileName,
         fileSize, fileOutputFormat, fileDownloadUrl, fileConvertedDate);
-    downloadableFiles.add({
-      "fileId": fileId,
-      "fileName": fileName,
-      "fileSize": fileSize,
-      "outputFormat": fileOutputFormat,
-      "fileDownloadUrl": fileDownloadUrl,
-      "fileConvertedDate": fileConvertedDate
-    });
+    downloadableFiles.add(DownloadableFileModel(
+        fileId: fileId,
+        fileName: fileName,
+        fileSize: fileSize,
+        fileOutputFormat: fileOutputFormat,
+        fileDownloadUrl: fileDownloadUrl,
+        fileConvertedDate: fileConvertedDate));
   }
 
   void setConvertedDate(String fileId, date) {
@@ -191,22 +201,20 @@ class FileController extends GetxController {
     });
   }
 
-  void setConvertedDates(List<Map<String, dynamic>> downloadableFiles) {
+  void setConvertedDates(List<DownloadableFileModel> downloadableFiles) {
     for (int i = 0; i < downloadableFiles.length; i++) {
-      String fileId = downloadableFiles[i]["fileId"];
-      String fileConvertedDate = downloadableFiles[i]["fileConvertedDate"];
+      String fileId = downloadableFiles[i].fileId!;
+      String fileConvertedDate = downloadableFiles[i].fileConvertedDate!;
       setConvertedDate(fileId, fileConvertedDate);
     }
   }
 
   Future<void> _getConvertingFileData() async {
-    convertingFile.value =
-        Map.from(await _preferencesHelper.fetchConvertingFileData())
-          ..remove("jobId");
+    convertingFile.value = await _preferencesHelper.fetchConvertingFileData();
   }
 
   void _getDownloadableFilesData() async {
-    List<Map<String, dynamic>> downloadadableDataFiles =
+    List<DownloadableFileModel> downloadadableDataFiles =
         await _preferencesHelper.fetchDownloadableFilesData();
     if (downloadadableDataFiles.isNotEmpty) {
       downloadableFiles.value = downloadadableDataFiles;
@@ -217,7 +225,7 @@ class FileController extends GetxController {
   void deleteDownloadableFile(String fileId) async {
     if (await _preferencesHelper.deleteDownloadableFile(fileId)) {
       final int fileIndex =
-          downloadableFiles.indexWhere((file) => file["fileId"] == fileId);
+          downloadableFiles.indexWhere((file) => file.fileId == fileId);
       downloadableFiles.removeAt(fileIndex);
     } else {
       CustomeDialog.showDeleteFailedDialog();
