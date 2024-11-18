@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:convertify/controller/config_controller.dart';
 import 'package:convertify/controller/file_controller.dart';
 import 'package:convertify/core/constant/app_Images.dart';
@@ -17,13 +19,16 @@ class DownloadableFileDetails extends StatelessWidget {
   final String fileExtension;
   final String downloadUrl;
   final String convertedDate;
+  final String expireDate;
   const DownloadableFileDetails({
     super.key,
     required this.fileId,
     required this.fileName,
     required this.fileSize,
     required this.fileExtension,
-    required this.downloadUrl, required this.convertedDate,
+    required this.downloadUrl,
+    required this.convertedDate,
+    required this.expireDate,
   });
 
   @override
@@ -76,78 +81,94 @@ class DownloadableFileDetails extends StatelessWidget {
             ),
           ],
         ),
-        Obx(() {
-          bool isDownloading =
-              fileController.isFileDownloading[fileId]?.value ?? false;
-          double downloadingProgressValue =
-              fileController.downloadProgress[fileId]?.value ?? 1.0;
-          return Row(
-            // mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              CircularPercentIndicator(
-                  radius: 15.0.r,
-                  lineWidth: 2.0.w,
-                  percent: downloadingProgressValue,
-                  center: isDownloading
-                      ? Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              "${(downloadingProgressValue * 100).toInt()}",
-                              style: TextStyle(
-                                  fontFamily: "Inter",
-                                  fontSize: 8.sp,
-                                  fontWeight: FontWeight.w900,
-                                  color: AppColor.extraPrimaryColor),
-                            ),
-                            Text(
-                              "%",
-                              style: TextStyle(
-                                  fontFamily: "Inter",
-                                  fontSize: 6.sp,
-                                  fontWeight: FontWeight.w900,
-                                  color: AppColor.extraPrimaryColor),
-                            ),
-                          ],
-                        )
-                      : IconButton(
-                          padding: const EdgeInsets.all(0),
-                          iconSize: 20.r,
-                          onPressed: () {
-                            fileController.downloadFile(fileId,fileName, downloadUrl);
+        Column(
+          children: [
+            Obx(() {
+              bool isDownloading =
+                  fileController.isFileDownloading[fileId]?.value ?? false;
+              double downloadingProgressValue =
+                  fileController.downloadProgress[fileId]?.value ?? 1.0;
+              return Row(
+                // mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  CircularPercentIndicator(
+                      radius: 15.0.r,
+                      lineWidth: 2.0.w,
+                      percent: downloadingProgressValue,
+                      center: isDownloading
+                          ? Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "${(downloadingProgressValue * 100).toInt()}",
+                                  style: TextStyle(
+                                      fontFamily: "Inter",
+                                      fontSize: 8.sp,
+                                      fontWeight: FontWeight.w900,
+                                      color: AppColor.extraPrimaryColor),
+                                ),
+                                Text(
+                                  "%",
+                                  style: TextStyle(
+                                      fontFamily: "Inter",
+                                      fontSize: 6.sp,
+                                      fontWeight: FontWeight.w900,
+                                      color: AppColor.extraPrimaryColor),
+                                ),
+                              ],
+                            )
+                          : IconButton(
+                              padding: const EdgeInsets.all(0),
+                              iconSize: 20.r,
+                              onPressed: () {
+                                fileController.downloadFile(
+                                    fileId, fileName, downloadUrl);
+                              },
+                              icon: const Icon(
+                                Icons.arrow_downward_rounded,
+                                color: AppColor.extraPrimaryColor,
+                              )),
+                      progressColor: AppColor.extraPrimaryColor),
+                  SizedBox(
+                    width: 15.w,
+                  ),
+                  InkWell(
+                    splashColor: AppColor.fourthyColor,
+                    onTap: () {
+                      CustomeDialog.showConfirmCancleDialog(
+                          "confirm_delete".tr,
+                          "yes".tr,
+                          () {
+                            fileController.deleteDownloadableFile(fileId);
+                            Get.back();
                           },
-                          icon: const Icon(
-                            Icons.arrow_downward_rounded,
-                            color: AppColor.extraPrimaryColor,
-                          )),
-                  progressColor: AppColor.extraPrimaryColor),
-              SizedBox(
-                width: 15.w,
+                          "no".tr,
+                          () {
+                            Get.back();
+                          });
+                    },
+                    child: Icon(
+                      Icons.delete,
+                      color: AppColor.extraPrimaryColor,
+                      size: 27.r,
+                    ),
+                  )
+                ],
+              );
+            }),
+            SizedBox(
+              height: 5.h,
+            ),
+            Text(
+              "Expire in ${expireDate}h",
+              style: TextStyle(
+                fontFamily: "Inter",
+                fontWeight: FontWeight.w700,
+                fontSize: 10.sp,
               ),
-              InkWell(
-                splashColor: AppColor.fourthyColor,
-                onTap: () {
-                  CustomeDialog.showConfirmCancleDialog(
-                      "confirm_delete".tr,
-                      "yes".tr,
-                      () {
-                        fileController.deleteDownloadableFile(fileId);
-                        Get.back();
-                      },
-                      "no".tr,
-                      () {
-                        Get.back();
-                      });
-                },
-                child: Icon(
-                  Icons.delete,
-                  color: AppColor.extraPrimaryColor,
-                  size: 27.r,
-                ),
-              )
-            ],
-          );
-        }),
+            )
+          ],
+        )
       ],
     );
   }

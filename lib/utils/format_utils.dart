@@ -115,4 +115,19 @@ class FormatUtils {
       return _formatTimeAgoInEn(dateTime);
     }
   }
+
+  // static String _formatExpireTimeAr(DateTime dateTime) {
+  //   final difference = dateTime.difference(DateTime.now());
+  //   return "يحذف خلال ${difference.inHours} ";
+  // }
+
+  // static String _formatExpireTimeEn(DateTime dateTime) {
+  //   final difference = dateTime.difference(DateTime.now());
+  //   return "Expire in ${difference.inHours} hours";
+  // }
+
+  static String formatExpireTime(DateTime expireDate) {
+    final difference = expireDate.difference(DateTime.now());
+    return "${difference.inHours}";
+  }
 }

@@ -20,6 +20,15 @@ class PreferencesHelper {
     return false;
   }
 
+  bool _isDownloadableFilesDataExist() {
+    if (_settingServicesController.sharedPreferences
+            .getString("downloadableData") !=
+        null) {
+      return true;
+    }
+    return false;
+  }
+
   Future<void> storeConvertingFileData(String name, String size,
       String extension, String outputFormat, String jobId) async {
     ConvertingFileModel convertingFileModel = ConvertingFileModel(
@@ -34,28 +43,37 @@ class PreferencesHelper {
   }
 
   Future<void> storeDownloadableFilesData(
-      String fileId,
-      String fileName,
-      String fileSize,
-      String fileOutputFormat,
-      String fileDownloadUrl,
-      fileConvertedDate) async {
+    String fileId,
+    String fileName,
+    String fileSize,
+    String fileOutputFormat,
+    String fileDownloadUrl,
+    String fileConvertedDate,
+    String fileExpireDate,
+  ) async {
     DownloadableFileModel downloadableFileModel = DownloadableFileModel(
         fileId: fileId,
         fileName: fileName,
         fileSize: fileSize,
         fileOutputFormat: fileOutputFormat,
         fileDownloadUrl: fileDownloadUrl,
-        fileConvertedDate: fileConvertedDate);
-    List<DownloadableFileModel> downloadableData =
-       fetchDownloadableFilesData();
-    downloadableData.add(downloadableFileModel);
-    await _settingServicesController.sharedPreferences
+        fileConvertedDate: fileConvertedDate,
+        fileExpireDate: fileExpireDate);
+     List<DownloadableFileModel>? downloadableData = fetchDownloadableFilesData();
+    if (downloadableData == null) {
+      downloadableData = <DownloadableFileModel>[];
+      downloadableData.add(downloadableFileModel);
+    } else{
+      downloadableData.add(downloadableFileModel);
+    }
+     await _settingServicesController.sharedPreferences
         .setString("downloadableData", jsonEncode(downloadableData));
   }
 
   ConvertingFileModel? fetchConvertingFileData() {
-    if (!_isConvertingFileDataExist()) {return null;}
+    if (!_isConvertingFileDataExist()) {
+      return null;
+    }
     String dataJson = _settingServicesController.sharedPreferences
         .getString("convertingFileData")!;
     Map<String, dynamic> dataMap = jsonDecode(dataJson);
@@ -63,7 +81,10 @@ class PreferencesHelper {
     return data;
   }
 
-  List<DownloadableFileModel> fetchDownloadableFilesData() {
+  List<DownloadableFileModel>? fetchDownloadableFilesData() {
+    if (!_isDownloadableFilesDataExist()) {
+      return null;
+    }
     String dataJson = _settingServicesController.sharedPreferences
         .getString("downloadableData")!;
     List<dynamic> dynamicList = jsonDecode(dataJson);
@@ -85,10 +106,10 @@ class PreferencesHelper {
   }
 
   Future<bool> deleteDownloadableFile(String fileId) async {
-    final List<DownloadableFileModel> downloadableFilesData =
+    final List<DownloadableFileModel>? downloadableFilesData =
         fetchDownloadableFilesData();
     final int fileIndex =
-        downloadableFilesData.indexWhere((file) => file.fileId == fileId);
+        downloadableFilesData!.indexWhere((file) => file.fileId == fileId);
     if (fileIndex == -1) {
       return false;
     }

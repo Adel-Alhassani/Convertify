@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:ffi';
 import 'dart:io';
 import 'dart:math';
 
@@ -51,6 +52,7 @@ class FileController extends GetxController {
   RxMap<String, String> files = <String, String>{}.obs;
   RxList searchResult = <Map<String, String>>[].obs;
   RxMap<String, RxString> convertedDates = <String, RxString>{}.obs;
+  RxMap<String, RxString> expiredDates = <String, RxString>{}.obs;
   RxMap<String, RxDouble> downloadProgress = <String, RxDouble>{}.obs;
   RxMap<String, RxBool> isFileDownloading = <String, RxBool>{}.obs;
   // Logger logger = Logger();
@@ -76,20 +78,24 @@ class FileController extends GetxController {
       isFileConverting.value = true;
       String fileId = "${GenerateUtils.generateIdWithDate("Convertify")}";
       String fileConvertedDate = DateTime.now().toString();
-      await _setDownloadableFiles(
-          fileId, data.fileName!, data.outputFormat, fileConvertedDate);
+      String fileExpireDate =
+          DateTime.now().add(const Duration(minutes: 5)).toString();
+      await _setDownloadableFiles(fileId, data.fileName!, data.outputFormat,
+          fileConvertedDate, fileExpireDate);
       setConvertedDate(fileId, fileConvertedDate);
+      setExpireDate(fileId, fileExpireDate);
       await removeConvertingFile();
       isFileConverting.value = false;
     }
   }
 
-    void _loadDownloadableFilesData() {
-    List<DownloadableFileModel> downloadadableDataFiles =
+  void _loadDownloadableFilesData() {
+    List<DownloadableFileModel>? downloadadableDataFiles =
         _preferencesHelper.fetchDownloadableFilesData();
-    if (downloadadableDataFiles.isNotEmpty) {
+    if (downloadadableDataFiles != null && downloadadableDataFiles.isNotEmpty) {
       downloadableFiles.value = downloadadableDataFiles;
       setConvertedDates(downloadableFiles);
+      setExpiredDates(downloadableFiles);
     }
   }
 
@@ -149,9 +155,12 @@ class FileController extends GetxController {
       isFileConverting.value = true;
       String fileId = "${GenerateUtils.generateIdWithDate("Convertify")}";
       String fileConvertedDate = DateTime.now().toString();
+      String fileExpireDate =
+          DateTime.now().add(const Duration(hours: 24)).toString();
       await _setDownloadableFiles(
-          fileId, name!, outputFormat.value, fileConvertedDate);
+          fileId, name!, outputFormat.value, fileConvertedDate, fileExpireDate);
       setConvertedDate(fileId, fileConvertedDate);
+      setExpireDate(fileId, fileExpireDate);
       await removeConvertingFile();
       isFileConverting.value = false;
       logger.i("File converted");
@@ -183,27 +192,58 @@ class FileController extends GetxController {
   }
 
   Future<void> _setDownloadableFiles(String fileId, String fileName,
-      fileOutputFormat, String fileConvertedDate) async {
+      fileOutputFormat, String fileConvertedDate, fileExpireDate) async {
     String fileDownloadUrl = await getDownloadUrl();
     String fileSize = FormatUtils.formatFileSizeWithUnits(
         await _fileService.fetchFileSize(fileDownloadUrl));
-    await _preferencesHelper.storeDownloadableFilesData(fileId, fileName,
-        fileSize, fileOutputFormat, fileDownloadUrl, fileConvertedDate);
+    await _preferencesHelper.storeDownloadableFilesData(
+        fileId,
+        fileName,
+        fileSize,
+        fileOutputFormat,
+        fileDownloadUrl,
+        fileConvertedDate,
+        fileExpireDate);
     downloadableFiles.add(DownloadableFileModel(
         fileId: fileId,
         fileName: fileName,
         fileSize: fileSize,
         fileOutputFormat: fileOutputFormat,
         fileDownloadUrl: fileDownloadUrl,
-        fileConvertedDate: fileConvertedDate));
+        fileConvertedDate: fileConvertedDate,
+        fileExpireDate: fileExpireDate));
   }
 
   void setConvertedDate(String fileId, date) {
+    // only for the firs time will excute this
+    // but after it enter the Timer block it'll not excute this
+    // -----------------------------
     convertedDates[fileId] =
         FormatUtils.formatTimeAgo(DateTime.parse(date)).obs;
+    // -----------------------------
     Timer.periodic(const Duration(minutes: 1), (timer) {
       convertedDates[fileId] =
           FormatUtils.formatTimeAgo(DateTime.parse(date)).obs;
+    });
+  }
+
+  void setExpireDate(String fileId, date) {
+    // only for the firs time will excute this
+    // but after it enter the Timer block it'll not excute this
+    // -----------------------------
+    expiredDates[fileId] =
+        FormatUtils.formatExpireTime(DateTime.parse(date)).obs;
+        if (int.parse(expiredDates[fileId]!.value) <= 0) {
+      deleteDownloadableFile(fileId);
+    }
+    // -----------------------------
+    Timer.periodic(const Duration(hours: 1), (timer) {
+      expiredDates[fileId] =
+          FormatUtils.formatExpireTime(DateTime.parse(date)).obs;
+      if (int.parse(expiredDates[fileId]!.value) <= 0) {
+        deleteDownloadableFile(fileId);
+        timer.cancel();
+      }
     });
   }
 
@@ -212,6 +252,14 @@ class FileController extends GetxController {
       String fileId = downloadableFiles[i].fileId!;
       String fileConvertedDate = downloadableFiles[i].fileConvertedDate!;
       setConvertedDate(fileId, fileConvertedDate);
+    }
+  }
+
+  void setExpiredDates(List<DownloadableFileModel> downloadableFiles) {
+    for (int i = 0; i < downloadableFiles.length; i++) {
+      String fileId = downloadableFiles[i].fileId!;
+      String fileExpireDate = downloadableFiles[i].fileExpireDate!;
+      setExpireDate(fileId, fileExpireDate);
     }
   }
 
@@ -233,7 +281,7 @@ class FileController extends GetxController {
   }
 
   Future<String> getDownloadUrl() async {
-    String jobId = await _preferencesHelper.fetchJobId();
+    String jobId = _preferencesHelper.fetchJobId();
     String downloadUrl = await _fileService.getFileDownloadUrl(jobId);
     return downloadUrl;
   }

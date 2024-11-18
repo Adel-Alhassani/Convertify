@@ -5,6 +5,7 @@ class DownloadableFileModel {
   String? fileOutputFormat;
   String? fileDownloadUrl;
   String? fileConvertedDate;
+  String? fileExpireDate;
 
   DownloadableFileModel(
       {this.fileId,
@@ -12,7 +13,8 @@ class DownloadableFileModel {
       this.fileSize,
       this.fileOutputFormat,
       this.fileDownloadUrl,
-      this.fileConvertedDate});
+      this.fileConvertedDate,
+      this.fileExpireDate});
 
   DownloadableFileModel.fromJson(Map<String, dynamic> json) {
     fileId = json['fileId'];
@@ -21,6 +23,7 @@ class DownloadableFileModel {
     fileOutputFormat = json['outputFormat'];
     fileDownloadUrl = json['fileDownloadUrl'];
     fileConvertedDate = json['fileConvertedDate'];
+    fileExpireDate = json['fileExpireDate'];
   }
 
   Map<String, dynamic> toJson() {
@@ -31,6 +34,7 @@ class DownloadableFileModel {
     data['outputFormat'] = this.fileOutputFormat;
     data['fileDownloadUrl'] = this.fileDownloadUrl;
     data['fileConvertedDate'] = this.fileConvertedDate;
+    data['fileExpireDate'] = this.fileExpireDate; 
     return data;
   }
 }

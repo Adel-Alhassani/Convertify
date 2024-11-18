@@ -55,7 +55,8 @@ class MyFilesScreen extends StatelessWidget {
                   : ConvertingFileDetails(
                       fileName: fileController.convertingFile.value.fileName!,
                       fileSize: fileController.convertingFile.value.fileSize!,
-                      inputFormat: fileController.convertingFile.value.inputFormat!,
+                      inputFormat:
+                          fileController.convertingFile.value.inputFormat!,
                       outputFormat:
                           fileController.convertingFile.value.outputFormat!,
                     ),
@@ -78,24 +79,27 @@ class MyFilesScreen extends StatelessWidget {
                             : fileController.searchResult.length,
                         itemBuilder: (context, index) {
                           return Obx(() {
-                            String fileId = fileController
-                                .downloadableFiles[index].fileId!;
+                            String fileId =
+                                fileController.downloadableFiles[index].fileId!;
                             return Column(
                               children: [
                                 DownloadableFileDetails(
-                                    fileId: fileId,
-                                    fileName: fileController
-                                        .downloadableFiles[index].fileName!,
-                                    fileSize: fileController
-                                        .downloadableFiles[index].fileSize!,
-                                    fileExtension:
-                                        fileController.downloadableFiles[index].
-                                            fileOutputFormat!,
-                                    downloadUrl:
-                                        fileController.downloadableFiles[index].
-                                            fileDownloadUrl!,
-                                    convertedDate: fileController
-                                        .convertedDates[fileId]!.value),
+                                  fileId: fileId,
+                                  fileName: fileController
+                                      .downloadableFiles[index].fileName!,
+                                  fileSize: fileController
+                                      .downloadableFiles[index].fileSize!,
+                                  fileExtension: fileController
+                                      .downloadableFiles[index]
+                                      .fileOutputFormat!,
+                                  downloadUrl: fileController
+                                      .downloadableFiles[index]
+                                      .fileDownloadUrl!,
+                                  convertedDate: fileController
+                                      .convertedDates[fileId]!.value,
+                                  expireDate: fileController
+                                      .expiredDates[fileId]!.value,
+                                ),
                                 SizedBox(
                                   height: 24.h,
                                 )
