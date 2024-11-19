@@ -57,7 +57,6 @@ class FileController extends GetxController {
   Map<String, Timer> expiredDatesTimer = <String, Timer>{};
   RxMap<String, RxDouble> downloadProgress = <String, RxDouble>{}.obs;
   RxMap<String, RxBool> isFileDownloading = <String, RxBool>{}.obs;
-  // Logger logger = Logger();
 
   @override
   void onInit() {
@@ -81,7 +80,7 @@ class FileController extends GetxController {
       String fileId = "${GenerateUtils.generateIdWithDate("Convertify")}";
       String fileConvertedDate = DateTime.now().toString();
       String fileExpireDate =
-          DateTime.now().add(const Duration(minutes: 5)).toString();
+          DateTime.now().add(const Duration(hours: 24)).toString();
       await _setDownloadableFiles(fileId, data.fileName!, data.outputFormat,
           fileConvertedDate, fileExpireDate);
       setConvertedDate(fileId, fileConvertedDate);
@@ -158,7 +157,7 @@ class FileController extends GetxController {
       String fileId = "${GenerateUtils.generateIdWithDate("Convertify")}";
       String fileConvertedDate = DateTime.now().toString();
       String fileExpireDate =
-          DateTime.now().add(const Duration(seconds: 15)).toString();
+          DateTime.now().add(const Duration(hours: 24)).toString();
       await _setDownloadableFiles(
           fileId, name!, outputFormat.value, fileConvertedDate, fileExpireDate);
       setConvertedDate(fileId, fileConvertedDate);
@@ -241,14 +240,10 @@ class FileController extends GetxController {
     }
     // -----------------------------
     expiredDatesTimer[fileId] =
-        Timer.periodic(const Duration(seconds: 1), (timer) {
+        Timer.periodic(const Duration(hours: 1), (timer) {
       expiredDates[fileId] =
           FormatUtils.formatExpireTime(DateTime.parse(date)).obs;
       if (int.parse(expiredDates[fileId]!.value) <= 0) {
-        // if (!downloadableFiles.any((file) => file.fileId == fileId)) {
-        //   timer.cancel();
-        //   return;
-        // }
         deleteDownloadableFile(fileId);
         timer.cancel();
       }
