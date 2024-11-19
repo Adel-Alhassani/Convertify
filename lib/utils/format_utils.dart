@@ -128,6 +128,6 @@ class FormatUtils {
 
   static String formatExpireTime(DateTime expireDate) {
     final difference = expireDate.difference(DateTime.now());
-    return "${difference.inHours}";
+    return "${difference.inSeconds}";
   }
 }

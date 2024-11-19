@@ -52,7 +52,9 @@ class FileController extends GetxController {
   RxMap<String, String> files = <String, String>{}.obs;
   RxList searchResult = <Map<String, String>>[].obs;
   RxMap<String, RxString> convertedDates = <String, RxString>{}.obs;
+  Map<String, Timer> convertedDatesTimer = <String, Timer>{};
   RxMap<String, RxString> expiredDates = <String, RxString>{}.obs;
+  Map<String, Timer> expiredDatesTimer = <String, Timer>{};
   RxMap<String, RxDouble> downloadProgress = <String, RxDouble>{}.obs;
   RxMap<String, RxBool> isFileDownloading = <String, RxBool>{}.obs;
   // Logger logger = Logger();
@@ -156,7 +158,7 @@ class FileController extends GetxController {
       String fileId = "${GenerateUtils.generateIdWithDate("Convertify")}";
       String fileConvertedDate = DateTime.now().toString();
       String fileExpireDate =
-          DateTime.now().add(const Duration(hours: 24)).toString();
+          DateTime.now().add(const Duration(seconds: 15)).toString();
       await _setDownloadableFiles(
           fileId, name!, outputFormat.value, fileConvertedDate, fileExpireDate);
       setConvertedDate(fileId, fileConvertedDate);
@@ -221,7 +223,8 @@ class FileController extends GetxController {
     convertedDates[fileId] =
         FormatUtils.formatTimeAgo(DateTime.parse(date)).obs;
     // -----------------------------
-    Timer.periodic(const Duration(minutes: 1), (timer) {
+    convertedDatesTimer[fileId] =
+        Timer.periodic(const Duration(minutes: 1), (timer) {
       convertedDates[fileId] =
           FormatUtils.formatTimeAgo(DateTime.parse(date)).obs;
     });
@@ -229,18 +232,23 @@ class FileController extends GetxController {
 
   void setExpireDate(String fileId, date) {
     // only for the firs time will excute this
-    // but after it enter the Timer block it'll not excute this
+    // but after it enter the Timer block it'll not excute it
     // -----------------------------
     expiredDates[fileId] =
         FormatUtils.formatExpireTime(DateTime.parse(date)).obs;
-        if (int.parse(expiredDates[fileId]!.value) <= 0) {
+    if (int.parse(expiredDates[fileId]!.value) <= 0) {
       deleteDownloadableFile(fileId);
     }
     // -----------------------------
-    Timer.periodic(const Duration(hours: 1), (timer) {
+    expiredDatesTimer[fileId] =
+        Timer.periodic(const Duration(seconds: 1), (timer) {
       expiredDates[fileId] =
           FormatUtils.formatExpireTime(DateTime.parse(date)).obs;
       if (int.parse(expiredDates[fileId]!.value) <= 0) {
+        // if (!downloadableFiles.any((file) => file.fileId == fileId)) {
+        //   timer.cancel();
+        //   return;
+        // }
         deleteDownloadableFile(fileId);
         timer.cancel();
       }
@@ -275,9 +283,17 @@ class FileController extends GetxController {
       final int fileIndex =
           downloadableFiles.indexWhere((file) => file.fileId == fileId);
       downloadableFiles.removeAt(fileIndex);
+      cancelAndRemoveTimers(fileId);
     } else {
       CustomeDialog.showDeleteFailedDialog();
     }
+  }
+
+  void cancelAndRemoveTimers(String fileId) {
+    convertedDatesTimer[fileId]!.cancel();
+    convertedDatesTimer.remove(fileId);
+    expiredDatesTimer[fileId]!.cancel();
+    expiredDatesTimer.remove(fileId);
   }
 
   Future<String> getDownloadUrl() async {
