@@ -16,9 +16,9 @@ import 'package:http/http.dart' as http;
 class FileService {
   final String? apiKey = dotenv.env["API_KEY"];
   Dio dio = Dio();
-  late final String _jobId;
-  late final String _uploadUrl;
-  late final Map _parameters;
+  late String _jobId;
+  late String _uploadUrl;
+  late Map _parameters;
 
   Future<Map<String, List<String>>> fetchValidOutputFormatsOf(
       String inputFormat) async {
