@@ -20,6 +20,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
+import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -55,6 +56,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
                 Obx(() => Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         PrimaryButtonWithLoading(
                             text: "convert".tr,
@@ -84,7 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ? AppColor.tertiaryColor
                                 : AppColor.whiteColor, // Use AppColor
                             onPressed: () async {
-                              // await fileController.startFileUpload();
+                              await fileController.startFileUpload();
                               if (!context.mounted) return;
                               widget.controller.jumpToTab(1);
                               await fileController.convertFile();
@@ -93,10 +96,26 @@ class _HomeScreenState extends State<HomeScreen> {
                           height: 10.h,
                         ),
                         fileController.isFileUploading.value
-                            ? Text("preparing_file".tr,
-                                style: Get.textTheme.displaySmall!
-                                    .copyWith(color: AppColor.tertiaryColor))
-                            : const SizedBox.shrink()
+                            ? Column(
+                                children: [
+                                  Text("preparing_file".tr,
+                                      style: Get.textTheme.displaySmall!
+                                          .copyWith(
+                                              color: AppColor.tertiaryColor)),
+                                  SizedBox(
+                                    height: 10.h,
+                                  ),
+                                  LinearPercentIndicator(
+                                    width: 150.0.w,
+                                    lineHeight: 3.0.h,
+                                    percent:
+                                        fileController.uploadProgress.value,
+                                    progressColor: AppColor.primaryColor,
+                                    alignment: MainAxisAlignment.center,
+                                  ),
+                                ],
+                              )
+                            : const SizedBox.shrink(),
                       ],
                     ))
               ],

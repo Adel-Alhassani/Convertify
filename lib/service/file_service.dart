@@ -6,15 +6,16 @@ import 'dart:math';
 import 'package:convertify/core/exception/network_exceptions.dart';
 import 'package:convertify/core/logger.dart';
 import 'package:convertify/view/widget/dialog/custome_dialog.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:get/get.dart';
+// import 'package:get/get.dart';
 // import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:http/http.dart' as http;
 // import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class FileService {
   final String? apiKey = dotenv.env["API_KEY"];
-  // late String _downloadUrl;
+  Dio dio = Dio();
   late final String _jobId;
   late final String _uploadUrl;
   late final Map _parameters;
@@ -99,32 +100,37 @@ class FileService {
     } on SocketException catch (e) {
       logger.e(e);
       throw CreateJobSocketException();
-    } catch (e) {
+    } on Exception catch (e) {
       logger.e(e);
       rethrow;
     }
   }
 
-  Future<void> uploadFile(String filePath) async {
+  Future<void> uploadFile(
+      {required String filePath,
+      required String fileName,
+      required void Function(int sent, int totat)? onSendProgress}) async {
     // Create the multipart request
     try {
-      final uploadRequest =
-          http.MultipartRequest("POST", Uri.parse(_uploadUrl));
-
-      // Add the file to the request
-      uploadRequest.files
-          .add(await http.MultipartFile.fromPath("file", filePath));
-
-      // Add the additional parameters to the request
-      _parameters.forEach((key, value) {
-        uploadRequest.fields[key] = value;
+      FormData formData = FormData.fromMap({
+        "file": await MultipartFile.fromFile(filePath,
+            filename: fileName //show only filename from path
+            ),
       });
-
-      // Send the upload request
-      final uploadResponse = await uploadRequest.send();
-
+      _parameters.forEach((key, value) {
+        formData.fields.add(MapEntry(key, value));
+      });
+      var uploadResponse = await dio.post(
+        _uploadUrl,
+        data: formData,
+        onSendProgress: (int sent, int total) {
+          if (onSendProgress != null) {
+            onSendProgress(sent, total); // Pass progress to the callback
+          }
+        },
+      );
       if (uploadResponse.statusCode != 201) {
-        throw UploadFileException(uploadResponse.statusCode);
+        throw UploadFileException(uploadResponse.statusCode!);
       }
     } on UploadFileException catch (e) {
       logger.e(e);
@@ -132,7 +138,7 @@ class FileService {
     } on SocketException catch (e) {
       logger.e(e);
       throw UploadFileSocketException();
-    } catch (e) {
+    } on Exception catch (e) {
       logger.e(e);
     }
   }
@@ -180,7 +186,7 @@ class FileService {
   }
 
   String getJobId() {
-    return "0e256592-0549-4788-bade-989087fb75da";
+    // return "0e256592-0549-4788-bade-989087fb75da";
     return _jobId;
   }
 

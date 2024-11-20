@@ -45,6 +45,7 @@ class FileController extends GetxController {
   String? name;
   String? size;
   String? extension;
+  RxInt fileLength = 0.obs;
   RxMap<String, List<String>> validOutputFormats = <String, List<String>>{}.obs;
   var convertingFile = ConvertingFileModel().obs;
   RxList<DownloadableFileModel> downloadableFiles =
@@ -55,6 +56,7 @@ class FileController extends GetxController {
   Map<String, Timer> convertedDatesTimer = <String, Timer>{};
   RxMap<String, RxString> expiredDates = <String, RxString>{}.obs;
   Map<String, Timer> expiredDatesTimer = <String, Timer>{};
+  RxDouble uploadProgress = 0.0.obs;
   RxMap<String, RxDouble> downloadProgress = <String, RxDouble>{}.obs;
   RxMap<String, RxBool> isFileDownloading = <String, RxBool>{}.obs;
 
@@ -66,22 +68,21 @@ class FileController extends GetxController {
 
   void loadData() async {
     logger.i("loading data");
-    // await _preferencesHelper.removeAllADateFromSharedPref();
+    await _preferencesHelper.removeConvertingFileData();
     _loadConvertingFileData();
     _loadDownloadableFilesData();
     logger.i("data laoded");
   }
 
   void _loadConvertingFileData() async {
-    ConvertingFileModel? data = await _getConvertingFileData();
+    ConvertingFileModel? data = _preferencesHelper.fetchConvertingFileData();
     if (data != null) {
-      logger.i(data);
       isFileConverting.value = true;
       String fileId = "${GenerateUtils.generateIdWithDate("Convertify")}";
       String fileConvertedDate = DateTime.now().toString();
       String fileExpireDate =
           DateTime.now().add(const Duration(hours: 24)).toString();
-      await _setDownloadableFiles(fileId, data.fileName!, data.outputFormat,
+      await _storeDownloadableFiles(fileId, data.fileName!, data.outputFormat,
           fileConvertedDate, fileExpireDate);
       setConvertedDate(fileId, fileConvertedDate);
       setExpireDate(fileId, fileExpireDate);
@@ -128,6 +129,7 @@ class FileController extends GetxController {
       await NetworkUtils.checkInternet();
       outputFormat.value = "";
       PlatformFile selectedFile = await FileUtils.pickFile();
+      fileLength.value = selectedFile.size;
       if (!ValidateUtils.validateFileSize(
           selectedFile.size, fileSizeLimitInMB)) {
         return;
@@ -143,7 +145,13 @@ class FileController extends GetxController {
   Future<void> startFileUpload() async {
     isFileUploading.value = true;
     await _fileService.creatJob(extension!, outputFormat.value);
-    await _fileService.uploadFile(path!);
+    await _fileService.uploadFile(
+      filePath: path!,
+      fileName: name!,
+      onSendProgress: (sent, totat) {
+        uploadProgress.value = sent / totat;
+      },
+    );
     isFileUploading.value = false;
     logger.i("File uploaded");
   }
@@ -151,20 +159,19 @@ class FileController extends GetxController {
   Future<void> convertFile() async {
     try {
       String jobId = _fileService.getJobId();
-      await _setConvertingFile(
+      await _storeConvertingFile(
           name!, size!, extension!, outputFormat.value, jobId);
       isFileConverting.value = true;
       String fileId = "${GenerateUtils.generateIdWithDate("Convertify")}";
       String fileConvertedDate = DateTime.now().toString();
       String fileExpireDate =
           DateTime.now().add(const Duration(hours: 24)).toString();
-      await _setDownloadableFiles(
+      await _storeDownloadableFiles(
           fileId, name!, outputFormat.value, fileConvertedDate, fileExpireDate);
       setConvertedDate(fileId, fileConvertedDate);
       setExpireDate(fileId, fileExpireDate);
       await removeConvertingFile();
       isFileConverting.value = false;
-      logger.i("File converted");
     } on Exception catch (e) {
       ExceptionsHandler.handle(e, "Failed to convert the file");
     }
@@ -175,10 +182,9 @@ class FileController extends GetxController {
     convertingFile.update((convertingFile) {
       convertingFile!.clear();
     });
-    logger.i("Converting file cleared");
   }
 
-  Future<void> _setConvertingFile(String fileName, String fileSize,
+  Future<void> _storeConvertingFile(String fileName, String fileSize,
       String fileExtension, String fileOutputFormat, String jobId) async {
     await _preferencesHelper.storeConvertingFileData(
         fileName, fileSize, fileExtension, fileOutputFormat, jobId);
@@ -192,7 +198,7 @@ class FileController extends GetxController {
     });
   }
 
-  Future<void> _setDownloadableFiles(String fileId, String fileName,
+  Future<void> _storeDownloadableFiles(String fileId, String fileName,
       fileOutputFormat, String fileConvertedDate, fileExpireDate) async {
     String fileDownloadUrl = await getDownloadUrl();
     String fileSize = FormatUtils.formatFileSizeWithUnits(
@@ -266,12 +272,12 @@ class FileController extends GetxController {
     }
   }
 
-  Future<ConvertingFileModel?> _getConvertingFileData() async {
-    if (_preferencesHelper.fetchConvertingFileData() != null) {
-      convertingFile.value = (_preferencesHelper.fetchConvertingFileData())!;
-    }
-    return null;
-  }
+  // Future<ConvertingFileModel?> _getConvertingFileData() async {
+  //   if (_preferencesHelper.fetchConvertingFileData() != null) {
+  //     convertingFile.value = (_preferencesHelper.fetchConvertingFileData())!;
+  //   }
+  //   return null;
+  // }
 
   void deleteDownloadableFile(String fileId) async {
     if (await _preferencesHelper.deleteDownloadableFile(fileId)) {
