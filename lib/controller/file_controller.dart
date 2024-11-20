@@ -167,7 +167,7 @@ class FileController extends GetxController {
       String fileExpireDate =
           DateTime.now().add(const Duration(hours: 24)).toString();
       await _storeDownloadableFiles(
-          fileId, name!, outputFormat.value, fileConvertedDate, fileExpireDate);
+          fileId,FormatUtils.changeFileExtension(name!, outputFormat.value), outputFormat.value, fileConvertedDate, fileExpireDate);
       setConvertedDate(fileId, fileConvertedDate);
       setExpireDate(fileId, fileExpireDate);
       await removeConvertingFile();
