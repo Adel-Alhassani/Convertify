@@ -15,6 +15,7 @@ class SearchFileBar extends StatelessWidget {
     return Container(
         width: 376.w,
         height: 40.h,
+        padding: EdgeInsets.symmetric(vertical: 5.h),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10.r),
             border: Border.all(
@@ -25,7 +26,7 @@ class SearchFileBar extends StatelessWidget {
             cursorColor: AppColor.secondaryColor,
             cursorOpacityAnimates: true,
             decoration: InputDecoration(
-                contentPadding: EdgeInsets.symmetric(vertical: 12.h),
+                alignLabelWithHint: true,
                 prefixIcon: const Icon(Icons.search),
                 prefixIconColor: AppColor.secondaryColor,
                 hintText: "search_in_files".tr,

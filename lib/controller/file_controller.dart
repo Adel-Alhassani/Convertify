@@ -35,7 +35,7 @@ class FileController extends GetxController {
   RxList<DownloadableFileModel> downloadableFiles =
       <DownloadableFileModel>[].obs;
   RxMap<String, String> files = <String, String>{}.obs;
-  RxList searchResult = <Map<String, String>>[].obs;
+  RxList<DownloadableFileModel> searchResult = <DownloadableFileModel>[].obs;
   RxMap<String, RxString> convertedDates = <String, RxString>{}.obs;
   Map<String, Timer> convertedDatesTimer = <String, Timer>{};
   RxMap<String, RxString> expiredDates = <String, RxString>{}.obs;
@@ -299,10 +299,12 @@ class FileController extends GetxController {
     return downloadUrl;
   }
 
-  // void searchFor(String value) {
-  //   searchResult.value =
-  //       files.where((i) => i["fileName"].toString().contains(value)).toList();
-  //   print(value);
-  //   print(searchResult.length);
-  // }
+  void searchFor(String value) {
+    searchResult.value = downloadableFiles
+        .where((file) => file.fileName!.toLowerCase().contains(value))
+        .toList();
+    for (var file in searchResult) {
+      print(file.fileName);
+    }
+  }
 }

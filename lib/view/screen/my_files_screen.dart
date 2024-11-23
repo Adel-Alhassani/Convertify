@@ -35,7 +35,7 @@ class MyFilesScreen extends StatelessWidget {
                 height: 20.h,
               ),
               SearchFileBar(onChanged: (value) {
-                // fileController.searchFor(value);
+                fileController.searchFor(value);
               }),
               SizedBox(
                 height: 20.h,
@@ -74,38 +74,67 @@ class MyFilesScreen extends StatelessWidget {
                       ))
                     : ListView.builder(
                         padding: const EdgeInsets.all(0),
-                        itemCount: fileController.searchResult.isEmpty
-                            ? fileController.downloadableFiles.length
-                            : fileController.searchResult.length,
+                        itemCount: fileController.searchResult.isNotEmpty
+                            ? fileController.searchResult.length
+                            : fileController.downloadableFiles.length,
                         itemBuilder: (context, index) {
-                          return Obx(() {
-                            String fileId =
-                                fileController.downloadableFiles[index].fileId!;
-                            return Column(
-                              children: [
-                                DownloadableFileDetails(
-                                  fileId: fileId,
-                                  fileName: fileController
-                                      .downloadableFiles[index].fileName!,
-                                  fileSize: fileController
-                                      .downloadableFiles[index].fileSize!,
-                                  fileExtension: fileController
-                                      .downloadableFiles[index]
-                                      .fileOutputFormat!,
-                                  downloadUrl: fileController
-                                      .downloadableFiles[index]
-                                      .fileDownloadUrl!,
-                                  convertedDate: fileController
-                                      .convertedDates[fileId]!.value,
-                                  expireDate: fileController
-                                      .expiredDates[fileId]!.value,
-                                ),
-                                SizedBox(
-                                  height: 24.h,
-                                )
-                              ],
-                            );
-                          });
+                          return fileController.searchResult.isNotEmpty
+                              ? Obx(() {
+                                  String fileId = fileController
+                                      .searchResult[index].fileId!;
+                                  return Column(
+                                    children: [
+                                      DownloadableFileDetails(
+                                        fileId: fileId,
+                                        fileName: fileController
+                                            .searchResult[index].fileName!,
+                                        fileSize: fileController
+                                            .searchResult[index].fileSize!,
+                                        fileExtension: fileController
+                                            .searchResult[index]
+                                            .fileOutputFormat!,
+                                        downloadUrl: fileController
+                                            .searchResult[index]
+                                            .fileDownloadUrl!,
+                                        convertedDate: fileController
+                                            .convertedDates[fileId]!.value,
+                                        expireDate: fileController
+                                            .expiredDates[fileId]!.value,
+                                      ),
+                                      SizedBox(
+                                        height: 24.h,
+                                      )
+                                    ],
+                                  );
+                                })
+                              : Obx(() {
+                                  String fileId = fileController
+                                      .downloadableFiles[index].fileId!;
+                                  return Column(
+                                    children: [
+                                      DownloadableFileDetails(
+                                        fileId: fileId,
+                                        fileName: fileController
+                                            .downloadableFiles[index].fileName!,
+                                        fileSize: fileController
+                                            .downloadableFiles[index].fileSize!,
+                                        fileExtension: fileController
+                                            .downloadableFiles[index]
+                                            .fileOutputFormat!,
+                                        downloadUrl: fileController
+                                            .downloadableFiles[index]
+                                            .fileDownloadUrl!,
+                                        convertedDate: fileController
+                                            .convertedDates[fileId]!.value,
+                                        expireDate: fileController
+                                            .expiredDates[fileId]!.value,
+                                      ),
+                                      SizedBox(
+                                        height: 24.h,
+                                      )
+                                    ],
+                                  );
+                                });
                         }),
               ),
             ],
