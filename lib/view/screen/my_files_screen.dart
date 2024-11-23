@@ -16,6 +16,7 @@ class MyFilesScreen extends StatelessWidget {
     FileController fileController = Get.find();
     final double statusBarHeight = MediaQuery.of(context).viewPadding.top;
     return Scaffold(
+      backgroundColor: AppColor.whiteColor,
       body: Obx(
         () => Container(
           padding: EdgeInsets.symmetric(horizontal: 21.w),

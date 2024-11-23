@@ -37,89 +37,82 @@ class _HomeScreenState extends State<HomeScreen> {
     final FileController fileController = Get.put(FileController());
     final double statusBarHeight = MediaQuery.of(context).viewPadding.top;
     return Scaffold(
+      backgroundColor: AppColor.whiteColor,
       body: Stack(
         children: [
-          Container(
-            color: AppColor.whiteColor, // Use AppColor
-            child: ListView(
-              physics: NeverScrollableScrollPhysics(),
-              padding: EdgeInsets.all(0),
-              children: [
-                Container(
-                    height: statusBarHeight,
-                    color: AppColor.primaryColor), // Use AppColor
-                CustomPaint(
-                  painter: BlueBackgroundPainter(),
-                  child: Container(
-                    width: 430.w,
-                    height: 717.h,
-                  ),
+          ListView(
+            physics: NeverScrollableScrollPhysics(),
+            padding: EdgeInsets.all(0),
+            children: [
+              Container(
+                  height: statusBarHeight,
+                  color: AppColor.primaryColor), // Use AppColor
+              CustomPaint(
+                painter: BlueBackgroundPainter(),
+                child: Container(
+                  width: 430.w,
+                  height: 717.h,
                 ),
-                Obx(() => Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        PrimaryButtonWithLoading(
-                            text: "convert".tr,
-                            minWidth: 170.w,
-                            height: 47.h,
-                            disabled:
-                                (fileController.outputFormat.value.isEmpty ||
-                                        fileController.isFileUploading.value ==
-                                            true)
-                                    ? true
-                                    : false,
-                            isLoading:
-                                fileController.isFileUploading.value == true
-                                    ? true
-                                    : false,
-                            loadingWidgetColor: AppColor.whiteColor,
-                            btnColor:
-                                (fileController.outputFormat.value.isEmpty ||
-                                        fileController.isFileUploading.value ==
-                                            true)
-                                    ? AppColor.secondaryColor
-                                    : AppColor.primaryColor, // Use AppColor
-                            textColor: (fileController
-                                        .outputFormat.value.isEmpty ||
-                                    fileController.isFileUploading.value ==
-                                        true)
-                                ? AppColor.tertiaryColor
-                                : AppColor.whiteColor, // Use AppColor
-                            onPressed: () async {
-                              // await fileController.startFileUpload();
-                              if (!context.mounted) return;
-                              widget.controller.jumpToTab(1);
-                              await fileController.convertFile();
-                            }),
-                        SizedBox(
-                          height: 10.h,
-                        ),
-                        fileController.isFileUploading.value
-                            ? Column(
-                                children: [
-                                  Text("preparing_file".tr,
-                                      style: Get.textTheme.displaySmall!
-                                          .copyWith(
-                                              color: AppColor.tertiaryColor)),
-                                  SizedBox(
-                                    height: 10.h,
-                                  ),
-                                  LinearPercentIndicator(
-                                    width: 150.0.w,
-                                    lineHeight: 3.0.h,
-                                    percent:
-                                        fileController.uploadProgress.value,
-                                    progressColor: AppColor.primaryColor,
-                                    alignment: MainAxisAlignment.center,
-                                  ),
-                                ],
-                              )
-                            : const SizedBox.shrink(),
-                      ],
-                    ))
-              ],
-            ),
+              ),
+              Obx(() => Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      PrimaryButtonWithLoading(
+                          text: "convert".tr,
+                          minWidth: 170.w,
+                          height: 47.h,
+                          disabled: (fileController
+                                      .outputFormat.value.isEmpty ||
+                                  fileController.isFileUploading.value == true)
+                              ? true
+                              : false,
+                          isLoading:
+                              fileController.isFileUploading.value == true
+                                  ? true
+                                  : false,
+                          loadingWidgetColor: AppColor.whiteColor,
+                          btnColor: (fileController
+                                      .outputFormat.value.isEmpty ||
+                                  fileController.isFileUploading.value == true)
+                              ? AppColor.secondaryColor
+                              : AppColor.primaryColor, // Use AppColor
+                          textColor: (fileController
+                                      .outputFormat.value.isEmpty ||
+                                  fileController.isFileUploading.value == true)
+                              ? AppColor.tertiaryColor
+                              : AppColor.whiteColor, // Use AppColor
+                          onPressed: () async {
+                            await fileController.startFileUpload();
+                            if (!context.mounted) return;
+                            widget.controller.jumpToTab(1);
+                            await fileController.convertFile();
+                          }),
+                      SizedBox(
+                        height: 10.h,
+                      ),
+                      fileController.isFileUploading.value
+                          ? Column(
+                              children: [
+                                Text("preparing_file".tr,
+                                    style: Get.textTheme.displaySmall!.copyWith(
+                                        color: AppColor.tertiaryColor)),
+                                SizedBox(
+                                  height: 10.h,
+                                ),
+                                LinearPercentIndicator(
+                                  width: 150.0.w,
+                                  lineHeight: 3.0.h,
+                                  percent: fileController.uploadProgress.value,
+                                  progressColor: AppColor.primaryColor,
+                                  alignment: MainAxisAlignment.center,
+                                ),
+                              ],
+                            )
+                          : const SizedBox.shrink(),
+                    ],
+                  ))
+            ],
           ),
           Obx(
             () => Container(
