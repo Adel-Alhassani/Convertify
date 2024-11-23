@@ -65,7 +65,9 @@ class MyFilesScreen extends StatelessWidget {
                 height: 20.h,
               ),
               Container(
-                height: 530.h,
+                constraints: BoxConstraints(
+                  maxHeight: 530.h,
+                ),
                 child: fileController.downloadableFiles.isEmpty
                     ? Center(
                         child: Text(
@@ -74,6 +76,7 @@ class MyFilesScreen extends StatelessWidget {
                             .copyWith(color: AppColor.blackSecondaryColor),
                       ))
                     : ListView.builder(
+                        // reverse: true,
                         padding: const EdgeInsets.all(0),
                         itemCount: fileController.searchResult.isNotEmpty
                             ? fileController.searchResult.length
@@ -82,20 +85,28 @@ class MyFilesScreen extends StatelessWidget {
                           return fileController.searchResult.isNotEmpty
                               ? Obx(() {
                                   String fileId = fileController
-                                      .searchResult[index].fileId!;
+                                      .searchResult.reversed
+                                      .toList()[index]
+                                      .fileId!;
                                   return Column(
                                     children: [
                                       DownloadableFileDetails(
                                         fileId: fileId,
                                         fileName: fileController
-                                            .searchResult[index].fileName!,
+                                            .searchResult.reversed
+                                            .toList()[index]
+                                            .fileName!,
                                         fileSize: fileController
-                                            .searchResult[index].fileSize!,
+                                            .searchResult.reversed
+                                            .toList()[index]
+                                            .fileSize!,
                                         fileExtension: fileController
-                                            .searchResult[index]
+                                            .searchResult.reversed
+                                            .toList()[index]
                                             .fileOutputFormat!,
                                         downloadUrl: fileController
-                                            .searchResult[index]
+                                            .searchResult.reversed
+                                            .toList()[index]
                                             .fileDownloadUrl!,
                                         convertedDate: fileController
                                             .convertedDates[fileId]!.value,
@@ -110,20 +121,28 @@ class MyFilesScreen extends StatelessWidget {
                                 })
                               : Obx(() {
                                   String fileId = fileController
-                                      .downloadableFiles[index].fileId!;
+                                      .downloadableFiles.reversed
+                                      .toList()[index]
+                                      .fileId!;
                                   return Column(
                                     children: [
                                       DownloadableFileDetails(
                                         fileId: fileId,
                                         fileName: fileController
-                                            .downloadableFiles[index].fileName!,
+                                            .downloadableFiles.reversed
+                                            .toList()[index]
+                                            .fileName!,
                                         fileSize: fileController
-                                            .downloadableFiles[index].fileSize!,
+                                            .downloadableFiles.reversed
+                                            .toList()[index]
+                                            .fileSize!,
                                         fileExtension: fileController
-                                            .downloadableFiles[index]
+                                            .downloadableFiles.reversed
+                                            .toList()[index]
                                             .fileOutputFormat!,
                                         downloadUrl: fileController
-                                            .downloadableFiles[index]
+                                            .downloadableFiles.reversed
+                                            .toList()[index]
                                             .fileDownloadUrl!,
                                         convertedDate: fileController
                                             .convertedDates[fileId]!.value,
