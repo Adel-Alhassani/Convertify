@@ -34,8 +34,8 @@ class FileController extends GetxController {
   var convertingFile = ConvertingFileModel().obs;
   RxList<DownloadableFileModel> downloadableFiles =
       <DownloadableFileModel>[].obs;
-  RxMap<String, String> files = <String, String>{}.obs;
   RxList<DownloadableFileModel> searchResult = <DownloadableFileModel>[].obs;
+  RxMap<String, String> files = <String, String>{}.obs;
   RxMap<String, RxString> convertedDates = <String, RxString>{}.obs;
   Map<String, Timer> convertedDatesTimer = <String, Timer>{};
   RxMap<String, RxString> expiredDates = <String, RxString>{}.obs;
@@ -300,11 +300,12 @@ class FileController extends GetxController {
   }
 
   void searchFor(String value) {
+    if (value.isEmpty) {
+      searchResult.clear();
+      return;
+    }
     searchResult.value = downloadableFiles
         .where((file) => file.fileName!.toLowerCase().contains(value))
         .toList();
-    for (var file in searchResult) {
-      print(file.fileName);
-    }
   }
 }

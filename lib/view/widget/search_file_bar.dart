@@ -23,6 +23,8 @@ class SearchFileBar extends StatelessWidget {
                 width: 2.w,
                 color: AppColor.secondaryColor)),
         child: TextField(
+            onTapOutside: (event) =>
+                FocusManager.instance.primaryFocus?.unfocus(),
             cursorColor: AppColor.secondaryColor,
             cursorOpacityAnimates: true,
             decoration: InputDecoration(
