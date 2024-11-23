@@ -140,14 +140,14 @@ class _HomeScreenState extends State<HomeScreen> {
                       height: 8.h,
                     ),
                     FileInfo(
-                        fileName: fileController.name ?? "",
-                        fileSize: fileController.size ?? ""),
+                        fileName: fileController.selectedFile.name ?? "",
+                        fileSize: fileController.selectedFile.size ?? ""),
                     SizedBox(
                       height: 28.h,
                     ),
                     FromTo(
                       text: fileController.isFilePicked.value
-                          ? fileController.extension!
+                          ? fileController.selectedFile.extension!
                           : "-".tr,
                       textColor: fileController.isFilePicked.value
                           ? AppColor.whiteColor // Use AppColor

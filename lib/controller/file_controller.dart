@@ -1,37 +1,25 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:ffi';
-import 'dart:io';
-import 'dart:math';
-
-import 'package:convertify/core/exception/file_exceptions.dart';
-import 'package:convertify/core/exception/network_exceptions.dart';
 import 'package:convertify/core/exception/exceptions_handler.dart';
 import 'package:convertify/core/logger.dart';
 import 'package:convertify/data/preferences_helper.dart';
 import 'package:convertify/model/converting_file_model.dart';
 import 'package:convertify/model/downloadable_file_model.dart';
+import 'package:convertify/model/selected_file_model.dart';
 import 'package:convertify/service/file_service.dart';
-import 'package:convertify/service/setting_services.dart';
 import 'package:convertify/utils/file_utils.dart';
 import 'package:convertify/utils/format_utils.dart';
 import 'package:convertify/utils/generate_utils.dart';
 import 'package:convertify/utils/network_utils.dart';
 import 'package:convertify/utils/permission_utils.dart';
 import 'package:convertify/utils/storage_utils.dart';
-import 'package:convertify/view/screen/my_files_screen.dart';
 import 'package:convertify/view/widget/dialog/custome_dialog.dart';
 import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:get/get.dart';
 import 'package:convertify/utils/validator_utils.dart';
-import 'package:logger/logger.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 
 class FileController extends GetxController {
+  SelectedFileModel selectedFile = SelectedFileModel();
   final Dio _dio = Dio();
   final FileService _fileService = FileService();
   final PreferencesHelper _preferencesHelper = PreferencesHelper();
@@ -41,10 +29,6 @@ class FileController extends GetxController {
   RxBool isValidOutputFormatLoading = false.obs;
   int fileSizeLimitInMB = 30;
   RxString outputFormat = "".obs;
-  String? path;
-  String? name;
-  String? size;
-  String? extension;
   RxInt fileLength = 0.obs;
   RxMap<String, List<String>> validOutputFormats = <String, List<String>>{}.obs;
   var convertingFile = ConvertingFileModel().obs;
@@ -68,7 +52,7 @@ class FileController extends GetxController {
 
   void loadData() async {
     logger.i("loading data");
-    await _preferencesHelper.removeConvertingFileData();
+    // await _preferencesHelper.removeConvertingFileData();
     _loadConvertingFileData();
     _loadDownloadableFilesData();
     logger.i("data laoded");
@@ -101,41 +85,17 @@ class FileController extends GetxController {
     }
   }
 
-  Future<void> setFilePropretis(
-      String? path, String? name, int size, String? extension) async {
-    if (extension == null) throw FileFormatUnknownException;
-    await getValidOutputFormatsOf(extension);
-    this.path = path;
-    this.name = name;
-    this.size = FormatUtils.formatFileSizeWithUnits(size);
-    this.extension = extension;
-  }
-
-  Future<void> getValidOutputFormatsOf(String format) async {
-    try {
-      isValidOutputFormatLoading.value = true;
-      validOutputFormats.value =
-          await _fileService.fetchValidOutputFormatsOf(format);
-    } on Exception catch (e) {
-      logger.e(e);
-      rethrow;
-    } finally {
-      isValidOutputFormatLoading.value = false;
-    }
-  }
-
   pickFile() async {
     try {
       await NetworkUtils.checkInternet();
       outputFormat.value = "";
-      PlatformFile selectedFile = await FileUtils.pickFile();
-      fileLength.value = selectedFile.size;
-      if (!ValidateUtils.validateFileSize(
-          selectedFile.size, fileSizeLimitInMB)) {
+      PlatformFile file = await FileUtils.pickFile();
+      fileLength.value = file.size;
+      if (!ValidateUtils.validateFileSize(file.size, fileSizeLimitInMB)) {
         return;
       }
-      await setFilePropretis(selectedFile.path, selectedFile.name,
-          selectedFile.size, selectedFile.extension);
+      selectedFile.set(file.path, file.name, file.size, file.extension);
+      await getValidOutputFormats(selectedFile.extension!);
       isFilePicked.value = true;
     } on Exception catch (e) {
       ExceptionsHandler.handle(e, "An error occurred while picking a file.");
@@ -144,10 +104,10 @@ class FileController extends GetxController {
 
   Future<void> startFileUpload() async {
     isFileUploading.value = true;
-    await _fileService.creatJob(extension!, outputFormat.value);
+    await _fileService.creatJob(selectedFile.extension!, outputFormat.value);
     await _fileService.uploadFile(
-      filePath: path!,
-      fileName: name!,
+      filePath: selectedFile.path!,
+      fileName: selectedFile.name!,
       onSendProgress: (sent, totat) {
         uploadProgress.value = sent / totat;
       },
@@ -159,21 +119,64 @@ class FileController extends GetxController {
   Future<void> convertFile() async {
     try {
       String jobId = _fileService.getJobId();
-      await _storeConvertingFile(
-          name!, size!, extension!, outputFormat.value, jobId);
+      await _storeConvertingFile(selectedFile.name!, selectedFile.size!,
+          selectedFile.extension!, outputFormat.value, jobId);
       isFileConverting.value = true;
       String fileId = "${GenerateUtils.generateIdWithDate("Convertify")}";
       String fileConvertedDate = DateTime.now().toString();
       String fileExpireDate =
           DateTime.now().add(const Duration(hours: 24)).toString();
       await _storeDownloadableFiles(
-          fileId,FormatUtils.changeFileExtension(name!, outputFormat.value), outputFormat.value, fileConvertedDate, fileExpireDate);
+          fileId,
+          FormatUtils.changeFileExtension(
+              selectedFile.name!, outputFormat.value),
+          outputFormat.value,
+          fileConvertedDate,
+          fileExpireDate);
       setConvertedDate(fileId, fileConvertedDate);
       setExpireDate(fileId, fileExpireDate);
       await removeConvertingFile();
       isFileConverting.value = false;
     } on Exception catch (e) {
       ExceptionsHandler.handle(e, "Failed to convert the file");
+    }
+  }
+
+  void downloadFile(String fileId, String fileName, String downloadUrl) async {
+    try {
+      await NetworkUtils.checkInternet();
+      PermissionUtils.getStoragePermission();
+      final String fileDownloadUrl = downloadUrl;
+      final String appDir = await StorageUtils.getAppDirectory();
+      isFileDownloading[fileId] = true.obs;
+      await _dio.download(
+        fileDownloadUrl,
+        "$appDir/$fileName",
+        onReceiveProgress: (count, total) {
+          if (total != -1) {
+            downloadProgress[fileId] =
+                FormatUtils.formatFileSize(count / total).obs;
+          }
+        },
+      );
+      CustomeDialog.showSuccessFileDownloadDialog(appDir);
+    } on Exception catch (e) {
+      ExceptionsHandler.handle(e, "Failed to download the file");
+    } finally {
+      isFileDownloading[fileId] = false.obs;
+    }
+  }
+
+  Future<void> getValidOutputFormats(String extension) async {
+    try {
+      isValidOutputFormatLoading.value = true;
+      validOutputFormats.value =
+          await _fileService.fetchValidOutputFormatsOf(extension);
+    } on Exception catch (e) {
+      logger.e(e);
+      rethrow;
+    } finally {
+      isValidOutputFormatLoading.value = false;
     }
   }
 
@@ -223,11 +226,11 @@ class FileController extends GetxController {
 
   void setConvertedDate(String fileId, date) {
     // only for the firs time will excute this
-    // but after it enter the Timer block it'll not excute this
     // -----------------------------
     convertedDates[fileId] =
         FormatUtils.formatTimeAgo(DateTime.parse(date)).obs;
     // -----------------------------
+    // but after it enter the Timer block it'll not excute this
     convertedDatesTimer[fileId] =
         Timer.periodic(const Duration(minutes: 1), (timer) {
       convertedDates[fileId] =
@@ -237,7 +240,6 @@ class FileController extends GetxController {
 
   void setExpireDate(String fileId, date) {
     // only for the firs time will excute this
-    // but after it enter the Timer block it'll not excute it
     // -----------------------------
     expiredDates[fileId] =
         FormatUtils.formatExpireTime(DateTime.parse(date)).obs;
@@ -245,6 +247,7 @@ class FileController extends GetxController {
       deleteDownloadableFile(fileId);
     }
     // -----------------------------
+    // but after it enter the Timer block it'll not excute it
     expiredDatesTimer[fileId] =
         Timer.periodic(const Duration(hours: 1), (timer) {
       expiredDates[fileId] =
@@ -272,13 +275,6 @@ class FileController extends GetxController {
     }
   }
 
-  // Future<ConvertingFileModel?> _getConvertingFileData() async {
-  //   if (_preferencesHelper.fetchConvertingFileData() != null) {
-  //     convertingFile.value = (_preferencesHelper.fetchConvertingFileData())!;
-  //   }
-  //   return null;
-  // }
-
   void deleteDownloadableFile(String fileId) async {
     if (await _preferencesHelper.deleteDownloadableFile(fileId)) {
       final int fileIndex =
@@ -301,31 +297,6 @@ class FileController extends GetxController {
     String jobId = _preferencesHelper.fetchJobId();
     String downloadUrl = await _fileService.getFileDownloadUrl(jobId);
     return downloadUrl;
-  }
-
-  void downloadFile(String fileId, String fileName, String downloadUrl) async {
-    try {
-      await NetworkUtils.checkInternet();
-      PermissionUtils.getStoragePermission();
-      final String fileDownloadUrl = downloadUrl;
-      final String appDir = await StorageUtils.getAppDirectory();
-      isFileDownloading[fileId] = true.obs;
-      await _dio.download(
-        fileDownloadUrl,
-        "$appDir/$fileName",
-        onReceiveProgress: (count, total) {
-          if (total != -1) {
-            downloadProgress[fileId] =
-                FormatUtils.formatFileSize(count / total).obs;
-          }
-        },
-      );
-      CustomeDialog.showSuccessFileDownloadDialog(appDir);
-    } on Exception catch (e) {
-      ExceptionsHandler.handle(e, "Failed to download the file");
-    } finally {
-      isFileDownloading[fileId] = false.obs;
-    }
   }
 
   // void searchFor(String value) {
