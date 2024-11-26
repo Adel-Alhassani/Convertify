@@ -190,34 +190,14 @@ class FileService {
     return _jobId;
   }
 
-  // String getDownloadUrl() {
-  //   print("downlaod url is: $_downloadUrl");
-  //   return _downloadUrl;
-  // }
-
   Future<int> fetchFileSize(String fileUrl) async {
-    // return 0;
     try {
-      // Send a HEAD request to get only headers
+      // HEAD request didn't work with me, so I used Get
       var response = await http.get(Uri.parse(fileUrl));
-
       if (response.statusCode == 200) {
-        // Check if 'Content-Length' header exists
-        if (response.headers.containsKey('content-length')) {
-          // Get the file size from the 'Content-Length' header
           String? contentLength = response.headers['content-length'];
-          if (contentLength != null) {
-            int fileSize = int.parse(contentLength);
-            print('File size: $fileSize bytes');
+            int fileSize = int.parse(contentLength!);
             return fileSize;
-          } else {
-            print("Content-Length found, but it's null");
-            return 0;
-          }
-        } else {
-          print('Content-Length header not found.');
-          return 0;
-        }
       } else {
         throw FetchFileSizeException(response.statusCode);
       }

@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:typed_data';
 import 'package:convertify/core/exception/exceptions_handler.dart';
 import 'package:convertify/core/logger.dart';
 import 'package:convertify/data/preferences_helper.dart';
@@ -191,16 +193,18 @@ class FileController extends GetxController {
 
   Future<void> _storeConvertingFile(String fileName, String fileSize,
       String fileExtension, String fileOutputFormat, String jobId) async {
-    try {await _preferencesHelper.storeConvertingFileData(
-        fileName, fileSize, fileExtension, fileOutputFormat, jobId);
-    convertingFile.update((convertingFile) {
-      convertingFile!.setFields(
-          fileName: fileName,
-          fileSize: fileSize,
-          inputFormat: fileExtension,
-          outputFormat: fileOutputFormat,
-          jobId: jobId);
-    });} on Exception catch (e) {
+    try {
+      await _preferencesHelper.storeConvertingFileData(
+          fileName, fileSize, fileExtension, fileOutputFormat, jobId);
+      convertingFile.update((convertingFile) {
+        convertingFile!.setFields(
+            fileName: fileName,
+            fileSize: fileSize,
+            inputFormat: fileExtension,
+            outputFormat: fileOutputFormat,
+            jobId: jobId);
+      });
+    } on Exception catch (e) {
       logger.e(e);
       rethrow;
     }
@@ -208,25 +212,27 @@ class FileController extends GetxController {
 
   Future<void> _storeDownloadableFiles(String fileId, String fileName,
       fileOutputFormat, String fileConvertedDate, fileExpireDate) async {
-    try{String fileDownloadUrl = await getDownloadUrl();
-    String fileSize = FormatUtils.formatFileSizeWithUnits(
-        await _fileService.fetchFileSize(fileDownloadUrl));
-    await _preferencesHelper.storeDownloadableFilesData(
-        fileId,
-        fileName,
-        fileSize,
-        fileOutputFormat,
-        fileDownloadUrl,
-        fileConvertedDate,
-        fileExpireDate);
-    downloadableFiles.add(DownloadableFileModel(
-        fileId: fileId,
-        fileName: fileName,
-        fileSize: fileSize,
-        fileOutputFormat: fileOutputFormat,
-        fileDownloadUrl: fileDownloadUrl,
-        fileConvertedDate: fileConvertedDate,
-        fileExpireDate: fileExpireDate));} on Exception catch (e) {
+    try {
+      String fileDownloadUrl = await getDownloadUrl();
+      String fileSize = FormatUtils.formatFileSizeWithUnits(
+          await _fileService.fetchFileSize(fileDownloadUrl));
+      await _preferencesHelper.storeDownloadableFilesData(
+          fileId,
+          fileName,
+          fileSize,
+          fileOutputFormat,
+          fileDownloadUrl,
+          fileConvertedDate,
+          fileExpireDate);
+      downloadableFiles.add(DownloadableFileModel(
+          fileId: fileId,
+          fileName: fileName,
+          fileSize: fileSize,
+          fileOutputFormat: fileOutputFormat,
+          fileDownloadUrl: fileDownloadUrl,
+          fileConvertedDate: fileConvertedDate,
+          fileExpireDate: fileExpireDate));
+    } on Exception catch (e) {
       logger.e(e);
       rethrow;
     }
