@@ -1,4 +1,3 @@
-import 'dart:ffi';
 import 'package:convertify/controller/file_controller.dart';
 import 'package:convertify/core/constant/app_color.dart';
 import 'package:convertify/view/widget/converting_file_details.dart';

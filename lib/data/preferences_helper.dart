@@ -31,15 +31,20 @@ class PreferencesHelper {
 
   Future<void> storeConvertingFileData(String name, String size,
       String extension, String outputFormat, String jobId) async {
-    ConvertingFileModel convertingFileModel = ConvertingFileModel(
-      fileName: name,
-      fileSize: size,
-      inputFormat: extension,
-      outputFormat: outputFormat,
-      jobId: jobId,
-    );
-    await _settingServicesController.sharedPreferences
-        .setString("convertingFileData", jsonEncode(convertingFileModel));
+    try {
+      ConvertingFileModel convertingFileModel = ConvertingFileModel(
+        fileName: name,
+        fileSize: size,
+        inputFormat: extension,
+        outputFormat: outputFormat,
+        jobId: jobId,
+      );
+      await _settingServicesController.sharedPreferences
+          .setString("convertingFileData", jsonEncode(convertingFileModel));
+    } on Exception catch (e) {
+      logger.e(e);
+      rethrow;
+    }
   }
 
   Future<void> storeDownloadableFilesData(
@@ -51,23 +56,29 @@ class PreferencesHelper {
     String fileConvertedDate,
     String fileExpireDate,
   ) async {
-    DownloadableFileModel downloadableFileModel = DownloadableFileModel(
-        fileId: fileId,
-        fileName: fileName,
-        fileSize: fileSize,
-        fileOutputFormat: fileOutputFormat,
-        fileDownloadUrl: fileDownloadUrl,
-        fileConvertedDate: fileConvertedDate,
-        fileExpireDate: fileExpireDate);
-     List<DownloadableFileModel>? downloadableData = fetchDownloadableFilesData();
-    if (downloadableData == null) {
-      downloadableData = <DownloadableFileModel>[];
-      downloadableData.add(downloadableFileModel);
-    } else{
-      downloadableData.add(downloadableFileModel);
+    try {
+      DownloadableFileModel downloadableFileModel = DownloadableFileModel(
+          fileId: fileId,
+          fileName: fileName,
+          fileSize: fileSize,
+          fileOutputFormat: fileOutputFormat,
+          fileDownloadUrl: fileDownloadUrl,
+          fileConvertedDate: fileConvertedDate,
+          fileExpireDate: fileExpireDate);
+      List<DownloadableFileModel>? downloadableData =
+          fetchDownloadableFilesData();
+      if (downloadableData == null) {
+        downloadableData = <DownloadableFileModel>[];
+        downloadableData.add(downloadableFileModel);
+      } else {
+        downloadableData.add(downloadableFileModel);
+      }
+      await _settingServicesController.sharedPreferences
+          .setString("downloadableData", jsonEncode(downloadableData));
+    } on Exception catch (e) {
+      logger.e(e);
+      rethrow;
     }
-     await _settingServicesController.sharedPreferences
-        .setString("downloadableData", jsonEncode(downloadableData));
   }
 
   ConvertingFileModel? fetchConvertingFileData() {
@@ -101,27 +112,42 @@ class PreferencesHelper {
   }
 
   Future<void> removeConvertingFileData() async {
-    await _settingServicesController.sharedPreferences
-        .remove("convertingFileData");
+    try {
+      await _settingServicesController.sharedPreferences
+          .remove("convertingFileData");
+    } on Exception catch (e) {
+      logger.e(e);
+      rethrow;
+    }
   }
 
   Future<bool> deleteDownloadableFile(String fileId) async {
-    final List<DownloadableFileModel>? downloadableFilesData =
-        fetchDownloadableFilesData();
-    final int fileIndex =
-        downloadableFilesData!.indexWhere((file) => file.fileId == fileId);
-    if (fileIndex == -1) {
-      return false;
+    try {
+      final List<DownloadableFileModel>? downloadableFilesData =
+          fetchDownloadableFilesData();
+      final int fileIndex =
+          downloadableFilesData!.indexWhere((file) => file.fileId == fileId);
+      if (fileIndex == -1) {
+        return false;
+      }
+      downloadableFilesData.removeAt(fileIndex);
+      await _settingServicesController.sharedPreferences
+          .setString("downloadableData", jsonEncode(downloadableFilesData));
+      return true;
+    } on Exception catch (e) {
+      logger.e(e);
+      rethrow;
     }
-    downloadableFilesData.removeAt(fileIndex);
-    await _settingServicesController.sharedPreferences
-        .setString("downloadableData", jsonEncode(downloadableFilesData));
-    return true;
   }
 
   Future<void> removeAllADateFromSharedPref() async {
-    return await _settingServicesController.sharedPreferences.clear()
-        ? logger.i("All data removed")
-        : logger.i("Data didn't removed!");
+    try {
+      return await _settingServicesController.sharedPreferences.clear()
+          ? logger.i("All data removed")
+          : logger.i("Data didn't removed!");
+    } on Exception catch (e) {
+      logger.e(e);
+      rethrow;
+    }
   }
 }

@@ -186,7 +186,7 @@ class FileService {
   }
 
   String getJobId() {
-    // return "3a580b6c-c78a-40cc-a541-01e1184261f9";
+    // return "7eef2c16-b5b6-4681-9951-2816ce3513ae";
     return _jobId;
   }
 
@@ -196,10 +196,10 @@ class FileService {
   // }
 
   Future<int> fetchFileSize(String fileUrl) async {
-    return 0;
+    // return 0;
     try {
       // Send a HEAD request to get only headers
-      var response = await http.head(Uri.parse(fileUrl));
+      var response = await http.get(Uri.parse(fileUrl));
 
       if (response.statusCode == 200) {
         // Check if 'Content-Length' header exists
@@ -221,13 +221,7 @@ class FileService {
       } else {
         throw FetchFileSizeException(response.statusCode);
       }
-    } on FetchFileSizeException catch (e) {
-      logger.e(e);
-      rethrow;
-    } on SocketException catch (e) {
-      logger.e(e);
-      throw FetchFileSizeSocketException();
-    } catch (e) {
+    } on Exception catch (e) {
       logger.e(e);
       rethrow;
     }

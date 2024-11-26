@@ -52,7 +52,7 @@ class FileController extends GetxController {
 
   void loadData() async {
     logger.i("loading data");
-    // await _preferencesHelper.removeConvertingFileData();
+    // removeConvertingFile();
     _loadConvertingFileData();
     _loadDownloadableFilesData();
     logger.i("data laoded");
@@ -136,9 +136,11 @@ class FileController extends GetxController {
       setConvertedDate(fileId, fileConvertedDate);
       setExpireDate(fileId, fileExpireDate);
       await removeConvertingFile();
-      isFileConverting.value = false;
     } on Exception catch (e) {
       ExceptionsHandler.handle(e, "Failed to convert the file");
+    } finally {
+      removeConvertingFile();
+      isFileConverting.value = false;
     }
   }
 
@@ -189,7 +191,7 @@ class FileController extends GetxController {
 
   Future<void> _storeConvertingFile(String fileName, String fileSize,
       String fileExtension, String fileOutputFormat, String jobId) async {
-    await _preferencesHelper.storeConvertingFileData(
+    try {await _preferencesHelper.storeConvertingFileData(
         fileName, fileSize, fileExtension, fileOutputFormat, jobId);
     convertingFile.update((convertingFile) {
       convertingFile!.setFields(
@@ -198,12 +200,15 @@ class FileController extends GetxController {
           inputFormat: fileExtension,
           outputFormat: fileOutputFormat,
           jobId: jobId);
-    });
+    });} on Exception catch (e) {
+      logger.e(e);
+      rethrow;
+    }
   }
 
   Future<void> _storeDownloadableFiles(String fileId, String fileName,
       fileOutputFormat, String fileConvertedDate, fileExpireDate) async {
-    String fileDownloadUrl = await getDownloadUrl();
+    try{String fileDownloadUrl = await getDownloadUrl();
     String fileSize = FormatUtils.formatFileSizeWithUnits(
         await _fileService.fetchFileSize(fileDownloadUrl));
     await _preferencesHelper.storeDownloadableFilesData(
@@ -221,7 +226,10 @@ class FileController extends GetxController {
         fileOutputFormat: fileOutputFormat,
         fileDownloadUrl: fileDownloadUrl,
         fileConvertedDate: fileConvertedDate,
-        fileExpireDate: fileExpireDate));
+        fileExpireDate: fileExpireDate));} on Exception catch (e) {
+      logger.e(e);
+      rethrow;
+    }
   }
 
   void setConvertedDate(String fileId, date) {
