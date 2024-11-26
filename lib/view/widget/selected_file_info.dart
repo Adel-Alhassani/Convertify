@@ -6,10 +6,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
-class FileInfo extends StatelessWidget {
+class SelectedFileInfo extends StatelessWidget {
   final String fileName;
   final String fileSize;
-  const FileInfo({
+  const SelectedFileInfo({
     super.key,
     required this.fileName,
     required this.fileSize,
@@ -18,7 +18,7 @@ class FileInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Directionality(
-      textDirection: TextDirection.ltr ,
+      textDirection: TextDirection.ltr,
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 5.w),
         width: 221.w,

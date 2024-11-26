@@ -12,7 +12,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
-class DownloadableFileDetails extends StatelessWidget {
+class DownloadableFileInfo extends StatelessWidget {
   final String fileId;
   final String fileName;
   final String fileSize;
@@ -20,7 +20,7 @@ class DownloadableFileDetails extends StatelessWidget {
   final String downloadUrl;
   final String convertedDate;
   final String expireDate;
-  const DownloadableFileDetails({
+  const DownloadableFileInfo({
     super.key,
     required this.fileId,
     required this.fileName,
@@ -75,7 +75,7 @@ class DownloadableFileDetails extends StatelessWidget {
                     style: TextStyle(
                       fontFamily: "Inter",
                       fontWeight: FontWeight.w700,
-                      fontSize: 12.sp,
+                      fontSize: 11.sp,
                     )),
               ],
             ),

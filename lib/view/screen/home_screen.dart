@@ -5,7 +5,7 @@ import 'package:convertify/core/constant/app_color.dart';
 import 'package:convertify/controller/file_controller.dart';
 import 'package:convertify/view/widget/dialog/button_collection_dialog.dart';
 import 'package:convertify/view/widget/button/primary_button_with_loading.dart';
-import 'package:convertify/view/widget/file_info_widget.dart';
+import 'package:convertify/view/widget/selected_file_info.dart';
 import 'package:convertify/view/widget/from_to.dart';
 import 'package:convertify/view/widget/pick_file_widget.dart';
 import 'package:flutter/material.dart';
@@ -123,7 +123,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     SizedBox(
                       height: 8.h,
                     ),
-                    FileInfo(
+                    SelectedFileInfo(
                         fileName: fileController.selectedFile.name ?? "",
                         fileSize: fileController.selectedFile.size ?? ""),
                     SizedBox(
