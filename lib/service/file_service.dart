@@ -165,7 +165,7 @@ class FileService {
             final String url = exportTask['result']['files'][0]['url'];
             return url;
           } else {
-            print('-------- Waiting for file conversion to complete...');
+            logger.i('-------- Waiting for file conversion to complete...');
             await Future.delayed(
                 const Duration(seconds: 1)); // Wait before polling again
           }
@@ -186,7 +186,7 @@ class FileService {
   }
 
   String getJobId() {
-    // return "7eef2c16-b5b6-4681-9951-2816ce3513ae";
+    // return "eac37abe-5cd1-4d3b-bde5-d817adef6bbe";
     return _jobId;
   }
 
@@ -195,9 +195,9 @@ class FileService {
       // HEAD request didn't work with me, so I used Get
       var response = await http.get(Uri.parse(fileUrl));
       if (response.statusCode == 200) {
-          String? contentLength = response.headers['content-length'];
-            int fileSize = int.parse(contentLength!);
-            return fileSize;
+        String? contentLength = response.headers['content-length'];
+        int fileSize = int.parse(contentLength!);
+        return fileSize;
       } else {
         throw FetchFileSizeException(response.statusCode);
       }

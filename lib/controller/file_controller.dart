@@ -30,6 +30,7 @@ class FileController extends GetxController {
   RxBool isFileUploading = false.obs;
   RxBool isValidOutputFormatLoading = false.obs;
   int fileSizeLimitInMB = 30;
+  int downloadableFilesListLimit = 15;
   RxString outputFormat = "".obs;
   RxInt fileLength = 0.obs;
   RxMap<String, List<String>> validOutputFormats = <String, List<String>>{}.obs;
@@ -104,7 +105,11 @@ class FileController extends GetxController {
     }
   }
 
-  Future<void> startFileUpload() async {
+  Future<bool> startFileUpload() async {
+    if (isDownloadableFilesListLimitReached()) {
+      CustomeDialog.showDownloadableFilesListLimitError();
+      return false;
+    }
     isFileUploading.value = true;
     await _fileService.creatJob(selectedFile.extension!, outputFormat.value);
     await _fileService.uploadFile(
@@ -116,6 +121,7 @@ class FileController extends GetxController {
     );
     isFileUploading.value = false;
     logger.i("File uploaded");
+    return true;
   }
 
   Future<void> convertFile() async {
@@ -169,6 +175,10 @@ class FileController extends GetxController {
     } finally {
       isFileDownloading[fileId] = false.obs;
     }
+  }
+
+  bool isDownloadableFilesListLimitReached() {
+    return downloadableFiles.length >= downloadableFilesListLimit;
   }
 
   Future<void> getValidOutputFormats(String extension) async {
@@ -240,11 +250,11 @@ class FileController extends GetxController {
 
   void setConvertedDate(String fileId, date) {
     // only for the firs time will excute this
+    // but after it enter the Timer block it'll not excute it
     // -----------------------------
     convertedDates[fileId] =
         FormatUtils.formatTimeAgo(DateTime.parse(date)).obs;
     // -----------------------------
-    // but after it enter the Timer block it'll not excute this
     convertedDatesTimer[fileId] =
         Timer.periodic(const Duration(minutes: 1), (timer) {
       convertedDates[fileId] =
@@ -254,6 +264,7 @@ class FileController extends GetxController {
 
   void setExpireDate(String fileId, date) {
     // only for the firs time will excute this
+    // but after it enter the Timer block it'll not excute it
     // -----------------------------
     expiredDates[fileId] =
         FormatUtils.formatExpireTime(DateTime.parse(date)).obs;
@@ -261,7 +272,6 @@ class FileController extends GetxController {
       deleteDownloadableFile(fileId);
     }
     // -----------------------------
-    // but after it enter the Timer block it'll not excute it
     expiredDatesTimer[fileId] =
         Timer.periodic(const Duration(hours: 1), (timer) {
       expiredDates[fileId] =

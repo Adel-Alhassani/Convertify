@@ -184,6 +184,12 @@ class CustomeDialog {
       Get.back();
     });
   }
+  static showDownloadableFilesListLimitError(){
+    _showConfirmDialog(
+        "error".tr, "downloadable_files_list_limit_reached".tr, "ok".tr, () {
+      Get.back();
+    });
+  }
 
   static showNoInternetConnectionDialog(){
     _showConfirmDialog(

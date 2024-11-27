@@ -44,7 +44,9 @@ class AppLocale extends Translations {
           "confirm": "Yes",
           "cancel": "No",
           "no_converting_file": "No file is being converted.",
-          "no_downloadable_files" : "No converted files available for download."
+          "no_downloadable_files": "No converted files available for download.",
+          "downloadable_files_list_limit_reached":
+              "Maximum downloadable files reached.\nplease delete a file and try again."
         },
         'ar': {
           'convert': 'تحويل',
@@ -75,17 +77,17 @@ class AppLocale extends Translations {
           "donwloaded_complate": "اكتمل التنزيل.",
           "file_downloaded_successfully": "\nتم تنزيل الملف بنجاح في @appDir.",
           "downloading_error": "حدث خطأ أثناء تنزيل الملف!",
-          "preparing_file":
-              "الملف قيد التحضير، يرجى عدم إغلاق التطبيق...",
-              "start_downloading": "جاري تنزيل الملف...",
-              // "delete_success": "تم حذف الملف بنجاح",
+          "preparing_file": "الملف قيد التحضير، يرجى عدم إغلاق التطبيق...",
+          "start_downloading": "جاري تنزيل الملف...",
+          // "delete_success": "تم حذف الملف بنجاح",
           "delete_failed": "فشل حذف الملف",
           "confirm_delete": "هل أنت متأكد من رغبتك في حذف هذا الملف؟",
           "confirm": "تأكيد",
           "cancel": "إلغاء",
           "no_converting_file": "لا يوجد ملف قيد التحويل.",
-          "no_downloadable_files": "لا توجد ملفات محولة متاحة للتنزيل."
-
+          "no_downloadable_files": "لا توجد ملفات محولة متاحة للتنزيل.",
+          "downloadable_files_list_limit_reached":
+              "تم الوصول إلى الحد الأقصى للملفات القابلة للتنزيل.\nيرجى حذف ملف والمحاولة مرة أخرى."
         },
       };
 }
