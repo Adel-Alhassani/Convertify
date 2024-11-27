@@ -1,6 +1,8 @@
 import 'package:convertify/controller/file_controller.dart';
 import 'package:convertify/core/constant/app_color.dart';
+import 'package:convertify/model/downloadable_file_model.dart';
 import 'package:convertify/view/widget/converting_file_details.dart';
+import 'package:convertify/view/widget/custom_animated_list.dart';
 import 'package:convertify/view/widget/downloadable_file_info.dart';
 import 'package:convertify/view/widget/search_file_bar.dart';
 import 'package:flutter/material.dart';
@@ -74,84 +76,73 @@ class MyFilesScreen extends StatelessWidget {
                         style: Get.textTheme.bodySmall!
                             .copyWith(color: AppColor.blackSecondaryColor),
                       ))
-                    : ListView.builder(
+                    : CustomAnimatedList(
                         // reverse: true,
-                        padding: const EdgeInsets.all(0),
-                        itemCount: fileController.searchResult.isNotEmpty
+                        // padding: const EdgeInsets.all(0),
+                        listKey: fileController.listKey,
+                        itemsLength: fileController.searchResult.isNotEmpty
                             ? fileController.searchResult.length
                             : fileController.downloadableFiles.length,
-                        itemBuilder: (context, index) {
+                        itemBuilder: (context, index, animation) {
                           return fileController.searchResult.isNotEmpty
                               ? Obx(() {
-                                  String fileId = fileController
-                                      .searchResult.reversed
-                                      .toList()[index]
-                                      .fileId!;
-                                  return Column(
-                                    children: [
-                                      DownloadableFileInfo(
-                                        fileId: fileId,
-                                        fileName: fileController
-                                            .searchResult.reversed
-                                            .toList()[index]
-                                            .fileName!,
-                                        fileSize: fileController
-                                            .searchResult.reversed
-                                            .toList()[index]
-                                            .fileSize!,
-                                        fileExtension: fileController
-                                            .searchResult.reversed
-                                            .toList()[index]
-                                            .fileOutputFormat!,
-                                        downloadUrl: fileController
-                                            .searchResult.reversed
-                                            .toList()[index]
-                                            .fileDownloadUrl!,
-                                        convertedDate: fileController
-                                            .convertedDates[fileId]!.value,
-                                        expireDate: fileController
-                                            .expiredDates[fileId]!.value,
-                                      ),
-                                      SizedBox(
-                                        height: 24.h,
-                                      )
-                                    ],
+                                  List<DownloadableFileModel> items =
+                                      fileController.searchResult.reversed
+                                          .toList();
+                                  String fileId = items[index].fileId!;
+                                  return FadeTransition(
+                                    opacity: animation,
+                                    child: Column(
+                                      children: [
+                                        DownloadableFileInfo(
+                                          fileId: fileId,
+                                          fileName: items[index].fileName!,
+                                          fileSize: items[index].fileSize!,
+                                          fileExtension:
+                                              items[index].fileOutputFormat!,
+                                          downloadUrl:
+                                              items[index].fileDownloadUrl!,
+                                          convertedDate: fileController
+                                              .convertedDates[fileId]!.value,
+                                          expireDate: fileController
+                                              .expiredDates[fileId]!.value,
+                                        ),
+                                        SizedBox(
+                                          height: 24.h,
+                                        )
+                                      ],
+                                    ),
                                   );
                                 })
                               : Obx(() {
-                                  String fileId = fileController
-                                      .downloadableFiles.reversed
-                                      .toList()[index]
-                                      .fileId!;
-                                  return Column(
-                                    children: [
-                                      DownloadableFileInfo(
-                                        fileId: fileId,
-                                        fileName: fileController
-                                            .downloadableFiles.reversed
-                                            .toList()[index]
-                                            .fileName!,
-                                        fileSize: fileController
-                                            .downloadableFiles.reversed
-                                            .toList()[index]
-                                            .fileSize!,
-                                        fileExtension: fileController
-                                            .downloadableFiles.reversed
-                                            .toList()[index]
-                                            .fileOutputFormat!,
-                                        downloadUrl: fileController
-                                            .downloadableFiles.reversed
-                                            .toList()[index]
-                                            .fileDownloadUrl!,
-                                        convertedDate: fileController
-                                            .convertedDates[fileId]!.value,
-                                        expireDate: fileController
-                                            .expiredDates[fileId]!.value,
-                                      ),
-                                      SizedBox(
-                                        height: 24.h,
-                                      )
-                                    ],
+                                  List<DownloadableFileModel> items =
+                                      fileController.downloadableFiles.reversed
+                                          .toList();
+                                  String fileId = items[index].fileId!;
+                                  return FadeTransition(
+                                    opacity: animation,
+                                    child: Column(
+                                      children: [
+                                        DownloadableFileInfo(
+                                          fileId: fileId,
+                                          fileName: items[index]
+                                              .fileName!,
+                                          fileSize: items[index]
+                                              .fileSize!,
+                                          fileExtension: items[index]
+                                              .fileOutputFormat!,
+                                          downloadUrl: items[index]
+                                              .fileDownloadUrl!,
+                                          convertedDate: fileController
+                                              .convertedDates[fileId]!.value,
+                                          expireDate: fileController
+                                              .expiredDates[fileId]!.value,
+                                        ),
+                                        SizedBox(
+                                          height: 24.h,
+                                        )
+                                      ],
+                                    ),
                                   );
                                 });
                         }),

@@ -15,8 +15,11 @@ import 'package:convertify/utils/network_utils.dart';
 import 'package:convertify/utils/permission_utils.dart';
 import 'package:convertify/utils/storage_utils.dart';
 import 'package:convertify/view/widget/dialog/custome_dialog.dart';
+import 'package:convertify/view/widget/downloadable_file_info.dart';
 import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:convertify/utils/validator_utils.dart';
 
@@ -46,6 +49,7 @@ class FileController extends GetxController {
   RxDouble uploadProgress = 0.0.obs;
   RxMap<String, RxDouble> downloadProgress = <String, RxDouble>{}.obs;
   RxMap<String, RxBool> isFileDownloading = <String, RxBool>{}.obs;
+  GlobalKey<AnimatedListState> listKey = GlobalKey();
 
   @override
   void onInit() {
@@ -242,6 +246,8 @@ class FileController extends GetxController {
           fileDownloadUrl: fileDownloadUrl,
           fileConvertedDate: fileConvertedDate,
           fileExpireDate: fileExpireDate));
+      listKey.currentState
+          ?.insertItem(0, duration: const Duration(milliseconds: 400));
     } on Exception catch (e) {
       logger.e(e);
       rethrow;
@@ -303,7 +309,28 @@ class FileController extends GetxController {
     if (await _preferencesHelper.deleteDownloadableFile(fileId)) {
       final int fileIndex =
           downloadableFiles.indexWhere((file) => file.fileId == fileId);
-      downloadableFiles.removeAt(fileIndex);
+      DownloadableFileModel deletedItem = downloadableFiles.removeAt(fileIndex);
+      listKey.currentState?.removeItem(downloadableFiles.length - fileIndex,
+          (context, animation) {
+        return FadeTransition(
+          opacity: animation,
+          child: Column(
+            children: [
+              DownloadableFileInfo(
+                  fileId: deletedItem.fileId!,
+                  fileName: deletedItem.fileName!,
+                  fileSize: deletedItem.fileSize!,
+                  fileExtension: deletedItem.fileOutputFormat!,
+                  downloadUrl: deletedItem.fileDownloadUrl!,
+                  convertedDate: convertedDates[deletedItem.fileId]!.value,
+                  expireDate: expiredDates[deletedItem.fileId]!.value),
+              SizedBox(
+                height: 24.h,
+              )
+            ],
+          ),
+        );
+      }, duration: const Duration(milliseconds: 400));
       cancelAndRemoveTimers(fileId);
     } else {
       CustomeDialog.showDeleteFailedDialog();
