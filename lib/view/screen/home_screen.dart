@@ -53,26 +53,29 @@ class _HomeScreenState extends State<HomeScreen> {
                           text: "convert".tr,
                           minWidth: 170.w,
                           height: 47.h,
-                          disabled: (fileController
-                                      .outputFormat.value.isEmpty ||
-                                  fileController.isFileUploading.value == true)
-                              ? true
-                              : false,
+                          disabled:
+                              (fileController.outputFormat.value.isEmpty ||
+                                      fileController.isFileUploading.value ||
+                                      fileController.isFileConverting.value)
+                                  ? true
+                                  : false,
                           isLoading:
                               fileController.isFileUploading.value == true
                                   ? true
                                   : false,
                           loadingWidgetColor: AppColor.whiteColor,
-                          btnColor: (fileController
-                                      .outputFormat.value.isEmpty ||
-                                  fileController.isFileUploading.value == true)
-                              ? AppColor.secondaryColor
-                              : AppColor.primaryColor, // Use AppColor
-                          textColor: (fileController
-                                      .outputFormat.value.isEmpty ||
-                                  fileController.isFileUploading.value == true)
-                              ? AppColor.tertiaryColor
-                              : AppColor.whiteColor, // Use AppColor
+                          btnColor:
+                              (fileController.outputFormat.value.isEmpty ||
+                                      fileController.isFileUploading.value ||
+                                      fileController.isFileConverting.value)
+                                  ? AppColor.secondaryColor
+                                  : AppColor.primaryColor, // Use AppColor
+                          textColor:
+                              (fileController.outputFormat.value.isEmpty ||
+                                      fileController.isFileUploading.value ||
+                                      fileController.isFileConverting.value)
+                                  ? AppColor.tertiaryColor
+                                  : AppColor.whiteColor, // Use AppColor
                           onPressed: () async {
                             // if (!await fileController.startFileUpload()) return;
                             if (!context.mounted) return;
