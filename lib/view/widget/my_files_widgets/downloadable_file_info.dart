@@ -5,7 +5,7 @@ import 'package:convertify/controller/file_controller.dart';
 import 'package:convertify/core/constant/app_Images.dart';
 import 'package:convertify/core/constant/app_color.dart';
 import 'package:convertify/utils/format_utils.dart';
-import 'package:convertify/view/widget/dialog/custome_dialog.dart';
+import 'package:convertify/core/shared/custome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';

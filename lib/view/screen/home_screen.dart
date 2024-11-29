@@ -4,12 +4,12 @@ import 'package:convertify/controller/ad_controller.dart';
 import 'package:convertify/core/constant/app_Images.dart';
 import 'package:convertify/core/constant/app_color.dart';
 import 'package:convertify/controller/file_controller.dart';
-import 'package:convertify/view/widget/dialog/button_collection_dialog.dart';
-import 'package:convertify/view/widget/button/primary_button_with_loading.dart';
-import 'package:convertify/view/widget/home_banner_ad_widget.dart';
-import 'package:convertify/view/widget/selected_file_info.dart';
-import 'package:convertify/view/widget/from_to.dart';
-import 'package:convertify/view/widget/pick_file_widget.dart';
+import 'package:convertify/view/widget/home_widgets/button_collection_dialog.dart';
+import 'package:convertify/view/widget/home_widgets/primary_button_with_loading.dart';
+import 'package:convertify/core/shared/banner_ad_widget.dart';
+import 'package:convertify/view/widget/home_widgets/selected_file_info.dart';
+import 'package:convertify/view/widget/home_widgets/from_to.dart';
+import 'package:convertify/view/widget/home_widgets/pick_file_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -123,7 +123,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ],
                           ),
                         ])),
-                Obx(() => adController.isHomeBannerLoaded.value
+                Obx(() => adController.isAdBannerLoaded.value
                     ? Container(
                         width: adController.bannerAd!.size.width.toDouble(),
                         height: adController.bannerAd!.size.height.toDouble(),

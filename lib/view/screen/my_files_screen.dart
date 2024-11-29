@@ -1,10 +1,10 @@
 import 'package:convertify/controller/file_controller.dart';
 import 'package:convertify/core/constant/app_color.dart';
 import 'package:convertify/model/downloadable_file_model.dart';
-import 'package:convertify/view/widget/converting_file_details.dart';
-import 'package:convertify/view/widget/custom_animated_list.dart';
-import 'package:convertify/view/widget/downloadable_file_info.dart';
-import 'package:convertify/view/widget/search_file_bar.dart';
+import 'package:convertify/view/widget/my_files_widgets/converting_file_details.dart';
+import 'package:convertify/view/widget/my_files_widgets/custom_animated_list.dart';
+import 'package:convertify/view/widget/my_files_widgets/downloadable_file_info.dart';
+import 'package:convertify/view/widget/my_files_widgets/search_file_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';

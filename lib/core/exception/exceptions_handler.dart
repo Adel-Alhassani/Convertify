@@ -4,7 +4,7 @@ import 'package:convertify/core/exception/data_exception.dart';
 import 'package:convertify/core/exception/file_exceptions.dart';
 import 'package:convertify/core/exception/network_exceptions.dart';
 import 'package:convertify/core/logger.dart';
-import 'package:convertify/view/widget/dialog/custome_dialog.dart';
+import 'package:convertify/core/shared/custome_dialog.dart';
 
 class ExceptionsHandler {
   static void handle(Exception e, String unknownExceptionMssg) {

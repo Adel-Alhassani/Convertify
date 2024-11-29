@@ -4,10 +4,10 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class AdController extends GetxController {
   BannerAd? bannerAd;
-  RxBool isHomeBannerLoaded = false.obs;
+  RxBool isAdBannerLoaded = false.obs;
   final bool _isTest = true;
-  final String _testAdHomeBannerId = "ca-app-pub-3940256099942544/9214589741";
-  final String? _appAdHomeBannerId = dotenv.env["HOME_BANNER_ID"];
+  final String _testAdBannerId = "ca-app-pub-3940256099942544/9214589741";
+  final String? _appAdBannerId = dotenv.env["AD_BANNER_ID"];
 
   @override
   void onInit() {
@@ -20,13 +20,13 @@ class AdController extends GetxController {
   void dispose() {
     // TODO: implement dispose
     super.dispose();
-    if (isHomeBannerLoaded.value) {
+    if (isAdBannerLoaded.value) {
       bannerAd!.dispose();
     }
   }
 
   String _getHomeBanner() {
-    return _isTest ? _testAdHomeBannerId : _appAdHomeBannerId!;
+    return _isTest ? _testAdBannerId : _appAdBannerId!;
   }
 
   void loadHomeBanner() {
@@ -35,7 +35,7 @@ class AdController extends GetxController {
         adUnitId: _getHomeBanner(),
         listener: BannerAdListener(
           onAdLoaded: (ad) {
-            isHomeBannerLoaded.value = true;
+            isAdBannerLoaded.value = true;
           },
           onAdFailedToLoad: (ad, error) {
             ad.dispose();

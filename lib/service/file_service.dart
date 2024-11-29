@@ -5,7 +5,7 @@ import 'dart:math';
 // import 'dart:io';
 import 'package:convertify/core/exception/network_exceptions.dart';
 import 'package:convertify/core/logger.dart';
-import 'package:convertify/view/widget/dialog/custome_dialog.dart';
+import 'package:convertify/core/shared/custome_dialog.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 // import 'package:get/get.dart';
