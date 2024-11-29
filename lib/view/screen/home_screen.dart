@@ -11,6 +11,7 @@ import 'package:convertify/view/widget/selected_file_info.dart';
 import 'package:convertify/view/widget/from_to.dart';
 import 'package:convertify/view/widget/pick_file_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -30,10 +31,15 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final FileController fileController = Get.put(FileController());
     final AdController adController = Get.put(AdController());
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: AppColor.whiteColor,
-        body: Stack(
+    return Scaffold(
+      backgroundColor: AppColor.whiteColor,
+      appBar: AppBar(
+        toolbarHeight: 0.0,
+        systemOverlayStyle:
+            const SystemUiOverlayStyle(statusBarColor: AppColor.primaryColor),
+      ),
+      body: SafeArea(
+        child: Stack(
           children: [
             Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -83,7 +89,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ? AppColor.tertiaryColor
                                       : AppColor.whiteColor, // Use AppColor
                                   onPressed: () async {
-                                    // if (!await fileController.startFileUpload()) return;
+                                    if (!await fileController.startFileUpload()) return;
                                     if (!context.mounted) return;
                                     widget.controller.jumpToTab(1);
                                     await fileController.convertFile();
@@ -257,8 +263,9 @@ class BlueBackgroundPainter extends CustomPainter {
     );
     path.lineTo(
         size.width, size.height); // Ensure this point is included in the path
-    path.lineTo(0, size.height); // Connect back to the start point
-    path.close(); // Close the path to ensure it's a complete shape
+    path.lineTo(0,
+        size.height); // Connect back to the start point // Close the path to ensure it's a complete shape
+    path.close();
 
     canvas.drawPath(path, paint);
   }
