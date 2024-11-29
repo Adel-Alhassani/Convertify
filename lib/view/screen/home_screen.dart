@@ -32,7 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final FileController fileController = Get.put(FileController());
     final AdController adController = Get.put(AdController());
     return Scaffold(
-      backgroundColor: AppColor.whiteColor,
+      backgroundColor: AppColor.primaryColor,
       appBar: AppBar(
         toolbarHeight: 0.0,
         systemOverlayStyle:
@@ -89,7 +89,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ? AppColor.tertiaryColor
                                       : AppColor.whiteColor, // Use AppColor
                                   onPressed: () async {
-                                    if (!await fileController.startFileUpload()) return;
+                                    if (!await fileController.startFileUpload())
+                                      return;
                                     if (!context.mounted) return;
                                     widget.controller.jumpToTab(1);
                                     await fileController.convertFile();
@@ -245,29 +246,11 @@ class _HomeScreenState extends State<HomeScreen> {
 class BlueBackgroundPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint();
-
-    // Draw blue background
-    paint.color = AppColor.primaryColor; // Use AppColor
-    canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), paint);
-
-    // Draw white curve
-    paint.color = AppColor.whiteColor; // Use AppColor
-    final path = Path();
-    path.moveTo(0, size.height);
-    path.quadraticBezierTo(
-      size.width / 2,
-      size.height - 80,
-      size.width,
-      size.height,
-    );
-    path.lineTo(
-        size.width, size.height); // Ensure this point is included in the path
-    path.lineTo(0,
-        size.height); // Connect back to the start point // Close the path to ensure it's a complete shape
-    path.close();
-
-    canvas.drawPath(path, paint);
+    Paint circlePaint = Paint()..color = AppColor.whiteColor;
+    canvas.drawOval(
+        Rect.fromLTWH(
+            -100, size.height - 30, size.width + 200, size.height / 2),
+        circlePaint);
   }
 
   @override
