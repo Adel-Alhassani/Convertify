@@ -125,14 +125,12 @@ class MyFilesScreen extends StatelessWidget {
                                       children: [
                                         DownloadableFileInfo(
                                           fileId: fileId,
-                                          fileName: items[index]
-                                              .fileName!,
-                                          fileSize: items[index]
-                                              .fileSize!,
-                                          fileExtension: items[index]
-                                              .fileOutputFormat!,
-                                          downloadUrl: items[index]
-                                              .fileDownloadUrl!,
+                                          fileName: items[index].fileName!,
+                                          fileSize: items[index].fileSize!,
+                                          fileExtension:
+                                              items[index].fileOutputFormat!,
+                                          downloadUrl:
+                                              items[index].fileDownloadUrl!,
                                           convertedDate: fileController
                                               .convertedDates[fileId]!.value,
                                           expireDate: fileController
