@@ -25,14 +25,14 @@ class HomeBannerAdController extends GetxController{
       homeBannerAd!.dispose();
     }
   }
-   String _getHomeBanner() {
+   String _getHomeBannerAdId() {
     return _isTest ? _testAdBannerId : _homeAdBannerId!;
   }
 
   void loadHomeBanner() {
     homeBannerAd = BannerAd(
         size: AdSize.banner,
-        adUnitId: _getHomeBanner(),
+        adUnitId: _getHomeBannerAdId(),
         listener: BannerAdListener(
           onAdLoaded: (ad) {
             isHomeAdBannerLoaded.value = true;

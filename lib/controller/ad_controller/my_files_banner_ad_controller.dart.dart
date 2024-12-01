@@ -24,14 +24,14 @@ class MyFilesBannerAdController extends GetxController {
       myFilesBannerAd!.dispose();
     }
   }
-  String _getMyFilesBanner() {
+  String _getMyFilesBannerAdId() {
     return _isTest ? _testAdBannerId : _myFilesAdBannerId!;
   }
 
   void loadMyFilesBanner() {
     myFilesBannerAd = BannerAd(
         size: AdSize.banner,
-        adUnitId: _getMyFilesBanner(),
+        adUnitId: _getMyFilesBannerAdId(),
         listener: BannerAdListener(
           onAdLoaded: (ad) {
             isMyFilesAdBannerLoaded.value = true;

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:convertify/controller/ad_controller/home_banner_ad_controller.dart';
+import 'package:convertify/controller/ad_controller/home_rewarded_ad_controller.dart';
 import 'package:convertify/controller/ad_controller/my_files_banner_ad_controller.dart.dart';
 import 'package:convertify/core/constant/app_Images.dart';
 import 'package:convertify/core/constant/app_color.dart';
@@ -32,7 +33,10 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final FileController fileController = Get.put(FileController());
-    final HomeBannerAdController homeBannerAdController = Get.put(HomeBannerAdController());
+    final HomeBannerAdController homeBannerAdController =
+        Get.put(HomeBannerAdController());
+    final HomeRewardedAdController homeRewardedAdController =
+        Get.put(HomeRewardedAdController());
     return Scaffold(
       backgroundColor: AppColor.primaryColor,
       appBar: AppBar(
@@ -82,14 +86,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ? AppColor.tertiaryColor
                                     : AppColor.whiteColor, // Use AppColor
                             onPressed: () async {
-                              if (!await fileController.startFileUpload()) {
-                                return;
-                              }
-                              if (!context.mounted) {
-                                return;
-                              }
-                              widget.controller.jumpToTab(1);
-                              await fileController.convertFile();
+                               await homeRewardedAdController.showRewardedAd(onUserEarnedReward: (ad,rewared) async{
+                                // if (!await fileController.startFileUpload()) {
+                                //   return;
+                                // }
+                                if (!context.mounted) {
+                                  return;
+                                }
+                                widget.controller.jumpToTab(1);
+                                await fileController.convertFile();
+                               });
+                              
                             }),
                         SizedBox(
                           height: 10.h,
