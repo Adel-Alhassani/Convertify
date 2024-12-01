@@ -17,8 +17,8 @@ class MyFilesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     FileController fileController = Get.find();
-    MyFilesBannerAdController myFilesBannerAdController = Get.put(MyFilesBannerAdController());
-    final double statusBarHeight = MediaQuery.of(context).viewPadding.top;
+    MyFilesBannerAdController myFilesBannerAdController =
+        Get.put(MyFilesBannerAdController());
     return Scaffold(
       backgroundColor: AppColor.whiteColor,
       body: SafeArea(
@@ -30,16 +30,16 @@ class MyFilesScreen extends StatelessWidget {
                 // crossAxisAlignment: CrossAxisAlignment.start,
                 padding: EdgeInsets.all(0),
                 children: [
+                  // SizedBox(
+                  //   height: 25.h,
+                  // ),
+                  // Text(
+                  //   "my_files".tr,
+                  //   style: Get.textTheme.headlineMedium!
+                  //       .copyWith(fontWeight: FontWeight.w700),
+                  // ),
                   SizedBox(
-                    height: statusBarHeight + 82.h,
-                  ),
-                  Text(
-                    "my_files".tr,
-                    style: Get.textTheme.headlineMedium!
-                        .copyWith(fontWeight: FontWeight.w700),
-                  ),
-                  SizedBox(
-                    height: 20.h,
+                    height: 55.h,
                   ),
                   SearchFileBar(onChanged: (value) {
                     fileController.searchFor(value);
@@ -74,7 +74,7 @@ class MyFilesScreen extends StatelessWidget {
                   ),
                   Container(
                     constraints: BoxConstraints(
-                      maxHeight: 530.h,
+                      maxHeight: 550.h,
                     ),
                     child: fileController.downloadableFiles.isEmpty
                         ? Center(
@@ -84,8 +84,6 @@ class MyFilesScreen extends StatelessWidget {
                                 .copyWith(color: AppColor.blackSecondaryColor),
                           ))
                         : CustomAnimatedList(
-                            // reverse: true,
-                            // padding: const EdgeInsets.all(0),
                             listKey: fileController.listKey,
                             itemsLength: fileController.searchResult.isNotEmpty
                                 ? fileController.searchResult.length
@@ -161,9 +159,10 @@ class MyFilesScreen extends StatelessWidget {
           ),
           Align(
             alignment: Alignment.bottomCenter,
-            child: Obx(() => myFilesBannerAdController.isMyFilesAdBannerLoaded.value
-                ? bannerAdWidget(myFilesBannerAdController.myFilesBannerAd!)
-                : const SizedBox.shrink()),
+            child: Obx(() =>
+                myFilesBannerAdController.isMyFilesAdBannerLoaded.value
+                    ? bannerAdWidget(myFilesBannerAdController.myFilesBannerAd!)
+                    : const SizedBox.shrink()),
           )
         ]),
       ),
