@@ -1,4 +1,4 @@
-import 'package:convertify/controller/ad_controller.dart';
+import 'package:convertify/controller/ad_controller/my_files_banner_ad_controller.dart.dart';
 import 'package:convertify/controller/file_controller.dart';
 import 'package:convertify/core/constant/app_color.dart';
 import 'package:convertify/core/shared/banner_ad_widget.dart';
@@ -17,7 +17,7 @@ class MyFilesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     FileController fileController = Get.find();
-    AdController adController = Get.find();
+    MyFilesBannerAdController myFilesBannerAdController = Get.put(MyFilesBannerAdController());
     final double statusBarHeight = MediaQuery.of(context).viewPadding.top;
     return Scaffold(
       backgroundColor: AppColor.whiteColor,
@@ -161,8 +161,8 @@ class MyFilesScreen extends StatelessWidget {
           ),
           Align(
             alignment: Alignment.bottomCenter,
-            child: Obx(() => adController.isMyFilesAdBannerLoaded.value
-                ? bannerAdWidget(adController.myFilesBannerAd!)
+            child: Obx(() => myFilesBannerAdController.isMyFilesAdBannerLoaded.value
+                ? bannerAdWidget(myFilesBannerAdController.myFilesBannerAd!)
                 : const SizedBox.shrink()),
           )
         ]),

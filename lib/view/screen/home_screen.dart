@@ -1,6 +1,7 @@
 import 'dart:io';
 
-import 'package:convertify/controller/ad_controller.dart';
+import 'package:convertify/controller/ad_controller/home_banner_ad_controller.dart';
+import 'package:convertify/controller/ad_controller/my_files_banner_ad_controller.dart.dart';
 import 'package:convertify/core/constant/app_Images.dart';
 import 'package:convertify/core/constant/app_color.dart';
 import 'package:convertify/controller/file_controller.dart';
@@ -31,7 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final FileController fileController = Get.put(FileController());
-    final AdController adController = Get.put(AdController());
+    final HomeBannerAdController homeBannerAdController = Get.put(HomeBannerAdController());
     return Scaffold(
       backgroundColor: AppColor.primaryColor,
       appBar: AppBar(
@@ -215,8 +216,8 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             Align(
               alignment: Alignment.bottomCenter,
-              child: Obx(() => adController.isHomeAdBannerLoaded.value
-                  ? bannerAdWidget(adController.homeBannerAd!)
+              child: Obx(() => homeBannerAdController.isHomeAdBannerLoaded.value
+                  ? bannerAdWidget(homeBannerAdController.homeBannerAd!)
                   : const SizedBox.shrink()),
             )
           ],
