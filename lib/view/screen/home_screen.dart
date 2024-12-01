@@ -5,6 +5,7 @@ import 'package:convertify/core/constant/app_Images.dart';
 import 'package:convertify/core/constant/app_color.dart';
 import 'package:convertify/controller/file_controller.dart';
 import 'package:convertify/view/widget/home_widgets/button_collection_dialog.dart';
+import 'package:convertify/view/widget/home_widgets/home_background_paint.dart';
 import 'package:convertify/view/widget/home_widgets/primary_button_with_loading.dart';
 import 'package:convertify/core/shared/banner_ad_widget.dart';
 import 'package:convertify/view/widget/home_widgets/selected_file_info.dart';
@@ -42,93 +43,76 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Stack(
           children: [
             Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                CustomPaint(
+                  painter: HomeBackgroundPaint(),
+                  child: Container(
+                    width: 430.w,
+                    height: 660.h,
+                  ),
+                ),
                 Obx(() => Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Column(
-                            children: [
-                              CustomPaint(
-                                painter: BlueBackgroundPainter(),
-                                child: Container(
-                                  width: 430.w,
-                                  height: 660.h,
-                                ),
-                              ),
-                              PrimaryButtonWithLoading(
-                                  text: "convert".tr,
-                                  minWidth: 170.w,
-                                  height: 47.h,
-                                  disabled: (fileController
-                                              .outputFormat.value.isEmpty ||
-                                          fileController
-                                              .isFileUploading.value ||
-                                          fileController.isFileConverting.value)
-                                      ? true
-                                      : false,
-                                  isLoading:
-                                      fileController.isFileUploading.value ==
-                                              true
-                                          ? true
-                                          : false,
-                                  loadingWidgetColor: AppColor.whiteColor,
-                                  btnColor: (fileController
-                                              .outputFormat.value.isEmpty ||
-                                          fileController
-                                              .isFileUploading.value ||
-                                          fileController.isFileConverting.value)
-                                      ? AppColor.secondaryColor
-                                      : AppColor.primaryColor, // Use AppColor
-                                  textColor: (fileController
-                                              .outputFormat.value.isEmpty ||
-                                          fileController
-                                              .isFileUploading.value ||
-                                          fileController.isFileConverting.value)
-                                      ? AppColor.tertiaryColor
-                                      : AppColor.whiteColor, // Use AppColor
-                                  onPressed: () async {
-                                    if (!await fileController.startFileUpload())
-                                      return;
-                                    if (!context.mounted) return;
-                                    widget.controller.jumpToTab(1);
-                                    await fileController.convertFile();
-                                  }),
-                              SizedBox(
-                                height: 10.h,
-                              ),
-                              fileController.isFileUploading.value
-                                  ? Column(
-                                      children: [
-                                        Text("preparing_file".tr,
-                                            style: Get.textTheme.displaySmall!
-                                                .copyWith(
-                                                    color: AppColor
-                                                        .tertiaryColor)),
-                                        SizedBox(
-                                          height: 10.h,
-                                        ),
-                                        LinearPercentIndicator(
-                                          width: 150.0.w,
-                                          lineHeight: 3.0.h,
-                                          percent: fileController
-                                              .uploadProgress.value,
-                                          progressColor: AppColor.primaryColor,
-                                          alignment: MainAxisAlignment.center,
-                                        ),
-                                      ],
-                                    )
-                                  : const SizedBox.shrink(),
-                            ],
-                          ),
-                        ])),
-                Obx(() => adController.isAdBannerLoaded.value
-                    ? Container(
-                        width: adController.bannerAd!.size.width.toDouble(),
-                        height: adController.bannerAd!.size.height.toDouble(),
-                        child: bannerAdWidget(adController.bannerAd!))
-                    : const SizedBox.shrink())
+                      children: [
+                        PrimaryButtonWithLoading(
+                            text: "convert".tr,
+                            minWidth: 170.w,
+                            height: 47.h,
+                            disabled:
+                                (fileController.outputFormat.value.isEmpty ||
+                                        fileController.isFileUploading.value ||
+                                        fileController.isFileConverting.value)
+                                    ? true
+                                    : false,
+                            isLoading:
+                                fileController.isFileUploading.value == true
+                                    ? true
+                                    : false,
+                            loadingWidgetColor: AppColor.whiteColor,
+                            btnColor:
+                                (fileController.outputFormat.value.isEmpty ||
+                                        fileController.isFileUploading.value ||
+                                        fileController.isFileConverting.value)
+                                    ? AppColor.secondaryColor
+                                    : AppColor.primaryColor, // Use AppColor
+                            textColor:
+                                (fileController.outputFormat.value.isEmpty ||
+                                        fileController.isFileUploading.value ||
+                                        fileController.isFileConverting.value)
+                                    ? AppColor.tertiaryColor
+                                    : AppColor.whiteColor, // Use AppColor
+                            onPressed: () async {
+                              if (!await fileController.startFileUpload())
+                                return;
+                              if (!context.mounted) return;
+                              widget.controller.jumpToTab(1);
+                              await fileController.convertFile();
+                            }),
+                        SizedBox(
+                          height: 10.h,
+                        ),
+                        fileController.isFileUploading.value
+                            ? Column(
+                                children: [
+                                  Text("preparing_file".tr,
+                                      style: Get.textTheme.displaySmall!
+                                          .copyWith(
+                                              color: AppColor.tertiaryColor)),
+                                  SizedBox(
+                                    height: 10.h,
+                                  ),
+                                  LinearPercentIndicator(
+                                    width: 150.0.w,
+                                    lineHeight: 3.0.h,
+                                    percent:
+                                        fileController.uploadProgress.value,
+                                    progressColor: AppColor.primaryColor,
+                                    alignment: MainAxisAlignment.center,
+                                  ),
+                                ],
+                              )
+                            : const SizedBox.shrink(),
+                      ],
+                    )),
               ],
             ),
             Obx(
@@ -226,33 +210,18 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
-            // Obx(() => fileController.isConverting.value
-            //     ? IgnorePointer(
-            //         ignoring: false,
-            //         child: Container(
-            //           color: AppColor.blackColor.withOpacity(0.7),
-            //           child: Center(
-            //               child: LoadingAnimationWidget.waveDots(
-            //                   color: AppColor.primaryColor, size: 50.w)),
-            //         ))
-            //     : const SizedBox.shrink())
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Obx(() => adController.isAdBannerLoaded.value
+                  ? Container(
+                      width: adController.bannerAd!.size.width.toDouble(),
+                      height: adController.bannerAd!.size.height.toDouble(),
+                      child: bannerAdWidget(adController.bannerAd!))
+                  : const SizedBox.shrink()),
+            )
           ],
         ),
       ),
     );
   }
-}
-
-class BlueBackgroundPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    Paint circlePaint = Paint()..color = AppColor.whiteColor;
-    canvas.drawOval(
-        Rect.fromLTWH(
-            -100, size.height - 30, size.width + 200, size.height / 2),
-        circlePaint);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
