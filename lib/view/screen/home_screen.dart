@@ -81,9 +81,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ? AppColor.tertiaryColor
                                     : AppColor.whiteColor, // Use AppColor
                             onPressed: () async {
-                              if (!await fileController.startFileUpload())
+                              if (!await fileController.startFileUpload()) {
                                 return;
-                              if (!context.mounted) return;
+                              }
+                              if (!context.mounted) {
+                                return;
+                              }
                               widget.controller.jumpToTab(1);
                               await fileController.convertFile();
                             }),
@@ -212,11 +215,8 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             Align(
               alignment: Alignment.bottomCenter,
-              child: Obx(() => adController.isAdBannerLoaded.value
-                  ? Container(
-                      width: adController.bannerAd!.size.width.toDouble(),
-                      height: adController.bannerAd!.size.height.toDouble(),
-                      child: bannerAdWidget(adController.bannerAd!))
+              child: Obx(() => adController.isHomeAdBannerLoaded.value
+                  ? bannerAdWidget(adController.homeBannerAd!)
                   : const SizedBox.shrink()),
             )
           ],

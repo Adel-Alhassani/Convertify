@@ -5,6 +5,7 @@ Widget bannerAdWidget(BannerAd bannerAd) {
   return StatefulBuilder(
     builder: (context, setState) => Container(
       width: bannerAd.size.width.toDouble(),
+       height: bannerAd.size.height.toDouble(),
       alignment: Alignment.center,
       child: AdWidget(ad: bannerAd),
     ),
