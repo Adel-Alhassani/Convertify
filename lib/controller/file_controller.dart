@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
+import 'package:convertify/core/constant/app_config.dart';
 import 'package:convertify/core/exception/exceptions_handler.dart';
 import 'package:convertify/core/logger.dart';
 import 'package:convertify/data/preferences_helper.dart';
@@ -32,8 +33,8 @@ class FileController extends GetxController {
   RxBool isFileConverting = false.obs;
   RxBool isFileUploading = false.obs;
   RxBool isValidOutputFormatLoading = false.obs;
-  int fileSizeLimitInMB = 30;
-  int downloadableFilesListLimit = 15;
+  // int fileSizeLimitInMB = 30;
+  // int downloadableFilesListLimit = 15;
   RxString outputFormat = "".obs;
   RxInt fileLength = 0.obs;
   RxMap<String, List<String>> validOutputFormats = <String, List<String>>{}.obs;
@@ -98,7 +99,8 @@ class FileController extends GetxController {
       outputFormat.value = "";
       PlatformFile file = await FileUtils.pickFile();
       fileLength.value = file.size;
-      if (!ValidateUtils.validateFileSize(file.size, fileSizeLimitInMB)) {
+      if (!ValidateUtils.validateFileSize(
+          file.size, AppConfig.fileSizeLimitInMB)) {
         return;
       }
       selectedFile.set(file.path, file.name, file.size, file.extension);
@@ -182,7 +184,7 @@ class FileController extends GetxController {
   }
 
   bool isDownloadableFilesListLimitReached() {
-    return downloadableFiles.length >= downloadableFilesListLimit;
+    return downloadableFiles.length >= AppConfig.downloadableFilesListLimit;
   }
 
   Future<void> getValidOutputFormats(String extension) async {

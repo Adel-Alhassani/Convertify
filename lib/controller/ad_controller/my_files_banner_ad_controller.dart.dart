@@ -1,3 +1,4 @@
+import 'package:convertify/core/constant/app_config.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -5,7 +6,6 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 class MyFilesBannerAdController extends GetxController {
   BannerAd? myFilesBannerAd;
   RxBool isMyFilesAdBannerLoaded = false.obs;
-  final bool _isTest = true;
   final String _testAdBannerId = "ca-app-pub-3940256099942544/9214589741";
   final String? _myFilesAdBannerId = dotenv.env["MY_FILES_AD_BANNER_ID"];
 
@@ -24,8 +24,9 @@ class MyFilesBannerAdController extends GetxController {
       myFilesBannerAd!.dispose();
     }
   }
+
   String _getMyFilesBannerAdId() {
-    return _isTest ? _testAdBannerId : _myFilesAdBannerId!;
+    return AppConfig.isTestAd ? _testAdBannerId : _myFilesAdBannerId!;
   }
 
   void loadMyFilesBanner() {

@@ -6,6 +6,7 @@ import 'package:convertify/controller/ad_controller/my_files_banner_ad_controlle
 import 'package:convertify/core/constant/app_Images.dart';
 import 'package:convertify/core/constant/app_color.dart';
 import 'package:convertify/controller/file_controller.dart';
+import 'package:convertify/core/constant/app_config.dart';
 import 'package:convertify/view/widget/home_widgets/button_collection_dialog.dart';
 import 'package:convertify/view/widget/home_widgets/home_background_paint.dart';
 import 'package:convertify/view/widget/home_widgets/primary_button_with_loading.dart';
@@ -30,13 +31,22 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  late final FileController fileController;
+  HomeBannerAdController? homeBannerAdController;
+  HomeRewardedAdController? homeRewardedAdController;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    fileController = Get.put(FileController());
+    if (!AppConfig.isAdDisabled) {
+      homeBannerAdController = Get.put(HomeBannerAdController());
+      homeRewardedAdController = Get.put(HomeRewardedAdController());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final FileController fileController = Get.put(FileController());
-    final HomeBannerAdController homeBannerAdController =
-        Get.put(HomeBannerAdController());
-    final HomeRewardedAdController homeRewardedAdController =
-        Get.put(HomeRewardedAdController());
     return Scaffold(
       backgroundColor: AppColor.primaryColor,
       appBar: AppBar(
@@ -86,7 +96,19 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ? AppColor.tertiaryColor
                                     : AppColor.whiteColor, // Use AppColor
                             onPressed: () async {
-                               await homeRewardedAdController.showRewardedAd(onUserEarnedReward: (ad,rewared) async{
+                              if (homeRewardedAdController != null) {
+                                await homeRewardedAdController!.showRewardedAd(
+                                    onUserEarnedReward: (ad, rewared) async {
+                                  // if (!await fileController.startFileUpload()) {
+                                  //   return;
+                                  // }
+                                  if (!context.mounted) {
+                                    return;
+                                  }
+                                  widget.controller.jumpToTab(1);
+                                  await fileController.convertFile();
+                                });
+                              } else {
                                 // if (!await fileController.startFileUpload()) {
                                 //   return;
                                 // }
@@ -95,8 +117,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 }
                                 widget.controller.jumpToTab(1);
                                 await fileController.convertFile();
-                               });
-                              
+                              }
                             }),
                         SizedBox(
                           height: 10.h,
@@ -221,12 +242,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Obx(() => homeBannerAdController.isHomeAdBannerLoaded.value
-                  ? bannerAdWidget(homeBannerAdController.homeBannerAd!)
-                  : const SizedBox.shrink()),
-            )
+            homeBannerAdController == null
+                ? const SizedBox.shrink()
+                : Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Obx(() => homeBannerAdController!
+                            .isHomeAdBannerLoaded.value
+                        ? bannerAdWidget(homeBannerAdController!.homeBannerAd!)
+                        : const SizedBox.shrink()),
+                  )
           ],
         ),
       ),

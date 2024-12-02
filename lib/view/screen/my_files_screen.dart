@@ -1,6 +1,7 @@
 import 'package:convertify/controller/ad_controller/my_files_banner_ad_controller.dart.dart';
 import 'package:convertify/controller/file_controller.dart';
 import 'package:convertify/core/constant/app_color.dart';
+import 'package:convertify/core/constant/app_config.dart';
 import 'package:convertify/core/shared/banner_ad_widget.dart';
 import 'package:convertify/model/downloadable_file_model.dart';
 import 'package:convertify/view/widget/my_files_widgets/converting_file_details.dart';
@@ -11,14 +12,29 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
-class MyFilesScreen extends StatelessWidget {
+class MyFilesScreen extends StatefulWidget {
   const MyFilesScreen({super.key});
 
   @override
+  State<MyFilesScreen> createState() => _MyFilesScreenState();
+}
+
+class _MyFilesScreenState extends State<MyFilesScreen> {
+  late final FileController fileController;
+  MyFilesBannerAdController? myFilesBannerAdController;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    fileController = Get.find();
+    if (!AppConfig.isAdDisabled) {
+      myFilesBannerAdController = Get.put(MyFilesBannerAdController());
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    FileController fileController = Get.find();
-    MyFilesBannerAdController myFilesBannerAdController =
-        Get.put(MyFilesBannerAdController());
     return Scaffold(
       backgroundColor: AppColor.whiteColor,
       body: SafeArea(
@@ -74,7 +90,8 @@ class MyFilesScreen extends StatelessWidget {
                   ),
                   Container(
                     constraints: BoxConstraints(
-                      maxHeight: 550.h,
+                      maxHeight:
+                          myFilesBannerAdController == null ? 620.h : 550.h,
                     ),
                     child: fileController.downloadableFiles.isEmpty
                         ? Center(
@@ -157,13 +174,16 @@ class MyFilesScreen extends StatelessWidget {
               ),
             ),
           ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Obx(() =>
-                myFilesBannerAdController.isMyFilesAdBannerLoaded.value
-                    ? bannerAdWidget(myFilesBannerAdController.myFilesBannerAd!)
-                    : const SizedBox.shrink()),
-          )
+          myFilesBannerAdController == null
+              ? const SizedBox.shrink()
+              : Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Obx(() =>
+                      myFilesBannerAdController!.isMyFilesAdBannerLoaded.value
+                          ? bannerAdWidget(
+                              myFilesBannerAdController!.myFilesBannerAd!)
+                          : const SizedBox.shrink()),
+                )
         ]),
       ),
     );

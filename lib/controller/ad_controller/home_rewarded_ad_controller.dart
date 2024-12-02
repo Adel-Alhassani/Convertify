@@ -1,3 +1,4 @@
+import 'package:convertify/core/constant/app_config.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -5,8 +6,7 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 class HomeRewardedAdController extends GetxController {
   RewardedAd? homeRewardedAd;
   RxBool isHomeRewardedAd = false.obs;
-  final bool _isTest = false;
-  final String _testAdRewardedAdId = "ca-app-pub-3940256099942544/1033173712";
+  final String _testRewardedAdId = "ca-app-pub-3940256099942544/1033173712";
   final String? _homeRewardedAdId = dotenv.env["HOME_AD_REWARDED_ID"];
 
   @override
@@ -17,7 +17,7 @@ class HomeRewardedAdController extends GetxController {
   }
 
   String _getHomeRewardedAdId() {
-    return _isTest ? _testAdRewardedAdId : _homeRewardedAdId!;
+    return AppConfig.isTestAd ? _testRewardedAdId : _homeRewardedAdId!;
   }
 
   void _loadRewardedAd() {

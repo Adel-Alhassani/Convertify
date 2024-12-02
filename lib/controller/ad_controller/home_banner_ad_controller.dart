@@ -1,15 +1,14 @@
+import 'package:convertify/core/constant/app_config.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
-class HomeBannerAdController extends GetxController{
-    BannerAd? homeBannerAd;
-    RxBool isHomeAdBannerLoaded = false.obs;
-    final bool _isTest = true;
+class HomeBannerAdController extends GetxController {
+  BannerAd? homeBannerAd;
+  RxBool isHomeAdBannerLoaded = false.obs;
   final String _testAdBannerId = "ca-app-pub-3940256099942544/9214589741";
   final String? _homeAdBannerId = dotenv.env["HOME_AD_BANNER_ID"];
 
-  
   @override
   void onInit() {
     // TODO: implement onInit
@@ -25,8 +24,9 @@ class HomeBannerAdController extends GetxController{
       homeBannerAd!.dispose();
     }
   }
-   String _getHomeBannerAdId() {
-    return _isTest ? _testAdBannerId : _homeAdBannerId!;
+
+  String _getHomeBannerAdId() {
+    return AppConfig.isTestAd ? _testAdBannerId : _homeAdBannerId!;
   }
 
   void loadHomeBanner() {
@@ -44,5 +44,4 @@ class HomeBannerAdController extends GetxController{
         request: const AdRequest())
       ..load();
   }
-
 }
