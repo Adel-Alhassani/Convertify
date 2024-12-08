@@ -92,8 +92,6 @@ class CustomeDialog {
         content,
         style: Get.textTheme.bodyMedium!.copyWith(color: AppColor.blackColor),
       ),
-      titleStyle: Get.textTheme.bodyLarge!
-          .copyWith(color: AppColor.blackColor, fontWeight: FontWeight.bold),
       confirm: MaterialButton(
         minWidth: 80.w,
         height: 30.h,
@@ -121,14 +119,12 @@ class CustomeDialog {
     Get.defaultDialog(
       title: "",
       titlePadding: const EdgeInsets.all(0),
-      contentPadding: EdgeInsets.symmetric(horizontal: 20.w),
+      contentPadding: EdgeInsets.symmetric(horizontal: 17.w),
       barrierDismissible: barrierDismissible ?? true,
       content: Text(
         content,
         style: Get.textTheme.bodyMedium!.copyWith(color: AppColor.blackColor),
       ),
-      titleStyle: Get.textTheme.bodyLarge!
-          .copyWith(color: AppColor.blackColor, fontWeight: FontWeight.bold),
       confirm: Container(
         margin: EdgeInsets.only(left: 3.w),
         child: MaterialButton(

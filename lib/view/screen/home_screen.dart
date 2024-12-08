@@ -99,9 +99,9 @@ class _HomeScreenState extends State<HomeScreen> {
                               if (homeRewardedAdController != null) {
                                 await homeRewardedAdController!.showRewardedAd(
                                     onUserEarnedReward: (ad, rewared) async {
-                                  // if (!await fileController.startFileUpload()) {
-                                  //   return;
-                                  // }
+                                  if (!await fileController.startFileUpload()) {
+                                    return;
+                                  }
                                   if (!context.mounted) {
                                     return;
                                   }
@@ -109,9 +109,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                   await fileController.convertFile();
                                 });
                               } else {
-                                // if (!await fileController.startFileUpload()) {
-                                //   return;
-                                // }
+                                if (!await fileController.startFileUpload()) {
+                                  return;
+                                }
                                 if (!context.mounted) {
                                   return;
                                 }
