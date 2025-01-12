@@ -45,15 +45,15 @@ class CustomeDialog {
       title: title,
       contentPadding: EdgeInsets.symmetric(horizontal: 20.w),
       barrierDismissible: barrierDismissible ?? true,
-      content: RichText(
-        textAlign: TextAlign.left,
+      content: RichText( 
         text: TextSpan(
           text: "$content\n",
-          style: Get.textTheme.bodyLarge,
+          style: Get.textTheme.bodyMedium,
           children: [
             TextSpan(
               text: specialText,
               style: TextStyle(
+                fontFamily: "Inter",
                   color: AppColor.primaryColor,
                   fontWeight: FontWeight.bold,
                   fontSize: 12.sp),

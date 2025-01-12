@@ -72,11 +72,7 @@ class DownloadableFileInfo extends StatelessWidget {
                       fontSize: 14.sp,
                     )),
                 Text("$fileSize, $convertedDate",
-                    style: TextStyle(
-                      fontFamily: "Inter",
-                      fontWeight: FontWeight.w700,
-                      fontSize: 11.sp,
-                    )),
+                    style: Get.textTheme.displaySmall),
               ],
             ),
           ],
@@ -137,12 +133,12 @@ class DownloadableFileInfo extends StatelessWidget {
                     onTap: () {
                       CustomeDialog.showConfirmCancleDialog(
                           "confirm_delete".tr,
-                          "yes".tr,
+                          "confirm".tr,
                           () {
                             fileController.deleteDownloadableFile(fileId);
                             Get.back();
                           },
-                          "no".tr,
+                          "cancel".tr,
                           () {
                             Get.back();
                           });
@@ -160,12 +156,8 @@ class DownloadableFileInfo extends StatelessWidget {
               height: 5.h,
             ),
             Text(
-              "Expire in ${expireDate}h",
-              style: TextStyle(
-                fontFamily: "Inter",
-                fontWeight: FontWeight.w700,
-                fontSize: 10.sp,
-              ),
+              FormatUtils.formatExpireTimeBasedOnLanguage(expireDate),
+              style: Get.textTheme.displaySmall,
             )
           ],
         )

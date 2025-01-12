@@ -90,19 +90,19 @@ class FormatUtils {
     if (difference.inSeconds < 60) {
       return 'الآن';
     } else if (difference.inMinutes < 60) {
-      return '${difference.inMinutes == 1 ? 'دقيقة' : 'دقائق'} ${difference.inMinutes} قبل';
+      return 'قبل ${difference.inMinutes} ${difference.inMinutes == 1 ? 'دقيقة' : 'دقائق'}';
     } else if (difference.inHours < 24) {
-      return '${difference.inHours == 1 ? 'ساعة' : 'ساعات'} ${difference.inHours} قبل';
+      return 'قبل ${difference.inHours} ${difference.inHours == 1 ? 'ساعة' : 'ساعات'}';
     } else if (difference.inDays == 1) {
       return 'الأمس';
     } else if (difference.inDays < 7) {
-      return '${difference.inDays == 1 ? 'يوم' : 'أيام'} ${difference.inDays} قبل';
+      return 'قبل ${difference.inDays} ${difference.inDays == 1 ? 'يوم' : 'أيام'}';
     } else if (difference.inDays < 30) {
-      return '${(difference.inDays / 7).floor() == 1 ? 'أسبوع' : 'أسابيع'} ${(difference.inDays / 7).floor()} قبل';
+      return 'قبل ${(difference.inDays / 7).floor()} ${(difference.inDays / 7).floor() == 1 ? 'أسبوع' : 'أسابيع'}';
     } else if (difference.inDays < 365) {
-      return '${(difference.inDays / 30).floor() == 1 ? 'شهر' : 'شهور'} ${(difference.inDays / 30).floor()} قبل';
+      return 'قبل ${(difference.inDays / 30).floor()} ${(difference.inDays / 30).floor() == 1 ? 'شهر' : 'شهور'}';
     } else {
-      return '${(difference.inDays / 365).floor() == 1 ? 'عام' : 'أعوام'} ${(difference.inDays / 365).floor()} قبل';
+      return 'قبل ${(difference.inDays / 365).floor()} ${(difference.inDays / 365).floor() == 1 ? 'عام' : 'أعوام'}';
     }
   }
 
@@ -116,18 +116,26 @@ class FormatUtils {
     }
   }
 
-  // static String _formatExpireTimeAr(DateTime dateTime) {
-  //   final difference = dateTime.difference(DateTime.now());
-  //   return "يحذف خلال ${difference.inHours} ";
-  // }
+  static String _formatExpireTimeAr(String expireDate) {
+    return "يحذف بعد $expireDate س ";
+  }
 
-  // static String _formatExpireTimeEn(DateTime dateTime) {
-  //   final difference = dateTime.difference(DateTime.now());
-  //   return "Expire in ${difference.inHours} hours";
-  // }
+  static String _formatExpireTimeEn(String expireDate) {
+    return "Expire in $expireDate\h";
+  }
 
-  static String formatExpireTime(DateTime expireDate) {
+  static String formatExpireTimeToHours(DateTime expireDate) {
     final difference = expireDate.difference(DateTime.now());
     return "${difference.inHours}";
+  }
+
+  static String formatExpireTimeBasedOnLanguage(String expireDate) {
+    final ConfigController configController = Get.find();
+    Locale? loacle = configController.getLocale();
+    if (loacle!.languageCode == "ar") {
+      return _formatExpireTimeAr(expireDate);
+    } else {
+      return _formatExpireTimeEn(expireDate);
+    }
   }
 }

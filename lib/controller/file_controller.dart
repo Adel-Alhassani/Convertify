@@ -275,7 +275,7 @@ class FileController extends GetxController {
     // but after it enter the Timer block it'll not excute it
     // -----------------------------
     expiredDates[fileId] =
-        FormatUtils.formatExpireTime(DateTime.parse(date)).obs;
+        FormatUtils.formatExpireTimeToHours(DateTime.parse(date)).obs;
     if (int.parse(expiredDates[fileId]!.value) <= 0) {
       deleteDownloadableFile(fileId);
     }
@@ -283,7 +283,7 @@ class FileController extends GetxController {
     expiredDatesTimer[fileId] =
         Timer.periodic(const Duration(hours: 1), (timer) {
       expiredDates[fileId] =
-          FormatUtils.formatExpireTime(DateTime.parse(date)).obs;
+          FormatUtils.formatExpireTimeToHours(DateTime.parse(date)).obs;
       if (int.parse(expiredDates[fileId]!.value) <= 0) {
         deleteDownloadableFile(fileId);
         timer.cancel();
