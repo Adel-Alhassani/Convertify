@@ -1,24 +1,20 @@
-import 'dart:io';
-
 import 'package:convertify/core/exception/file_exceptions.dart';
-import 'package:convertify/core/exception/network_exceptions.dart';
-import 'package:convertify/core/logger.dart';
 import 'package:file_picker/file_picker.dart';
 
 class FileUtils {
-  static Future<PlatformFile> pickFile() async {
-    PlatformFile selectedFile;
-    try {
-      FilePickerResult? result = await FilePicker.platform.pickFiles();
-      if (result == null) throw NullPickResultException();
-      selectedFile = result.files.single;
-      return selectedFile;
-    } on NullPickResultException catch (e) {
-      logger.i(e);
-      rethrow;
-    } on Exception catch (e) {
-      logger.e(e);
-      rethrow;
+  /// Opens the system picker. Throws [NullPickResultException] if the user
+  /// backs out. [allowedExtensions] narrows the picker (used by the
+  /// "popular conversions" shortcuts).
+  static Future<PlatformFile> pickFile({List<String>? allowedExtensions}) async {
+    final FilePickerResult? result = allowedExtensions == null
+        ? await FilePicker.platform.pickFiles()
+        : await FilePicker.platform.pickFiles(
+            type: FileType.custom,
+            allowedExtensions: allowedExtensions,
+          );
+    if (result == null || result.files.isEmpty) {
+      throw NullPickResultException();
     }
+    return result.files.single;
   }
 }

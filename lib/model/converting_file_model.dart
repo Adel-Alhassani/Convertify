@@ -1,54 +1,35 @@
+/// The conversion in progress, persisted so it can resume after the app is
+/// killed.
 class ConvertingFileModel {
-  String? fileName;
-  String? fileSize;
-  String? inputFormat;
-  String? outputFormat;
-  String? jobId;
+  final String fileName;
+  final String fileSize;
+  final String inputFormat;
+  final String outputFormat;
+  final String jobId;
 
-  ConvertingFileModel(
-      {this.fileName,
-      this.fileSize,
-      this.inputFormat,
-      this.outputFormat,
-      this.jobId});
+  const ConvertingFileModel({
+    required this.fileName,
+    required this.fileSize,
+    required this.inputFormat,
+    required this.outputFormat,
+    required this.jobId,
+  });
 
-  ConvertingFileModel.fromJson(Map<String, dynamic> json) {
-    fileName = json['fileName'];
-    fileSize = json['fileSize'];
-    inputFormat = json['inputFormat'];
-    outputFormat = json['outputFormat'];
-    jobId = json['jobId'];
+  factory ConvertingFileModel.fromJson(Map<String, dynamic> json) {
+    return ConvertingFileModel(
+      fileName: json['fileName'] as String,
+      fileSize: (json['fileSize'] ?? '') as String,
+      inputFormat: json['inputFormat'] as String,
+      outputFormat: json['outputFormat'] as String,
+      jobId: json['jobId'] as String,
+    );
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['fileName'] = this.fileName;
-    data['fileSize'] = this.fileSize;
-    data['inputFormat'] = this.inputFormat;
-    data['outputFormat'] = this.outputFormat;
-    data['jobId'] = this.jobId;
-    return data;
-  }
-
-  setFields({
-    required String? fileName,
-    required String? fileSize,
-    required String? inputFormat,
-    required String? outputFormat,
-    required String? jobId,
-  }) {
-    this.fileName = fileName;
-    this.fileSize = fileSize;
-    this.inputFormat = inputFormat;
-    this.outputFormat = outputFormat;
-    this.jobId = jobId;
-  }
-
-  void clear() {
-    fileName = null;
-    fileSize = null;
-    inputFormat = null;
-    outputFormat = null;
-    jobId = null;
-  }
+  Map<String, dynamic> toJson() => {
+        'fileName': fileName,
+        'fileSize': fileSize,
+        'inputFormat': inputFormat,
+        'outputFormat': outputFormat,
+        'jobId': jobId,
+      };
 }

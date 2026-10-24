@@ -1,153 +1,71 @@
 import 'dart:convert';
-import 'dart:ffi';
-import 'dart:ui';
 
 import 'package:convertify/core/logger.dart';
 import 'package:convertify/model/converting_file_model.dart';
 import 'package:convertify/model/downloadable_file_model.dart';
-import 'package:convertify/service/setting_services.dart';
-import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PreferencesHelper {
-  final SettingServices _settingServicesController = Get.find();
+  static const _convertingKey = "convertingFileData";
+  static const _downloadableKey = "downloadableData";
+  static const _folderKey = "convertedFolderUri";
+  static const _localeKey = "languageCode";
 
-  bool _isConvertingFileDataExist() {
-    if (_settingServicesController.sharedPreferences
-            .getString("convertingFileData") !=
-        null) {
-      return true;
-    }
-    return false;
-  }
+  final SharedPreferences _prefs;
+  PreferencesHelper(this._prefs);
 
-  bool _isDownloadableFilesDataExist() {
-    if (_settingServicesController.sharedPreferences
-            .getString("downloadableData") !=
-        null) {
-      return true;
-    }
-    return false;
-  }
+  // ---- In-progress conversion ----
 
-  Future<void> storeConvertingFileData(String name, String size,
-      String extension, String outputFormat, String jobId) async {
+  ConvertingFileModel? fetchConvertingFile() {
+    final json = _prefs.getString(_convertingKey);
+    if (json == null) return null;
     try {
-      ConvertingFileModel convertingFileModel = ConvertingFileModel(
-        fileName: name,
-        fileSize: size,
-        inputFormat: extension,
-        outputFormat: outputFormat,
-        jobId: jobId,
-      );
-      await _settingServicesController.sharedPreferences
-          .setString("convertingFileData", jsonEncode(convertingFileModel));
-    } on Exception catch (e) {
-      logger.e(e);
-      rethrow;
-    }
-  }
-
-  Future<void> storeDownloadableFilesData(
-    String fileId,
-    String fileName,
-    String fileSize,
-    String fileOutputFormat,
-    String fileDownloadUrl,
-    String fileConvertedDate,
-    String fileExpireDate,
-  ) async {
-    try {
-      DownloadableFileModel downloadableFileModel = DownloadableFileModel(
-          fileId: fileId,
-          fileName: fileName,
-          fileSize: fileSize,
-          fileOutputFormat: fileOutputFormat,
-          fileDownloadUrl: fileDownloadUrl,
-          fileConvertedDate: fileConvertedDate,
-          fileExpireDate: fileExpireDate);
-      List<DownloadableFileModel>? downloadableData =
-          fetchDownloadableFilesData();
-      if (downloadableData == null) {
-        downloadableData = <DownloadableFileModel>[];
-        downloadableData.add(downloadableFileModel);
-      } else {
-        downloadableData.add(downloadableFileModel);
-      }
-      await _settingServicesController.sharedPreferences
-          .setString("downloadableData", jsonEncode(downloadableData));
-    } on Exception catch (e) {
-      logger.e(e);
-      rethrow;
-    }
-  }
-
-  ConvertingFileModel? fetchConvertingFileData() {
-    if (!_isConvertingFileDataExist()) {
+      return ConvertingFileModel.fromJson(jsonDecode(json));
+    } catch (e) {
+      logger.e("Corrupt converting file data, clearing it: $e");
+      _prefs.remove(_convertingKey);
       return null;
     }
-    String dataJson = _settingServicesController.sharedPreferences
-        .getString("convertingFileData")!;
-    Map<String, dynamic> dataMap = jsonDecode(dataJson);
-    ConvertingFileModel data = ConvertingFileModel.fromJson(dataMap);
-    return data;
   }
 
-  List<DownloadableFileModel>? fetchDownloadableFilesData() {
-    if (!_isDownloadableFilesDataExist()) {
-      return null;
-    }
-    String dataJson = _settingServicesController.sharedPreferences
-        .getString("downloadableData")!;
-    List<dynamic> dynamicList = jsonDecode(dataJson);
-    List<DownloadableFileModel> data = dynamicList
-        .map((file) => DownloadableFileModel.fromJson(file))
-        .toList();
-    return data;
-  }
+  Future<void> storeConvertingFile(ConvertingFileModel file) =>
+      _prefs.setString(_convertingKey, jsonEncode(file.toJson()));
 
-  String fetchJobId() {
-    ConvertingFileModel convertingFileData = fetchConvertingFileData()!;
-    String jobId = convertingFileData.jobId!;
-    return jobId;
-  }
+  Future<void> removeConvertingFile() => _prefs.remove(_convertingKey);
 
-  Future<void> removeConvertingFileData() async {
-    try {
-      await _settingServicesController.sharedPreferences
-          .remove("convertingFileData");
-    } on Exception catch (e) {
-      logger.e(e);
-      rethrow;
-    }
-  }
+  // ---- Converted files ----
 
-  Future<bool> deleteDownloadableFile(String fileId) async {
-    try {
-      final List<DownloadableFileModel>? downloadableFilesData =
-          fetchDownloadableFilesData();
-      final int fileIndex =
-          downloadableFilesData!.indexWhere((file) => file.fileId == fileId);
-      if (fileIndex == -1) {
-        return false;
+  /// Tree URI of the folder the user picked for converted files.
+  String? fetchFolderUri() => _prefs.getString(_folderKey);
+
+  Future<void> storeFolderUri(String uri) => _prefs.setString(_folderKey, uri);
+
+  /// Converted files that aren't in the folder yet. Files in the folder are
+  /// read from the folder itself.
+
+  List<DownloadableFileModel> fetchDownloadableFiles() {
+    final json = _prefs.getString(_downloadableKey);
+    if (json == null) return [];
+    final files = <DownloadableFileModel>[];
+    for (final item in jsonDecode(json) as List) {
+      try {
+        files.add(DownloadableFileModel.fromJson(
+            Map<String, dynamic>.from(item as Map)));
+      } catch (e) {
+        logger.e("Skipping unreadable file entry: $e");
       }
-      downloadableFilesData.removeAt(fileIndex);
-      await _settingServicesController.sharedPreferences
-          .setString("downloadableData", jsonEncode(downloadableFilesData));
-      return true;
-    } on Exception catch (e) {
-      logger.e(e);
-      rethrow;
     }
+    return files;
   }
 
-  Future<void> removeAllADateFromSharedPref() async {
-    try {
-      return await _settingServicesController.sharedPreferences.clear()
-          ? logger.i("All data removed")
-          : logger.i("Data didn't removed!");
-    } on Exception catch (e) {
-      logger.e(e);
-      rethrow;
-    }
-  }
+  Future<void> storeDownloadableFiles(List<DownloadableFileModel> files) =>
+      _prefs.setString(
+          _downloadableKey, jsonEncode(files.map((f) => f.toJson()).toList()));
+
+  // ---- Settings ----
+
+  String? fetchLanguageCode() => _prefs.getString(_localeKey);
+
+  Future<void> storeLanguageCode(String code) =>
+      _prefs.setString(_localeKey, code);
 }
