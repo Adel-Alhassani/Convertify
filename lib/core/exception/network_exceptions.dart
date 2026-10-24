@@ -1,96 +1,72 @@
-
 class NoInternetConnectionException implements Exception {
   final String mssg;
-  NoInternetConnectionException([this.mssg = "There is no internet connection!"]);
+  NoInternetConnectionException(
+      [this.mssg = "There is no internet connection!"]);
 
   @override
   String toString() => mssg;
 }
 
 class ValidOutputFormatsFetchException implements Exception {
-  final int statusCode;
+  final int? statusCode;
   ValidOutputFormatsFetchException(this.statusCode);
-  String getMssg() =>
+
+  @override
+  String toString() =>
       "Unable to retrieve valid output formats. Status code: $statusCode";
-  @override
-  String toString() => getMssg();
 }
-
-class ValidOutputFormatsSocketException implements Exception {
-  final String mssg;
-  ValidOutputFormatsSocketException([this.mssg = "Invalid URL used for fetching valid output formats!"]);
-  @override
-  String toString() => mssg;
-}
-
 
 class CreateJobException implements Exception {
-  final int statusCode;
+  final int? statusCode;
   CreateJobException(this.statusCode);
-  String getMssg() => "Unable to create a job. Status code: $statusCode";
-  @override
-  String toString() => getMssg();
-}
-
-class CreateJobSocketException implements Exception {
-  final String mssg;
-  CreateJobSocketException(
-      [this.mssg = "Invalid URL used for creating a job!"]);
 
   @override
-  String toString() => mssg;
+  String toString() => "Unable to create a job. Status code: $statusCode";
 }
 
 class UploadFileException implements Exception {
-  final int statusCode;
-  UploadFileException(this.statusCode);
-  String getMssg() => "Unable to upload the file. Status code: $statusCode";
-  @override
-  String toString() => getMssg();
-}
+  final int? statusCode;
 
-class UploadFileSocketException implements Exception {
-  final String mssg;
-  UploadFileSocketException(
-      [this.mssg = "Invalid URL used for uploading the file!"]);
+  /// Bytes sent before the failure, so the UI can say how far it got.
+  final int sentBytes;
+  UploadFileException(this.statusCode, {this.sentBytes = 0});
 
   @override
-  String toString() => mssg;
+  String toString() =>
+      "Unable to upload the file. Status code: $statusCode, sent: $sentBytes";
 }
 
-class FetchFileDownloadUrlException implements Exception {
-  final int statusCode;
-  FetchFileDownloadUrlException(this.statusCode);
-  String getMssg() => "Unable to fetch job status. Status code: $statusCode";
-  @override
-  String toString() => getMssg();
-}
-
-class FetchFileDownloadUrlSocketException implements Exception {
-  final String mssg;
-  FetchFileDownloadUrlSocketException(
-      [this.mssg = "Invalid URL used for fetching file download URL!"]);
+class ConversionFailedException implements Exception {
+  final String? reason;
+  ConversionFailedException([this.reason]);
 
   @override
-  String toString() => mssg;
+  String toString() => "Conversion failed: ${reason ?? 'unknown reason'}";
 }
 
-class FetchFileSizeException implements Exception {
-  final int statusCode;
-  FetchFileSizeException(this.statusCode);
-  String getMssg() => "Unable to fetch file size. Status code: $statusCode!";
+class ConversionTimeoutException implements Exception {
   @override
-  String toString() => getMssg();
+  String toString() => "Conversion did not finish in time.";
 }
 
-class FetchFileSizeSocketException implements Exception {
-  final String mssg;
-  FetchFileSizeSocketException(
-      [this.mssg = "Invalid URL used fetching file size!"]);
+class JobStatusException implements Exception {
+  final int? statusCode;
+  JobStatusException(this.statusCode);
 
   @override
-  String toString() => mssg;
+  String toString() => "Unable to fetch job status. Status code: $statusCode";
 }
 
+class DownloadFileException implements Exception {
+  final int? statusCode;
+  DownloadFileException(this.statusCode);
 
+  @override
+  String toString() => "Unable to download the file. Status code: $statusCode";
+}
 
+/// Thrown when the user cancels an upload or a conversion.
+class OperationCancelledException implements Exception {
+  @override
+  String toString() => "Operation cancelled by the user.";
+}

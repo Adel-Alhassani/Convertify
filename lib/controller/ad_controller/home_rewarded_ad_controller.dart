@@ -4,48 +4,58 @@ import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class HomeRewardedAdController extends GetxController {
-  RewardedAd? homeRewardedAd;
-  RxBool isHomeRewardedAd = false.obs;
-  final String _testRewardedAdId = "ca-app-pub-3940256099942544/1033173712";
-  final String? _homeRewardedAdId = dotenv.env["HOME_AD_REWARDED_ID"];
+  static const _testRewardedAdId = "ca-app-pub-3940256099942544/1033173712";
+  RewardedAd? _ad;
 
   @override
   void onInit() {
-    // TODO: implement onInit
     super.onInit();
-    _loadRewardedAd();
+    _load();
   }
 
-  String _getHomeRewardedAdId() {
-    return AppConfig.isTestAd ? _testRewardedAdId : _homeRewardedAdId!;
+  @override
+  void onClose() {
+    _ad?.dispose();
+    super.onClose();
   }
 
-  void _loadRewardedAd() {
+  void _load() {
+    final adUnitId = AppConfig.isTestAd
+        ? _testRewardedAdId
+        : dotenv.env["HOME_AD_REWARDED_ID"];
+    if (adUnitId == null || adUnitId.isEmpty) return;
     RewardedAd.load(
-        adUnitId: _getHomeRewardedAdId(),
-        request: const AdRequest(),
-        rewardedAdLoadCallback: RewardedAdLoadCallback(
-            onAdLoaded: (ad) => homeRewardedAd = ad,
-            onAdFailedToLoad: (error) => homeRewardedAd = null));
+      adUnitId: adUnitId,
+      request: const AdRequest(),
+      rewardedAdLoadCallback: RewardedAdLoadCallback(
+        onAdLoaded: (ad) => _ad = ad,
+        onAdFailedToLoad: (_) => _ad = null,
+      ),
+    );
   }
 
-  Future<void> showRewardedAd(
-      {required void Function(AdWithoutView, RewardItem)
-          onUserEarnedReward}) async {
-    if (homeRewardedAd != null) {
-      homeRewardedAd!.fullScreenContentCallback = FullScreenContentCallback(
-        onAdDismissedFullScreenContent: (ad) {
-          ad.dispose();
-          _loadRewardedAd();
-        },
-        onAdFailedToShowFullScreenContent: (ad, error) {
-          ad.dispose();
-          _loadRewardedAd();
-        },
-      );
-      // homeRewardedAd!.setImmersiveMode(true);
-      await homeRewardedAd!.show(onUserEarnedReward: onUserEarnedReward);
-      homeRewardedAd = null;
+  /// Shows the ad and runs [onReward] once the user earns it. If no ad is
+  /// loaded, runs [onReward] straight away so the user is never blocked.
+  Future<void> showThen(Future<void> Function() onReward) async {
+    final ad = _ad;
+    if (ad == null) {
+      await onReward();
+      return;
     }
+    _ad = null;
+    var rewarded = false;
+    ad.fullScreenContentCallback = FullScreenContentCallback(
+      onAdDismissedFullScreenContent: (ad) {
+        ad.dispose();
+        _load();
+        if (rewarded) onReward();
+      },
+      onAdFailedToShowFullScreenContent: (ad, _) {
+        ad.dispose();
+        _load();
+        onReward();
+      },
+    );
+    await ad.show(onUserEarnedReward: (_, __) => rewarded = true);
   }
 }

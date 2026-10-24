@@ -1,18 +1,23 @@
-import 'package:convertify/controller/file_controller.dart';
+import 'package:convertify/core/constant/app_config.dart';
+import 'package:convertify/data/preferences_helper.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+/// App-wide services, initialised once before runApp.
 class SettingServices extends GetxService {
-  late SharedPreferences sharedPreferences;
+  late final SharedPreferences sharedPreferences;
+  late final PreferencesHelper preferences;
 
   Future<SettingServices> init() async {
-    await ScreenUtil.ensureScreenSize();
-    dotenv.load(fileName: ".env");
+    // Must be awaited: FileService reads the API key from dotenv.
+    await dotenv.load(fileName: ".env");
     sharedPreferences = await SharedPreferences.getInstance();
-    MobileAds.instance.initialize();
+    preferences = PreferencesHelper(sharedPreferences);
+    if (!AppConfig.isAdDisabled) {
+      await MobileAds.instance.initialize();
+    }
     return this;
   }
 }
