@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Home-screen widget, matching AppColors.dark -->
+    <color name="widget_surface">#FF131C2E</color>
+    <color name="widget_ink">#FFE8EDF7</color>
+    <color name="widget_primary">#FF4F82FF</color>
+    <color name="widget_on_primary">#FFFFFFFF</color>
+    <color name="widget_primary_soft">#FF1A2A52</color>
+    <color name="widget_primary_ink">#FF93B2FF</color>
+</resources>
