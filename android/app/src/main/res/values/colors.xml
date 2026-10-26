@@ -1,4 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="ic_launcher_background">#FF2663FF</color>
+
+    <!-- Home-screen widget, matching AppColors.light -->
+    <color name="widget_surface">#FFFFFFFF</color>
+    <color name="widget_ink">#FF0F172A</color>
+    <color name="widget_primary">#FF2663FF</color>
+    <color name="widget_on_primary">#FFFFFFFF</color>
+    <color name="widget_primary_soft">#FFEAF0FF</color>
+    <color name="widget_primary_ink">#FF1A4BD1</color>
 </resources>

@@ -6,6 +6,7 @@ import android.content.ContentValues
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
+import android.os.Bundle
 import android.os.Environment
 import android.os.Handler
 import android.os.Looper
@@ -34,10 +35,51 @@ class MainActivity : FlutterActivity() {
     private val main = Handler(Looper.getMainLooper())
     private var pendingPick: MethodChannel.Result? = null
 
+    private var widgetChannel: MethodChannel? = null
+    /** The widget tap that started the app, until Dart asks for it. */
+    private var pendingLaunch: Map<String, String?>? = null
+    private var restored = false
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        // A recreated activity still carries the original widget intent.
+        restored = savedInstanceState != null
+        super.onCreate(savedInstanceState)
+    }
+
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
-        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL)
-            .setMethodCallHandler(::onCall)
+        val messenger = flutterEngine.dartExecutor.binaryMessenger
+        MethodChannel(messenger, CHANNEL).setMethodCallHandler(::onCall)
+
+        if (!restored) pendingLaunch = takeWidgetLaunch(intent)
+        widgetChannel = MethodChannel(messenger, WIDGET_CHANNEL).apply {
+            setMethodCallHandler { call, result ->
+                if (call.method == "takeLaunch") {
+                    result.success(pendingLaunch)
+                    pendingLaunch = null
+                } else {
+                    result.notImplemented()
+                }
+            }
+        }
+    }
+
+    /** A widget tap while the app is already running. */
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        val launch = takeWidgetLaunch(intent) ?: return
+        widgetChannel?.invokeMethod("launch", launch) ?: run { pendingLaunch = launch }
+    }
+
+    private fun takeWidgetLaunch(intent: Intent?): Map<String, String?>? {
+        if (intent?.action != ConvertWidgetProvider.ACTION_CONVERT) return null
+        // Reopened from recents: the tap was already handled.
+        if (intent.flags and Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY != 0) return null
+        intent.action = Intent.ACTION_MAIN
+        return mapOf(
+            "from" to intent.getStringExtra(ConvertWidgetProvider.EXTRA_FROM),
+            "to" to intent.getStringExtra(ConvertWidgetProvider.EXTRA_TO),
+        )
     }
 
     private fun onCall(call: MethodCall, result: MethodChannel.Result) {
@@ -293,6 +335,7 @@ class MainActivity : FlutterActivity() {
 
     companion object {
         private const val CHANNEL = "convertify/storage"
+        private const val WIDGET_CHANNEL = "convertify/widget"
         private const val PICK_FOLDER_REQUEST = 4101
         private const val FOLDER_NAME = "Convertify"
         private const val EXTERNAL_STORAGE_AUTHORITY = "com.android.externalstorage.documents"

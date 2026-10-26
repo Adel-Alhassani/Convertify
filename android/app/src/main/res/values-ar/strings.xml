@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_description">اختر ملفاً وحوّله بلمسة واحدة.</string>
+    <string name="widget_convert">حوّل ملفاً</string>
+    <string name="widget_docx_pdf">DOCX ← PDF</string>
+    <string name="widget_heic_jpg">HEIC ← JPG</string>
+    <string name="widget_mp4_mp3">MP4 ← MP3</string>
+</resources>

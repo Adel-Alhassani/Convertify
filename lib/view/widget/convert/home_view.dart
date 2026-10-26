@@ -17,7 +17,9 @@ class HomeView extends StatelessWidget {
 
   final VoidCallback onOpenFiles;
 
-  Future<void> _pick({String? only, String? preferred}) async {
+  /// Picks a file, then shows the format sheet unless [preferred] could be
+  /// preselected. Also used by the home-screen widget.
+  static Future<void> pick({String? only, String? preferred}) async {
     final convert = Get.find<ConvertController>();
     final openSheet =
         await convert.pickFile(onlyExtension: only, preferredOutput: preferred);
@@ -39,7 +41,7 @@ class HomeView extends StatelessWidget {
         const SizedBox(height: 22),
         const StepIndicator(current: 0),
         const SizedBox(height: 22),
-        _PickFileCard(onPick: () => _pick()),
+        _PickFileCard(onPick: () => pick()),
         const SizedBox(height: 24),
         SectionLabel("popular_conversions".tr),
         const SizedBox(height: 10),
@@ -56,7 +58,7 @@ class HomeView extends StatelessWidget {
                       : "${from.toUpperCase()} → ${to.toUpperCase()}",
                   style: const TextStyle(fontFamily: "Inter"),
                 ),
-                onPressed: () => _pick(only: from, preferred: to),
+                onPressed: () => pick(only: from, preferred: to),
               ),
           ],
         ),

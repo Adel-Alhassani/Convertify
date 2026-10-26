@@ -1,6 +1,8 @@
 import 'package:convertify/controller/convert_controller.dart';
+import 'package:convertify/service/widget_launches.dart';
 import 'package:convertify/view/screen/convert_screen.dart';
 import 'package:convertify/view/screen/files_screen.dart';
+import 'package:convertify/view/widget/convert/home_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -16,6 +18,21 @@ class _AppShellState extends State<AppShell> {
   int _index = 0;
 
   void _go(int index) => setState(() => _index = index);
+
+  @override
+  void initState() {
+    super.initState();
+    // The picker needs the app on screen, so start listening after a frame.
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => WidgetLaunches.listen(_onWidgetLaunch));
+  }
+
+  void _onWidgetLaunch(WidgetLaunch launch) {
+    _go(0);
+    // Mid-conversion the Convert tab shows its progress; don't interrupt.
+    if (Get.find<ConvertController>().isBusy) return;
+    HomeView.pick(only: launch.from, preferred: launch.to);
+  }
 
   @override
   Widget build(BuildContext context) {
